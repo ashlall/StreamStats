@@ -13,11 +13,11 @@ class BasicStats
   public: 
     BasicStats();
     ~BasicStats() {};
-    BasicStats insert(double num);
-    BasicStats mean();
-    BasicStats SD(double mean, int N, double data);
-    BasicStats MAX();
-    BasicStats MIN();
+    void insert(double num);
+    double mean();
+    double SD(double mean, int N, double data);
+    double MAX();
+    double MIN();
 }
 
 #include "BasicStats.cpp"
