@@ -1,1 +1,11 @@
+This files contains the following folders of classes:
 
+- Multiple quantile sketch algorithem classes, named as Quantiles 
+
+- Chi square test
+
+- KS test 
+
+- Outliers 
+
+- BasicStats
