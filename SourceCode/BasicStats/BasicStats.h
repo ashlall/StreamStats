@@ -8,12 +8,12 @@ using namespace std;
 class BasicStats
 {
   private:
-    double data, sum;
+    double data, sum, min;
     int N;
   public: 
     BasicStats();
-    ~BasicStats();
-    BasicStats insert()
+    ~BasicStats() {};
+    BasicStats insert(double num);
     BasicStats mean();
     BasicStats SD(double mean, int N, double data);
     BasicStats MAX();
