@@ -7,13 +7,13 @@ BasicStats::BasicStats()
   min = 0x80000000 // smallest number possible?
 }
 
-BasicStats::insert(double num)
+void BasicStats::insert(double num)
 {
   if (num < min)
     min = num;
 }
 
-BasicStats::MIN()
+double BasicStats::MIN()
 {
   return min;
 }
