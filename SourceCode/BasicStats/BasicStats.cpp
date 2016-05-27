@@ -1,8 +1,10 @@
 // BasicStats.cpp
+#include <math.h>
 
 BasicStats::BasicStats()
 {
   sum = 0;
+  squaredsum = 0;
   N = 0;
   min = 0; // smallest number possible?
   max = 0;
@@ -13,6 +15,7 @@ void BasicStats::insert(double num)
 {
   N = N+1;
   sum=sum+num;
+  squaredsum += num*num;
   min = _min(num);
   max = testMAX(num);
 }
@@ -48,4 +51,9 @@ double BasicStats:: Average()
 double BasicStats::MAX()
 {
 	return max;
+}
+
+double BasicStats::SD()
+{
+  return sqrt((squaredsum - (N*Average()*Average()))/(N-1));
 }
