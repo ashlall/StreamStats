@@ -8,16 +8,18 @@ using namespace std;
 class BasicStats
 {
   private:
-    double data, sum, min;
+    double sum, min, max;
     int N;
+
   public: 
     BasicStats();
     ~BasicStats() {};
     void insert(double num);
     double mean();
     double SD(double mean, int N, double data);
+    double testMAX(double num);
     double MAX();
-    double MIN();
+    //double MIN();
 };
 
 #include "BasicStats.cpp"
