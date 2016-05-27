@@ -32,8 +32,20 @@ void test_MIN()
   assert(d.MIN()==3);
 }
 
+void test_Average()
+{
+	BasicStats a;
+	for (int i=1;i<=100;i++)
+	  a.insert(i);
+	
+	assert(a.Average()==50);
+
+
+}
+
 int main()
 {
   test_constructor();
   test_MIN();
+  test_Average();
 }
