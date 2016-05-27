@@ -1,4 +1,4 @@
-// c
+// BasicStats.cpp
 
 BasicStats::BasicStats()
 {
@@ -11,22 +11,24 @@ BasicStats::BasicStats()
 void BasicStats::insert(double num)
 {
   N = N+1;
-  if (N == 1)
-    min = num;
-  if (num < min)
-    min = num;
+  min = MIN();
    max = BasicStats.MAX(num);
 }
 
 double BasicStats::MIN()
 {
-  return min;
+  if (N == 1)
+    min = num;
+  if (num < min)
+    return num;
+  else
+    return min;
 }
 
 double BasicStats ::Max(double num)
 {
 	if (num >= max)
-		return num
+	  return num;
 	else 
-		return max 
+	  return max; 
 }
