@@ -18,12 +18,10 @@ class ReservoirSampling: public QuantileSketch
   double getQuantile(double f);
  protected:
   int n,k;
-  double []s;
+  double *s;
 };
 
-#include "ReservoirSampling.cpp"
-
-#endif RESERVOIR_SAMPLING
+//#endif
 
 ReservoirSampling::ReservoirSampling(int items)
 {
@@ -51,3 +49,5 @@ double ReservoirSampling::getQuantile(double f)
   else
     return s[(int)(f*k)];
 }
+
+#endif
