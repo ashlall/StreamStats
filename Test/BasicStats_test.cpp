@@ -71,10 +71,20 @@ void test_Average()
 
 }
 
+void test_SD()
+{
+  BasicStats a;
+  for (int i=1;i<=10;i++)
+    a.insert(i);
+  cout<<a.SD()<<endl;
+  // assert(a.SD()==3.02765);
+}
+
 int main()
 {
   test_constructor();
   test_Average();
   test_MIN();
   test_MAX();
+  test_SD();
 }
