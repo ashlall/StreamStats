@@ -8,7 +8,7 @@ using namespace std;
 class BasicStats
 {
   private:
-    double data, sum, min, max;
+    double sum, squaredsum, min, max;
     long long int N;
     double testMAX(double num);
     double _min(double num);
@@ -17,7 +17,7 @@ class BasicStats
     BasicStats();
     ~BasicStats() {};
     void insert(double num);
-   // double SD(double mean, int N, double data);
+    double SD();
     double MAX();
     double MIN();
     double Average();
