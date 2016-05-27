@@ -3,7 +3,7 @@
 #include "QuantileSketch.h"
 #include <iostream>
 #include <algorithm>
-#include <rand>
+#include <stdlib.h>
 using namespace std;
 
 #ifndef RESERVOIR_SAMPLING
@@ -37,8 +37,8 @@ void ReservoirSampling::insert(double x)
   n += 1;
   if (n <= k)
     s[n-1] = x;
-  else if ((rand % n + 1) <= k)
-    s[(rand % k)] = x;
+  else if ((rand() % n + 1) <= k)
+    s[(rand() % k)] = x;
 }
 
 double ReservoirSampling::getQuantile(double f)
