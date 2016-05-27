@@ -2,19 +2,20 @@
 
 BasicStats::BasicStats()
 {
-  sum = 0;
-  N = 0;
-  min = 0; // smallest number possible?
-  max = 0;
+  double sum = 0;
+  int  N = 0;
+  double min = 0; // smallest number possible?
+  double max = 0;
 }
 
 void BasicStats::insert(double num)
 {
   N = N+1;
-  min = MIN();
-   max = BasicStats.MAX(num);
+  //min = MIN();
+	max = testMAX(num);
 }
 
+/*
 double BasicStats::MIN()
 {
   if (N == 1)
@@ -24,11 +25,17 @@ double BasicStats::MIN()
   else
     return min;
 }
+*/
 
-double BasicStats ::Max(double num)
+double BasicStats::testMAX(double num)
 {
-	if (num >= max)
-	  return num;
-	else 
-	  return max; 
+  if (num >= max)
+    return num;
+  else
+    return max;
+}
+
+double BasicStats::MAX()
+{
+	return max;
 }
