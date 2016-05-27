@@ -6,19 +6,18 @@ BasicStats::BasicStats()
   N = 0;
   min = 0; // smallest number possible?
   max = 0;
-  count=0;
+  //  count=0;
 }
 
 void BasicStats::insert(double num)
 {
   N = N+1;
   sum=sum+num;
-  //min = MIN();
-	max = testMAX(num);
+  min = _min(num);
+  max = testMAX(num);
 }
 
-/*
-double BasicStats::MIN()
+double BasicStats::_min(double num)
 {
   if (N == 1)
     min = num;
@@ -27,7 +26,11 @@ double BasicStats::MIN()
   else
     return min;
 }
-*/
+
+double BasicStats::MIN()
+{
+  return min;
+}
 
 double BasicStats::testMAX(double num)
 {
@@ -37,7 +40,7 @@ double BasicStats::testMAX(double num)
 	  return max; 
 }
 
-double BasicStats:: Average(double num)
+double BasicStats:: Average()
 {
 	return sum/N;
 }
