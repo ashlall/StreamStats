@@ -18,7 +18,7 @@ class BasicStats
     double SD(double mean, int N, double data);
     double MAX();
     double MIN();
-}
+};
 
 #include "BasicStats.cpp"
 #endif
