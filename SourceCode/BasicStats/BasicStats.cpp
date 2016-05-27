@@ -14,7 +14,7 @@ void BasicStats::insert(double num)
   N = N+1;
   sum=sum+num;
   //min = MIN();
-  //max = BasicStats.MAX(num);
+	max = testMAX(num);
 }
 
 /*
@@ -27,17 +27,22 @@ double BasicStats::MIN()
   else
     return min;
 }
+*/
 
-double BasicStats ::Max(double num)
+double BasicStats::testMAX(double num)
 {
 	if (num >= max)
 	  return num;
 	else 
 	  return max; 
-}*/
+}
 
-double Basic Stats:: Average(double num)
+double BasicStats:: Average(double num)
 {
 	return sum/N;
+}
 
+double BasicStats::MAX()
+{
+	return max;
 }
