@@ -11,14 +11,12 @@ class  QuantileSketch
  public:
   QuantileSketch() {};
   ~QuantileSketch() {};
-  virtual void insert(double x);
-  virtual double getQuantile(double q);
+  virtual void insert(double x) { } ;
+  virtual double getQuantile(double f) = 0;
   int reverseQuantile(double r, int n);
 };
 
-//#include "QuantileSketch.cpp"
-
-#endif QUANTILE_SKETCH
+#endif
 
 int QuantileSketch::reverseQuantile(double r, int n)
 {
