@@ -22,13 +22,9 @@ void test_MIN()
   assert(b.MIN()==1);
 
   BasicStats c; // tests with one million items in the stream in descending order 
-  for (int i=10;i>=1;i++)
-  {
+  for (int i=1000000;i>=1;i--)
     c.insert(i);
-    cout<<c.MIN()<<endl;
-  }
-  cout<<c.MIN()<<endl;
-  //  assert(c.MIN()==1);
+  assert(c.MIN()==1);
 }
 
 int main()
