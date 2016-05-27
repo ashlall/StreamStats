@@ -10,7 +10,6 @@ void test_constructor()
   
 }
 
-/*
 void test_MIN()
 {
   BasicStats a; // tests when there is one item in the stream
@@ -32,7 +31,6 @@ void test_MIN()
     d.insert(i*3);
   assert(d.MIN()==3);
 }
-*/
 
 void test_MAX()
 {
@@ -68,8 +66,7 @@ void test_Average()
 	BasicStats a;
 	for (int i=1;i<=100;i++)
 	  a.insert(i);
-	
-	assert(a.Average()==50);
+       	assert(a.Average()==50.5);
 
 
 }
@@ -78,6 +75,6 @@ int main()
 {
   test_constructor();
   test_Average();
-  //test_MIN();
+  test_MIN();
   test_MAX();
 }
