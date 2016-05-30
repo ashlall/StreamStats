@@ -16,11 +16,11 @@ void BasicStats::insert(double num)
   N = N+1;
   sum=sum+num;
   squaredsum += num*num;
-  min = _min(num);
-  max = testMAX(num);
+  min = if_MIN(num);
+  max = if_MAX(num);
 }
 
-double BasicStats::_min(double num)
+double BasicStats::if_MIN(double num)
 {
   if (N == 1)
     min = num;
@@ -35,7 +35,7 @@ double BasicStats::MIN()
   return min;
 }
 
-double BasicStats::testMAX(double num)
+double BasicStats::if_MAX(double num)
 {
 	if (num >= max)
 	  return num;
