@@ -8,6 +8,9 @@ using namespace std;
 void test_constructor()
 {
   ReservoirSampling a(10);
+  a.insert(1);
+  a.insert(2);
+  a.insert(3);
 }
 
 int main()
