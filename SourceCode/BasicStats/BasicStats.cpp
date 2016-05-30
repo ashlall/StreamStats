@@ -8,12 +8,11 @@ BasicStats::BasicStats()
   N = 0;
   min = 0; // smallest number possible?
   max = 0;
-  //  count=0;
 }
 
 void BasicStats::insert(double num)
 {
-  N = N+1;
+  N = N+1; 
   sum=sum+num;
   squaredsum += num*num;
   min = if_MIN(num);
@@ -37,6 +36,8 @@ double BasicStats::MIN()
 
 double BasicStats::if_MAX(double num)
 {
+	if(N==1)
+          max=num;
 	if (num >= max)
 	  return num;
 	else 
