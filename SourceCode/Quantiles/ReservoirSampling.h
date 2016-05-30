@@ -13,7 +13,7 @@ class ReservoirSampling: public QuantileSketch
 {
  public:
   ReservoirSampling(int items);
-  ~ReservoirSampling();
+  //~ReservoirSampling();
   void insert(double x);
   double getQuantile(double f);
  protected:
