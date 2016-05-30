@@ -5,11 +5,6 @@
 #include <iostream>
 using namespace std;
 
-void test_constructor()
-{
-  
-}
-
 void test_MIN()
 {
   BasicStats a; // tests when there is one item in the stream
@@ -34,13 +29,6 @@ void test_MIN()
 
 void test_MAX()
 {
-/*BasicStats e;
-	e.insert(5);
-	e.insert(109);
-	e.insert(10);
-	cout << e.MAX() <<endl;
-*/
-	
  BasicStats a; // tests when there is one item in the stream
   a.insert(3);
   assert(a.MAX()==3);
@@ -63,26 +51,39 @@ void test_MAX()
 
 void test_Average()
 {
-	BasicStats a;
-	for (int i=1;i<=100;i++)
-	  a.insert(i);
-       	assert(a.Average()==50.5);
-
+  BasicStats a;
+  for (int i=1;i<=100;i++)
+    a.insert(i);
+  assert(a.Average()==50.5);
 
 }
 
 void test_SD()
 {
-  BasicStats a;
+  BasicStats a; // tests with 10 items in the stream in ascending order
   for (int i=1;i<=10;i++)
     a.insert(i);
-  cout<<a.SD()<<endl;
-  // assert(a.SD()==3.02765);
+  assert(3.02765 <= a.SD() <= 3.0275);
+
+  for (int i=100;i>=11;i--) // tests with 100 items in the stream in descending order
+    a.insert(i);
+  assert(29.01149<=a.SD()<=29.01149);
+
+  a.insert(1000); // tests adding an outlier to the stream
+  assert(98.79013<=a.SD()<=98.79013);
+
+  for (int i=1;i<10;i++) // tests having 10 max values in the stream
+    a.insert(1000);
+  assert(275.6017<=a.SD()<=275.6017);
+
+  BasicStats b; // tests with father apart integers
+  for (int i=1;i<=50;i++)
+    b.insert(i*3);
+  assert(43.73214<=b.SD()<=43.73214);
 }
 
 int main()
 {
-  test_constructor();
   test_Average();
   test_MIN();
   test_MAX();
