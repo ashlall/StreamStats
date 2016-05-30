@@ -34,13 +34,13 @@ void test_MIN()
 
 void test_MAX()
 {
-/*
-	BasicStats e;
+/*BasicStats e;
 	e.insert(5);
 	e.insert(109);
 	e.insert(10);
 	cout << e.MAX() <<endl;
 */
+	
  BasicStats a; // tests when there is one item in the stream
   a.insert(3);
   assert(a.MAX()==3);
