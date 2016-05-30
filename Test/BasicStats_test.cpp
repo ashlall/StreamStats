@@ -3,6 +3,8 @@
 #include "../SourceCode/BasicStats/BasicStats.h"
 #include <cassert>
 #include <iostream>
+#include <cstdlib>
+
 using namespace std;
 
 void test_MIN()
@@ -25,6 +27,15 @@ void test_MIN()
   for (int i=1;i<=100000;i++)
     d.insert(i*3);
   assert(d.MIN()==3);
+  
+  BasicStats e;
+  for(int i=1;i<=10000;i++)
+     e.insert(rand()%1000+250); //tests in a randomly generated stream with 100 as minimum
+  e.insert(100);
+  for(int i=1;i<=1000;i++)
+     e.insert(rand()%1000+550);
+  assert(e.MIN()==100);
+  
 }
 
 void test_MAX()
@@ -47,6 +58,14 @@ void test_MAX()
   for (int i=1;i<=100000;i++)
     d.insert(i*3);
   assert(d.MAX()==300000);
+  
+  BasicStats e;
+  for(int i=1;i<=10000;i++)
+     e.insert(rand()%1000+250); //tests in a randomly generated stream with 200 as maximum
+  e.insert(2000);
+  for(int i=1;i<=1000;i++)
+     e.insert(rand()%1000+550);
+  assert(e.MAX()==2000);
 }
 
 void test_Average()
