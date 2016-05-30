@@ -71,10 +71,29 @@ void test_MAX()
 void test_Average()
 {
   BasicStats a;
-  for (int i=1;i<=100;i++)
-    a.insert(i);
-  assert(a.Average()==50.5);
-
+  a.insert(50);
+  assert(a.Average()==50); //tests when there is only one number in the stream.       
+        
+  BasicStats b;
+  for (int i=1;i<=100;i++) //tests for ascending number from 1 to 100. 
+    b.insert(i);
+  assert(b.Average()==50.5);
+  
+  BasicStats c; // tests with one million items in the stream in descending order 
+  for (int i=1000000;i>=1;i--)
+    c.insert(i);
+  assert(c.Average()==500000.5);
+  
+  BasicStats d;
+  double sum=0;
+  int random_num;
+  for(int i=0;i<100000;i++)
+  {
+     random_num=(rand()%1000+250);
+     d.insert(random_num); //tests for a randomly generated stream
+     sum=sum+random_num;
+  }
+   assert(d.Average()==sum/100000);
 }
 
 void test_SD()
