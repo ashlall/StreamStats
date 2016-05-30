@@ -10,8 +10,8 @@ class BasicStats
   private:
     double sum, squaredsum, min, max;
     long long int N;
-    double testMAX(double num);
-    double _min(double num);
+    double if_MAX(double num);
+    double if_MIN(double num);
 
   public: 
     BasicStats();
