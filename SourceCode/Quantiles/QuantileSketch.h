@@ -6,18 +6,32 @@
 #include <iostream>
 using namespace std;
 
-class  QuantileSketch
+/*
+Prototypes:
+*/
+class QuantileSketch
 {
  public:
   QuantileSketch() {};
   ~QuantileSketch() {};
   virtual void insert(double x) { } ;
-  virtual double getQuantile(double f) = 0;
+  virtual double getQuantile(double f) {return 0;};
   int reverseQuantile(double r, int n);
+  
+  // To do the following:
+  void reset();
+  void read();
+  void write();
 };
 
 #endif
 
+
+/*
+Member Functions:
+*/
+
+// performs a search to find the largest index that has value less than or equal to r
 int QuantileSketch::reverseQuantile(double r, int n)
 {
   int lo=0, hi= n-1;
@@ -32,3 +46,16 @@ int QuantileSketch::reverseQuantile(double r, int n)
   }
   return lo;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
