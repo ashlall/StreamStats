@@ -3,3 +3,7 @@ Things that are yet to be done:
 1) Implemeneting all the quantile sketches.
 2) Testing all the quantile sketches.
 3) Implementing our algorithm
+
+- ability to reset the sketch (i.e., re-initialize to empty stream)
+- ability to write the sketch to a stream
+- ability to read the sketch from a stream
