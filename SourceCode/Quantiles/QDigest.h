@@ -10,11 +10,12 @@ class QDigest
  public:
   QDigest(int _k, int u); // constructor
   ~QDigest(); // deconstructor
-  void compress(QDigestNode *n, int level);
-  double getRank(QDigestNode *n, int current, int rank);
+  void insert(double x);
   double getQuantile(double f);
   
  private:
+  void compress(QDigestNode *n, int level);
+  double getRank(QDigestNode *n, int current, int rank);
   *QDigestNode getSibling(QDigestNode *n);
   int sib_par_count(QDigestNode *n);
   void delete_node(QDigestNode *n);

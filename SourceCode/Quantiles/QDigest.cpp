@@ -13,6 +13,17 @@ QDigest::~QDigest()
   //destructor
 }
 
+void QDigest::insert(double x)
+{
+
+}
+
+double QDigest::getQuantile(double f)
+{
+  double rank = f*N;
+  return getRank(root, 0, rank);
+}
+
 void QDigest::compress(QDigestNode *n, int level)
 {
   if (n == NULL)
@@ -30,6 +41,22 @@ void QDigest::compress(QDigestNode *n, int level)
 	delete_node(n->parent->right);
     }
   }
+}
+
+double QDigest::getRank(QDigestNode *n, int current, int rank)
+{
+  if (n == NULL)
+    return 0;
+  double val = getRank(n->left, current, rank);
+  if (current >= rank)
+    return val;
+  val = getRank(n->right, current, rank);
+  if (current < rank)
+  {
+    val = n->upper;
+    current = n->count;
+  }
+  return val;
 }
 
 QDigestNode* QDigest::getSibling(QDigestNode *n)
