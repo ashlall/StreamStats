@@ -14,6 +14,7 @@ class QDigest
   double getQuantile(double f);
   
  private:
+  void _insert(int x, int l, int u, QDigestNode *n);
   void compress(QDigestNode *n, int level);
   double getRank(QDigestNode *n, int current, int rank);
   int sib_par_count(QDigestNode *n);

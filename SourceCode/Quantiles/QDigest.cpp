@@ -17,7 +17,14 @@ QDigest::~QDigest()
 
 void QDigest::insert(double x)
 {
+  // if (x > root->upper)
+    // get new upper bound, rebuild(x)
+  _insert(x, 0, root->upper, root);
+}
 
+void QDigest::_insert(int x, int l, int u, QDigestNode *n)
+{
+  int mid = (l+u)/2;
 }
 
 double QDigest::getQuantile(double f)
