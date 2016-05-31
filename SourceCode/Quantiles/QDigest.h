@@ -16,7 +16,6 @@ class QDigest
  private:
   void compress(QDigestNode *n, int level);
   double getRank(QDigestNode *n, int current, int rank);
-  //*QDigestNode getSibling(QDigestNode *n);
   int sib_par_count(QDigestNode *n);
   void delete_node(QDigestNode *n);
   void destroy(QDigestNode *n);
