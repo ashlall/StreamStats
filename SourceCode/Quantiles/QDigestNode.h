@@ -17,3 +17,5 @@ class QDigestNode
   QDigestNode *left, *right, *parent;
   int count, lower, upper;
 };
+
+#endif
