@@ -3,13 +3,13 @@
 #include<cassert>
 #include "../SourceCode/Quantiles/ReservoirSampling.h"
 #include <iostream>
-
+//this stage 
 void test_reservoir1()
 {
   ReservoirSampling a(1000);
   ReservoirSampling b(1000);
-  int quantA,quantB;bool condA,condB;
-  int n=10000000;
+  int quantA,quantB;bool condA,condB, condM, condN;
+  int n=100000000;
   
   for (int i=n;i>=1;i--)
   {
@@ -27,36 +27,40 @@ void test_reservoir1()
   	  quantA=a.getQuantile(interval); //getting quantile for each probability interval
   	  quantB=b.getQuantile(interval);//getting quantile for each probability interval
   	  
-  	  condA= ((interval-0.04)*n <=quantA) && ((interval+0.04)*n>=quantA);
-  	  //checking if quantile is within error range
+  	  condA= (a.getQuantile(interval*1000- 0.001*n)<=quantA) && (a.getQuantile(interval*1000 + 0.001*n)>=quantA);
+  	  //checking if quantile is within error range (j is in {i-en, i+en})
   	  
-  	  condB= ((interval-0.04)*n <=quantB) && ((interval+0.04)*n>=quantB);
-  	  //checking if quantile is within error range
+  	  condB= (b.getQuantile(interval*1000- 0.001*n)<=quantB) && (b.getQuantile(interval*1000 + 0.001*n)>=quantB);
+  	  //checking if quantile is within error range (j is in {i-en, i+en})
   	  
   	  assert(condA==true);
   	  assert(condB==true);
   }
   
+  /*
+  Test of reverseQuantile() is still needed.
+  */
   	  
 }
 void test_reservoir2()
 {
-  ReservoirSampling a(1000);
+  ReservoirSampling c(1000);
   int quant;bool cond;
   int n=10000000;
   
   for (int i=1;i<=n;i++)
   {	
   	int rand_num=rand()%10000000;
-  	a.insert(rand_num); //inserting random numbers of range 0-10 million
+  	c.insert(rand_num); //inserting random numbers of range 0-10 million
   }
   for (float i=0;i<=100;i++)
   {
   	  float interval=i/100;//getting each probabilty interval
-  	  quant=a.getQuantile(interval);//getting quantile for each probability interval
+  	  quant=c.getQuantile(interval);//getting quantile for each probability interval
   	  
-  	  cond= ((interval-0.04)*n <=quant) && ((interval+0.04)*n>=quant);
-  	  //checking if quantile is within error range
+  	  //cond= ((interval-0.04)*n <=quant) && ((interval+0.04)*n>=quant);
+  	  cond= (c.getQuantile(interval*1000- 0.001*n)<=quant) && (c.getQuantile(interval*1000 + 0.001*n)>=quant);
+  	  //checking if quantile is within error range (j is in {i-en, i+en})
   	  
   	  assert(cond==true);
   }
