@@ -15,11 +15,12 @@ class QDigest
   double getQuantile(double f);
   
  private:
-  QDigestNode *root;
-  int N, k, num; //items in the stream, compression factor, number of nodes
   *QDigestNode getSibling(QDigestNode *n);
   int sib_par_count(QDigestNode *n);
   void delete_node(QDigestNode *n);
+
+  QDigestNode *root;
+  int N, k, num; //items in the stream, compression factor, number of nodes
 };
 
 #include "QDigest.cpp"
