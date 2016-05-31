@@ -13,6 +13,25 @@ QDigest::~QDigest()
   //destructor
 }
 
+void QDigest::compress(QDigestNode *n, int level)
+{
+  if (n == NULL)
+    return;
+  compress(n->left, level + 1);
+  compress(n->right, level + 1);
+  if (level > 0)
+  {
+    if (sib_par_count(n) < (N/k))
+    {
+      n->parent->count = sib_par_count(n);
+      if (n->parent->left)
+	delete_node(n->parent->left);
+      if (n->parent->right)
+	delete_node(n->parent->right);
+    }
+  }
+}
+
 QDigestNode* QDigest::getSibling(QDigestNode *n)
 {
   if (n->parent->right == n)
