@@ -1,4 +1,6 @@
 // QDigest.cpp
+//#include <iostream>
+//using namespace std;
 
 QDigest::QDigest(int _k, int u)
 {
@@ -10,7 +12,7 @@ QDigest::QDigest(int _k, int u)
 
 QDigest::~QDigest()
 {
-  //destructor
+  destroy(root);
 }
 
 void QDigest::insert(double x)
@@ -24,7 +26,7 @@ double QDigest::getQuantile(double f)
   return getRank(root, 0, rank);
 }
 
-void QDigest::compress(QDigestNode *n, int level)
+void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
 {
   if (n == NULL)
     return;
@@ -38,12 +40,12 @@ void QDigest::compress(QDigestNode *n, int level)
       if (n->parent->left)
 	delete_node(n->parent->left);
       if (n->parent->right)
-	delete_node(n->parent->right);
+      delete_node(n->parent->right);
     }
   }
 }
 
-double QDigest::getRank(QDigestNode *n, int current, int rank)
+double QDigest::getRank(QDigestNode *n, int current, int rank) // haven't checked accuracy
 {
   if (n == NULL)
     return 0;
@@ -59,25 +61,32 @@ double QDigest::getRank(QDigestNode *n, int current, int rank)
   return val;
 }
 
-QDigestNode* QDigest::getSibling(QDigestNode *n)
-{
-  if (n->parent->right == n)
-    return n->parent->left;
-  return n->parent->right;
-}
-
 int QDigest::sib_par_count(QDigestNode *n)
 {
-  QDigestNode *s = getSibling();
+  QDigestNode *s;
+  if (n->parent->right == n)
+    s = n->parent->left;
+  else
+    s = n->parent->right;
   return n->count + s->count + n->parent->count;
 }
 
-void delete_node(QDigestNode *n)
+void QDigest::delete_node(QDigestNode *n)
 {
   if (n->parent->left == n)
-    n->parent->left == NULL;
+    n->parent->left = NULL;
   else
-    n->parent->right == NULL;
+    n->parent->right = NULL;
   delete n;
-  --num;
+  num--;
+}
+
+void QDigest::destroy(QDigestNode *n)
+{
+  if (n)
+  {
+    destroy(n->left);
+    destroy(n->right);
+    delete n;
+  }
 }

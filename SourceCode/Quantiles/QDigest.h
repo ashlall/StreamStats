@@ -16,9 +16,10 @@ class QDigest
  private:
   void compress(QDigestNode *n, int level);
   double getRank(QDigestNode *n, int current, int rank);
-  *QDigestNode getSibling(QDigestNode *n);
+  //*QDigestNode getSibling(QDigestNode *n);
   int sib_par_count(QDigestNode *n);
   void delete_node(QDigestNode *n);
+  void destroy(QDigestNode *n);
 
   QDigestNode *root;
   int N, k, num; //items in the stream, compression factor, number of nodes
