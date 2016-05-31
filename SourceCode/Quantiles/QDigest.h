@@ -10,16 +10,19 @@ class QDigest
  public:
   QDigest(int _k, int u); // constructor
   ~QDigest(); // deconstructor
-  compress(QDigestNode *n, int level);
-  getRank(QDigestNode *n, int current, int rank);
-  getQuantile(double f);
+  void insert(double x);
+  double getQuantile(double f);
   
  private:
+  void compress(QDigestNode *n, int level);
+  double getRank(QDigestNode *n, int current, int rank);
+  //*QDigestNode getSibling(QDigestNode *n);
+  int sib_par_count(QDigestNode *n);
+  void delete_node(QDigestNode *n);
+  void destroy(QDigestNode *n);
+
   QDigestNode *root;
   int N, k, num; //items in the stream, compression factor, number of nodes
-  getSibling(QDigestNode *n);
-  sib_par_count(QDigestNode *n);
-  delete_node(QDigestNode *n);
 };
 
 #include "QDigest.cpp"

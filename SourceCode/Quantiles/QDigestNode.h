@@ -1,5 +1,7 @@
 // QDigestNode.h
 
+#include <stdlib.h>
+
 #ifndef QDIGESTNODE_H
 #define QDIGESTNODE_H
 
