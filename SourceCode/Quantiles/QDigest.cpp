@@ -66,12 +66,12 @@ void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
   compress(n->right, level + 1);
   if (level > 0)
   {
-    QDigestNode *s;
+    /*QDigestNode *s;
     if (n->parent->right)
       s = n->parent->left;
     else
-      s = n->parent->right;
-    if (s &&  sib_par_count(n) < (N/k))
+    s = n->parent->right;*/
+    if (sib_par_count(n) < (N/k))
     { 
       n->parent->count = sib_par_count(n);
       if (n->parent->left)
