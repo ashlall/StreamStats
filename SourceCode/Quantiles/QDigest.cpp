@@ -1,6 +1,6 @@
 // QDigest.cpp
-//#include <iostream>
-//using namespace std;
+#include <iostream>
+using namespace std;
 
 QDigest::QDigest(int _k, int u)
 {
@@ -19,12 +19,37 @@ void QDigest::insert(double x)
 {
   // if (x > root->upper)
     // get new upper bound, rebuild(x)
-  _insert(x, 0, root->upper, root);
+  _insert(x, 1, root->upper, root);
+  //compress(root,0);
 }
 
 void QDigest::_insert(int x, int l, int u, QDigestNode *n)
 {
   int mid = (l+u)/2;
+  if (x <= mid)
+  {
+    if (n->left == NULL)
+    {
+      n->left = new QDigestNode(l, mid);
+      n->left->parent = n;
+      n->left->count++;
+      num++;
+    }
+    else
+      _insert(x, l, mid, n->left);
+  }
+  else
+  {
+    if (n->right == NULL)
+    {
+      n->right = new QDigestNode(mid + 1, u);
+      n->right->parent = n;
+      n->right->count++;
+      num++;
+    }
+    else
+      _insert(x, mid + 1, u, n->right);
+  }
 }
 
 double QDigest::getQuantile(double f)
@@ -41,8 +66,13 @@ void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
   compress(n->right, level + 1);
   if (level > 0)
   {
-    if (sib_par_count(n) < (N/k))
-    {
+    QDigestNode *s;
+    if (n->parent->right)
+      s = n->parent->left;
+    else
+      s = n->parent->right;
+    if (s &&  sib_par_count(n) < (N/k))
+    { 
       n->parent->count = sib_par_count(n);
       if (n->parent->left)
 	delete_node(n->parent->left);
