@@ -20,8 +20,8 @@ class QuantileSketch
   
   // To do the following:
   void reset();
-  void read();
-  void write();
+  void read(); 
+  void write(); // write on the disk?
 };
 
 #endif
