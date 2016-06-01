@@ -10,6 +10,17 @@ BasicStats::BasicStats()
   max = 0;
 }
 
+BasicStats::BasicStats(const BasicStats& b)
+{
+  copy(b);
+}
+
+BasicStats& BasicStats::operator=(const BasicStats& b)
+{
+  copy(b);
+  return *this;
+}
+
 void BasicStats::insert(double num)
 {
   N = N+1; 
@@ -57,4 +68,13 @@ double BasicStats::MAX()
 double BasicStats::SD()
 {
   return sqrt((squaredsum - (N*Average()*Average()))/(N-1));
+}
+
+void BasicStats::copy(const BasicStats& b)
+{
+  sum = b.sum;
+  squaredsum = b.squaredsum;
+  N = b.N;
+  min = b.min;
+  max = b.max;
 }
