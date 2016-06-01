@@ -14,6 +14,7 @@ void test_qdigest()
 		a.insert(hi[i]);
 	}
 	cout << "median:" << a.getQuantile(0.5) << endl;
+	cout << "next: "<<a.getQuantile(0.1) << endl;
 }
 
 void test_constructors()
@@ -28,6 +29,6 @@ void test_constructors()
 int main()
 {
   test_qdigest();
-  test_constructors();
+  //test_constructors();
   return 0;
 }

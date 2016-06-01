@@ -34,11 +34,14 @@ QDigest::~QDigest()
 }
 
 void QDigest::insert(double x)
+
 {
-  // if (x > root->upper)
-    // get new upper bound, rebuild(x)
+  // if (x > root->upper)                                                       // get new upper bound, rebuild(x)                                          
   _insert(x, 1, root->upper, root);
-  //compress(root,0);
+  cout << "inserting "<< x<<endl;
+  compress(root,0);
+
+
 }
 
 void QDigest::_insert(int x, int l, int u, QDigestNode *n)
@@ -52,6 +55,7 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
       n->left->parent = n;
       n->left->count++;
       num++;
+      N++;
     }
     else
       _insert(x, l, mid, n->left);
@@ -64,6 +68,7 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
       n->right->parent = n;
       n->right->count++;
       num++;
+      N++;
     }
     else
       _insert(x, mid + 1, u, n->right);
@@ -84,14 +89,13 @@ void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
   compress(n->right, level + 1);
   if (level > 0)
   {
-    /*QDigestNode *s;
-    if (n->parent->right)
-      s = n->parent->left;
-    else
-    s = n->parent->right;*/
-    if (sib_par_count(n) < (N/k))
-    { 
-      n->parent->count = sib_par_count(n);
+    // cout << "hello "<<node_count(n->parent)<<" " << N/k <<endl;
+    //cout <<"N and k "<< N << " " << k << endl;
+    if (node_count(n->parent) < (N/k))
+    {
+      cout << "before"<<n->parent->count<<endl;
+      n->parent->count = node_count(n->parent);
+      cout<<"after " <<n->parent->count<<endl;
       if (n->parent->left)
 	delete_node(n->parent->left);
       if (n->parent->right)
@@ -116,14 +120,14 @@ double QDigest::getRank(QDigestNode *n, int current, int rank) // haven't checke
   return val;
 }
 
-int QDigest::sib_par_count(QDigestNode *n)
+int QDigest::node_count(QDigestNode *n)
 {
-  QDigestNode *s;
-  if (n->parent->right == n)
-    s = n->parent->left;
-  else
-    s = n->parent->right;
-  return n->count + s->count + n->parent->count;
+  int total = n->count;
+  if (n->right)
+    total += n->right->count;
+  if (n->left)
+    total += n->left->count;
+  return total;
 }
 
 void QDigest::delete_node(QDigestNode *n)

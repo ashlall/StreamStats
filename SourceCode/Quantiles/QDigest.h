@@ -1,5 +1,7 @@
 // QDigest.h
 
+#include <stdlib.h>
+
 #ifndef QDIGEST_H
 #define QDIGEST_H
 
@@ -34,7 +36,7 @@ class QDigest
   void _insert(int x, int l, int u, QDigestNode *n);
   void compress(QDigestNode *n, int level);
   double getRank(QDigestNode *n, int current, int rank);
-  int sib_par_count(QDigestNode *n);
+  int node_count(QDigestNode *n);
   void delete_node(QDigestNode *n);
   QDigestNode* copy(QDigestNode *n); 
   void destroy(QDigestNode *n);
