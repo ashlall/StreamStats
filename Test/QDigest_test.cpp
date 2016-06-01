@@ -13,7 +13,7 @@ void test_qdigest()
 	{
 		a.insert(hi[i]);
 	}
-	cout << a.getQuantile(0.5) << endl;
+	cout << "median:" << a.getQuantile(0.5) << endl;
 }
 
 int main()
