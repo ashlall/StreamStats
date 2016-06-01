@@ -12,6 +12,17 @@ ReservoirSampling::ReservoirSampling(int items)
   n = 0; //Setting the initial size of the stream to be 0. 
 }
 
+ReservoirSampling::ReservoirSampling(const ReservoirSampling& r)
+{
+  copy(r);
+}
+
+ReservoirSampling& ReservoirSampling::operator=(const ReservoirSampling& r)
+{
+  delete [] s;
+  copy(r);
+  return *this;
+}
 
 /*
 Destructor.
@@ -53,4 +64,13 @@ double ReservoirSampling::getQuantile(double f)
     return s[0];//if f is less than 1
   else
     return s[(int)(f*k)]; //if f is between 0 and 1. 
+}
+
+void ReservoirSampling::copy(const ReservoirSampling& r)
+{
+  k = r.k;
+  n = r.n;
+  s = new double[k];
+  for (int i = 0; i < k; i++)
+    s[i] = r.s[i];
 }

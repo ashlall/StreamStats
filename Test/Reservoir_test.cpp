@@ -52,8 +52,41 @@ void test_reservoir1()
   	  
 }
 
+void test_constructors()
+{
+  ReservoirSampling a(1000);
+  int n = 10000000;
+  for (int i=n;i>=1;i--)
+    a.insert(i); //inserting in desceding order
+
+  ReservoirSampling b(a);
+  ReservoirSampling c(100);
+
+  for (int i = 1; i <= n; i++)
+    c.insert(i);
+  c = a;
+
+  for (float i = 0; i <= 100; i++)
+  {
+    float interval = i/100;
+
+    int quantA = a.getQuantile(interval);
+    int quantB = b.getQuantile(interval);
+    int quantC = c.getQuantile(interval);
+
+    double lower = (interval - 0.05) * n;
+    double upper = (interval + 0.05) * n;
+
+    assert((lower <= quantA) && (upper >= quantA));
+    assert((lower <= quantB) && (upper >= quantB));
+    assert(quantA == quantB);
+    assert(quantA == quantC);
+  }
+}
+
 int main()
 {
+  test_constructors();
  test_reservoir1();
   return 0;
 }
