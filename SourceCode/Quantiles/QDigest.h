@@ -9,6 +9,8 @@ class QDigest
 {
  public:
   QDigest(int _k, int u); // constructor
+  QDigest(const QDigest& q); // copy constructor
+  QDigest& operator=(const QDigest& q); // assignment operator
   ~QDigest(); // deconstructor
   void insert(double x);
   double getQuantile(double f);
@@ -19,6 +21,7 @@ class QDigest
   double getRank(QDigestNode *n, int current, int rank);
   int sib_par_count(QDigestNode *n);
   void delete_node(QDigestNode *n);
+  QDigestNode* copy(QDigestNode *n); 
   void destroy(QDigestNode *n);
 
   QDigestNode *root;

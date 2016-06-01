@@ -10,6 +10,24 @@ QDigest::QDigest(int _k, int u)
   root = new QDigestNode(1,u); // or 0 for lower bound?
 }
 
+QDigest::QDigest(const QDigest& q)
+{
+  k = q.k;
+  N = q.N;
+  num = q.num;
+  root = copy(q.root);
+}
+
+QDigest& QDigest::operator=(const QDigest& q)
+{
+  destroy(root);
+  k = q.k;
+  N = q.N;
+  num = q.num;
+  root = copy(q.root);
+  return *this;
+}
+
 QDigest::~QDigest()
 {
   destroy(root);
@@ -116,6 +134,18 @@ void QDigest::delete_node(QDigestNode *n)
     n->parent->right = NULL;
   delete n;
   num--;
+}
+
+QDigestNode* QDigest::copy(QDigestNode *n)
+{
+  if (n == NULL)
+    return NULL;
+  QDigestNode *node = new QDigestNode(n->lower, n->upper);
+  node->parent = n->parent;
+  node->count = n->count;
+  node->left = copy(n->left);
+  node->right = copy(n->right);
+  return node;
 }
 
 void QDigest::destroy(QDigestNode *n)
