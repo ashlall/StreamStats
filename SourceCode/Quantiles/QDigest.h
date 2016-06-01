@@ -1,9 +1,24 @@
 // QDigest.h
 
-#include "QDigestNode.h"
-
 #ifndef QDIGEST_H
 #define QDIGEST_H
+
+struct QDigestNode
+{
+ public:
+  QDigestNode(int l,int u)
+  {
+    left = right = parent = NULL; // null node?
+    count = 0;
+    lower = l;
+    upper = u;
+  }
+  ~QDigestNode() {};
+  QDigestNode *left, *right, *parent;
+  int count, lower, upper;
+};
+
+
 
 class QDigest
 {
@@ -29,5 +44,4 @@ class QDigest
 };
 
 #include "QDigest.cpp"
-
 #endif
