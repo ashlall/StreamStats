@@ -16,8 +16,18 @@ void test_qdigest()
 	cout << "median:" << a.getQuantile(0.5) << endl;
 }
 
+void test_constructors()
+{
+  QDigest a(3,10);
+  a.insert(2);
+  
+  QDigest b(a);
+
+}
+
 int main()
 {
   test_qdigest();
+  test_constructors();
   return 0;
 }
