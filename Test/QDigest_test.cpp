@@ -15,6 +15,8 @@ void test_qdigest()
 	}
 	cout << "median:" << a.getQuantile(0.5) << endl;
 	cout << "next: "<<a.getQuantile(0.1) << endl;
+	cout << "next: "<<a.getQuantile(0.3) << endl;
+	cout << "next: "<<a.getQuantile(0.4) << endl;
 }
 
 void test_constructors()
