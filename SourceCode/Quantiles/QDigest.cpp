@@ -36,7 +36,7 @@ QDigest::~QDigest()
 void QDigest::insert(double x)
 
 {
-  // if (x > root->upper)                                                       // get new upper bound, rebuild(x)                                          
+  // if (x > root->upper)    // get new upper bound, rebuild(x)                                          
   _insert(x, 1, root->upper, root);
   cout << "inserting "<< x<<endl;
   compress(root,0);
@@ -78,7 +78,10 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
 double QDigest::getQuantile(double f)
 {
   double rank = f*N;
-  return getRank(root, 0, rank);
+  cout << "rank:" << rank <<endl;
+  int a = getRank(root, 0, rank);
+  cout << "getRank:" << a << endl;
+  return a;
 }
 
 void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
