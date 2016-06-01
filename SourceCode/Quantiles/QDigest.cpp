@@ -34,9 +34,10 @@ QDigest::~QDigest()
 }
 
 void QDigest::insert(double x)
-
 {
-  // if (x > root->upper)                                                       // get new upper bound, rebuild(x)                                          
+  // if (x > root->upper)                                                      // get new upper bound, rebuild(x)                                          
+  if (x > N)
+    N = x;
   _insert(x, 1, root->upper, root);
   cout << "inserting "<< x<<endl;
   compress(root,0);
@@ -55,7 +56,7 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
       n->left->parent = n;
       n->left->count++;
       num++;
-      N++;
+      //N++;
     }
     else
       _insert(x, l, mid, n->left);
@@ -68,7 +69,7 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
       n->right->parent = n;
       n->right->count++;
       num++;
-      N++;
+      //N++;
     }
     else
       _insert(x, mid + 1, u, n->right);
