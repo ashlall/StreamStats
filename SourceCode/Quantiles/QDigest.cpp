@@ -1,5 +1,6 @@
 // QDigest.cpp
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 QDigest::QDigest(int _k, int u)
@@ -36,8 +37,8 @@ QDigest::~QDigest()
 void QDigest::insert(double x)
 {
   // if (x > root->upper)    // get new upper bound, rebuild(x)
-  if (x > N)
-    N = x;
+  //if (x > N)
+  //  N = x;
 
   _insert(x, 1, root->upper, root);
   cout << "inserting "<< x<<endl;
@@ -53,11 +54,11 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
   {
     if (n->left == NULL)
     {
-      n->left = new QDigestNode(l, mid);
+      n->left = new QDigestNode(x, x);
       n->left->parent = n;
       n->left->count++;
       num++;
-      //N++;
+      N++;
     }
     else
       _insert(x, l, mid, n->left);
@@ -66,11 +67,11 @@ void QDigest::_insert(int x, int l, int u, QDigestNode *n)
   {
     if (n->right == NULL)
     {
-      n->right = new QDigestNode(mid + 1, u);
+      n->right = new QDigestNode(x, x);
       n->right->parent = n;
       n->right->count++;
       num++;
-      //N++;
+      N++;
     }
     else
       _insert(x, mid + 1, u, n->right);
@@ -86,6 +87,24 @@ double QDigest::getQuantile(double f)
   return a;
 }
 
+string QDigest::toString()
+{
+  ostringstream s;
+  s << N << " " << k << " " << root->lower << " " << root->upper << " " << num << endl;
+  _toString(root, s);
+  return s.str();
+}
+
+void QDigest::_toString(QDigestNode *n, ostream &s)
+{
+  if (!n)
+    return;
+  if (n->count > 0)
+    s << n->lower << " " << n->upper << " " << n->count << endl;
+  _toString(n->left,s);
+  _toString(n->right,s);
+}
+
 void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
 {
   if (n == NULL)
@@ -94,7 +113,7 @@ void QDigest::compress(QDigestNode *n, int level) // haven't checked accuracy
   compress(n->right, level + 1);
   if (level > 0)
   {
-    // cout << "hello "<<node_count(n->parent)<<" " << N/k <<endl;
+    //cout << "hello "<<node_count(n->parent)<<" " << N/k <<endl;
     //cout <<"N and k "<< N << " " << k << endl;
     if (node_count(n->parent) < (N/k))
     {
@@ -117,11 +136,12 @@ double QDigest::getRank(QDigestNode *n, int current, int rank) // haven't checke
   if (current >= rank)
     return val;
   val = getRank(n->right, current, rank);
-  if (current < rank)
+  if (current >=  rank)
   {
-    val = n->upper;
-    current = n->count;
+    return val;
   }
+  val = n->upper;
+  current = n->count;
   return val;
 }
 
