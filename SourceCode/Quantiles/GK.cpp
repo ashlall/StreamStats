@@ -1,5 +1,13 @@
 //GK.cpp
+/*
 
+
+*/
+
+/*
+Pre-Condition: The maximum number of Tuples.
+Post-Condition: A Dynamically alloacted array of maxTuples.
+*/
 GK::GK(int maxTuples)
 {
 	numTuples=0;
@@ -7,7 +15,10 @@ GK::GK(int maxTuples)
 	max=maxTuples;
 	summary=new Tuple*[maxTuples];
 }
-
+/*
+Pre-Condition: None.
+Post-Condition: Deallocates dynamicaly allocated memory.
+*/
 GK::~GK()
 {	
 	for (int i=0;i<max;i++)
@@ -16,7 +27,10 @@ GK::~GK()
 	}
 	delete []summary;
 }
-
+/*
+Pre-Condition: The value to be inserted.
+Post-Condition: A tuple holding val as its value is inserted into the summary.
+*/
 void GK::insert(double val)
 {
 	int index= findIndex(val);
@@ -33,6 +47,11 @@ void GK::insert(double val)
 		deleteMerge();
 	numObservations++;
 }
+/*
+Pre-Condition: The Tuple to be inserted and the index in summary at
+which at has to be inserted.
+Post-Condition: The Tuple is inserted is inserted at index.
+*/
 void GK::insertTuple(Tuple* t,int index)
 {	
 	int destpos=numTuples;
@@ -46,7 +65,10 @@ void GK::insertTuple(Tuple* t,int index)
 	summary[index]=t;
 	numTuples++;
 }
-
+/*
+Pre-Condition:
+Post-Condition:
+*/
 int GK::findIndex(double val)
 {
 	int high= numTuples;int low=-1,mid;
@@ -60,7 +82,10 @@ int GK::findIndex(double val)
 	}
 	return high;
 }
-
+/*
+Pre-Condition:None.
+Post-Condition: Does a merge and deletes the tuple that is least full.
+*/
 void GK::deleteMerge()
 {	
 	int leastIndex = 0;
@@ -78,7 +103,10 @@ void GK::deleteMerge()
         if (leastIndex > 0) 
             deleteTuple(leastIndex);
 }
-
+/*
+Pre-Condition: the index of the tuple to be deleted.
+Post-Condition: the tuple at the index is deleted.
+*/
 void GK::deleteTuple(int index)
 {	
 	int srcpos=index+2;
@@ -97,7 +125,10 @@ void GK::deleteTuple(int index)
 	summary[numTuples-1]=NULL;
 	numTuples--;
 }
-
+/*
+Pre-Condition: The quantile interval.
+Post-Condition: The quantile estimate.
+*/
 double GK::getQuantile(double quant)
 {
 	long rank= (long) ceil(quant* numObservations);
