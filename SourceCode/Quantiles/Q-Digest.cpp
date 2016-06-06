@@ -151,15 +151,6 @@ long QDigest::get(long node)
   return (got == node2count.end()) ? 0 : got->second;
 }
 
-double QDigest::clamp(double value)
-{
-  if (value < min)
-    return min;
-  if (value > max)
-    return max;
-  return value;
-}
-
 int highestOneBit(long value)
 {
     if (!value)

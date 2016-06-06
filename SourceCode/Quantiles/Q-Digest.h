@@ -29,15 +29,12 @@ class QDigest : public QuantileSketch
   long parent(long id) { return id / 2; }; // Return the index of its parent.
   long leftChild(long id) { return 2 * id; };// Return the index of its left child.
   long rightChild(long id) { return 2 * id + 1; }; // Return the index of its right child.
-  long doubleToLong(double d) { return (long)(((d + range)/(2 * range)) * precision); }; //Handle the case that 
-  double longToDouble(long l) { return (((double)l)/precision) * 2 * range - range; }; // the original q-diget algorithm can only store integer
   long rangeLeft(long id);
   long rangeRight(long id);
   void offer(long value);
   void compressUpward(long node);
   void compressFully();
   long get(long node);
-  double clamp(double value);
   int highestOneBit(long value); 
   std::vector<long*> toAscRanges();
   void rebuildToCapacity(long newCapacity);  	
