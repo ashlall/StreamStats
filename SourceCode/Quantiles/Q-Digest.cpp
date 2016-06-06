@@ -25,18 +25,18 @@ void QDigest::insert(double x)
   offer(doubleToLong(x));
 }
 
-/*double QDigest::getQuantile(double p)
+double QDigest::getQuantile(double p)
 {
-  List <long [] > ranges = toAscRanges();
+  std::vector<long*> ranges = toAscRanges();
   long s = 0;
-  for (long[] r : ranges)
+  for (int i = 0; i < ranges.size(); i++)
   {
     if (s > p * size)
-      return r[1];
-    s += r[2];
+      return ranges[i][1];
+    s += ranges[i][2];
   }
-  return ranges.get(ranges.size() - 1)[1];
-}*/
+  return ranges[ranges.size() - 1][1];
+}
 
 std::vector<long*> QDigest::toAscRanges()
 {

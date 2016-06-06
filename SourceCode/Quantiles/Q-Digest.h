@@ -17,7 +17,7 @@ class QDigest : public QuantileSketch
   QDigest& operator=(const QDigest& q);
   ~QDigest() {};
   void insert(double x);
-  //double getQuantile(double f);
+  double getQuantile(double f);
 
  private:
   long value2leaf(long x) { return capacity + x; };
