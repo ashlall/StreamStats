@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <vector>
 
 QDigest::QDigest(double compression)
 {
@@ -36,6 +37,12 @@ void QDigest::insert(double x)
   }
   return ranges.get(ranges.size() - 1)[1];
 }*/
+
+std::vector<long*> QDigest::toAscRanges()
+{
+  std::vector<long*> ranges;
+  return ranges;
+}
 
 void QDigest::offer(long value)
 {
