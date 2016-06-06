@@ -25,23 +25,43 @@ void QDigest::insert(double x)
   offer(doubleToLong(x));
 }
 
-/*double QDigest::getQuantile(double p)
+double QDigest::getQuantile(double p)
 {
-  List <long [] > ranges = toAscRanges();
+  std::vector<long*> ranges = toAscRanges();
   long s = 0;
-  for (long[] r : ranges)
+  for (int i = 0; i < ranges.size(); i++)
   {
     if (s > p * size)
-      return r[1];
-    s += r[2];
+      return ranges[i][1];
+    s += ranges[i][2];
   }
-  return ranges.get(ranges.size() - 1)[1];
-}*/
+  return ranges[ranges.size() - 1][1];
+}
 
 std::vector<long*> QDigest::toAscRanges()
 {
   std::vector<long*> ranges;
+  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+  {
+    long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
+    ranges.push_back(hold);
+  }
+  //std::sort(ranges.begin(), ranges.end(), compare_ranges);
   return ranges;
+}
+
+bool QDigest::compare_ranges(long *a, long *b)
+{
+  long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
+  if (rightA < rightB)
+    return -1;
+  else if (rightA > rightB)
+    return 1;
+  else if (sizeA < sizeB)
+    return -1;
+  else if (sizeA > sizeB)
+    return 1;
+  return 0;
 }
 
 void QDigest::offer(long value)

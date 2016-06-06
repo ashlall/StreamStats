@@ -18,7 +18,7 @@ class QDigest : public QuantileSketch
   QDigest& operator=(const QDigest& q);
   ~QDigest() {};
   void insert(double x);
-  //double getQuantile(double f);
+  double getQuantile(double f);
 
  private:
   long value2leaf(long x) { return capacity + x; };
@@ -42,6 +42,8 @@ class QDigest : public QuantileSketch
   std::vector<long*> toAscRanges();
   void rebuildToCapacity(long newCapacity);  	
 
+  bool compare_ranges(long *a, long *b);
+  	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size, capacity; 
   double k; // compression factor
