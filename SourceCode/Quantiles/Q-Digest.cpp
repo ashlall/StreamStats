@@ -66,7 +66,7 @@ bool QDigest::compare_ranges(long *a, long *b)
 
 void QDigest::offer(long value)
 {
-	
+    	
     if (value < 0 || value == Long.MAX_VALUE)
 	{
 	    try 
@@ -87,7 +87,7 @@ void QDigest::offer(long value)
    		 of the highest-order ("leftmost") one-bit in the specified int value. 
    	 	For example, value = 220
 		Binary = 11011100
-		Highest one bit = 128 */ 
+		Highest one bit = 128 
 	}	
     
    long leaf = value2leaf(value);
@@ -98,10 +98,11 @@ void QDigest::offer(long value)
           if the tree becomes too large.
           This is one sensible strategy which both is fast and keeps
           the tree reasonably small (within the theoretical bound of 3k nodes)
-    */
+   
    compressUpward(leaf);
    //if (node2count.size() > 3 * k) // java syntax
-      //compressFully();
+  //compressFully(); 
+  */
 }
 
 /*void QDigest::compressFully()
@@ -163,7 +164,7 @@ double QDigest::clamp(double value)
     return max;
   return value;
 }
-
+/*
 int highestOneBit(long value)
 {
     if (!num)
@@ -175,5 +176,5 @@ int highestOneBit(long value)
     	ret <<= 1;
 
     return ret;
-}
+}*/
 
