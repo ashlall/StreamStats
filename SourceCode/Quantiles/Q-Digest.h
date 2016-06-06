@@ -8,6 +8,7 @@
 
 #ifndef QDIGEST_H
 #define QDIGEST_H
+#define MAX_VALUE 1000000000
 
 class QDigest : public QuantileSketch
 {
@@ -34,11 +35,13 @@ class QDigest : public QuantileSketch
   long rangeRight(long id);
   void offer(long value);
   void compressUpward(long node);
+  void compressFully();
   long get(long node);
   double clamp(double value);
   int highestOneBit(long value); 
   std::vector<long*> toAscRanges();
-  	
+  void rebuildToCapacity(long newCapacity);  	
+
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size, capacity; 
   double k; // compression factor
