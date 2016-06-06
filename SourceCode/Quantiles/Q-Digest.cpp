@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <vector>
 
 QDigest::QDigest(double compression)
 {
@@ -26,17 +27,22 @@ void QDigest::insert(double x)
 
 /*double QDigest::getQuantile(double p)
 {
-  // List <long [] > ranges = toAscRanges();
+  List <long [] > ranges = toAscRanges();
   long s = 0;
   for (long[] r : ranges)
   {
-    if (s > q * size)
-      return clamp(longToDouble(r[1]));
+    if (s > p * size)
+      return r[1];
     s += r[2];
   }
-  long v = ranges.get(ranges.size() - 1)[1];
-  return clamp(longToDouble(v));
-  }*/
+  return ranges.get(ranges.size() - 1)[1];
+}*/
+
+std::vector<long*> QDigest::toAscRanges()
+{
+  std::vector<long*> ranges;
+  return ranges;
+}
 
 void QDigest::offer(long value)
 {
@@ -126,9 +132,6 @@ long QDigest::rangeRight(long id)
 long QDigest::get(long node)
 {
   std::unordered_map<long, long>::const_iterator got = node2count.find(node);
-  //cout << "here: " << node << " " << endl;
-  //if (got != node2count.end())
-  //cout << got->first << " " << got->second << endl;
   return (got == node2count.end()) ? 0 : got->second;
 }
 

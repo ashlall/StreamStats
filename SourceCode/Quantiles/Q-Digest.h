@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "QuantileSketch.h"
 #include <stdbool.h>
+#include <vector>
 
 #ifndef QDIGEST_H
 #define QDIGEST_H
@@ -36,7 +37,7 @@ class QDigest : public QuantileSketch
   long get(long node);
   double clamp(double value);
   int highestOneBit(long value); 
-  
+  std::vector<long*> toAscRanges();
   	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size, capacity; 
