@@ -11,12 +11,12 @@
 class QDigest : public QuantileSketch
 {
  public:
-  QDigest(double compression) { k = compression; };
+  QDigest(double compression);
   QDigest(const QDigest& q);
   QDigest& operator=(const QDigest& q);
   ~QDigest() {};
   void insert(double x);
-  double getQuantile(double f);
+  //double getQuantile(double f);
 
  private:
   long value2leaf(long x) { return capacity + x; };
@@ -37,12 +37,12 @@ class QDigest : public QuantileSketch
   double clamp(double value);
 
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>();
-  long size, capacity = 1; 
+  long size, capacity; 
   double k; // compression factor
-  double range = 1000000000.0; // assume all value in range [-range, range]
-  double precision = 1000000000.0;
-  double min = range;
-  double max = -range;
+  double range; // assume all value in range [-range, range]
+  double precision;
+  double min;
+  double max;
 };
 
 #include "Q-Digest.cpp"
