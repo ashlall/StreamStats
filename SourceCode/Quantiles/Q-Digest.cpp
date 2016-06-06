@@ -5,6 +5,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <vector>
+#include <algorithm>    // std::sort
+#include <vector>       // std::vector
 
 QDigest::QDigest(double compression)
 {
@@ -82,19 +84,23 @@ void QDigest::offer(long value)
     if (value >= capacity)
 	{
 	   	rebuildToCapacity(highestOneBit(value) << 1);   
-	   	/* highestOneBit() returns a long value with at most a single one-bit, in the position 
+	   	/* 
+	   	highestOneBit() returns a long value with at most a single one-bit, in the position 
    		 of the highest-order ("leftmost") one-bit in the specified int value. 
    	 	For example, value = 220
 		Binary = 11011100
-		Highest one bit = 128 */
+		Highest one bit = 128 
+		*/
 	}	
-    
    long leaf = value2leaf(value);
-   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1)); //??? not sure about how get(leaf) works 
-   //Java syntax: node2count.put(leaf, get(leaf) + 1);
-   // value put(Key k, Value v): Inserts key value mapping into the map. 
-   //The get(Object key) method is used to return the value to which the specified key is mapped, 
-   // or null if this map contains no mapping for the key.
+   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
+   
+   /*
+   Java syntax: node2count.put(leaf, get(leaf) + 1);
+   value put(Key k, Value v): Inserts key value mapping into the map. 
+   The get(Object key) method is used to return the value to which the specified key is mapped, 
+   or null if this map contains no mapping for the key. 
+   */
    
    size++;
    /*
@@ -106,6 +112,17 @@ void QDigest::offer(long value)
    compressUpward(leaf);
    if (node2count.size() > 3 * k) 
       compressFully();
+}
+
+long QDigest::get(long node)
+{
+  /*
+  		Given the index of the index, then search the container/map.
+  		Return the corresponding key's value if found, 0 otherwise.
+  		how find() works: ttp://www.cplusplus.com/reference/unordered_map/unordered_map/find/
+  */ 
+  std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
+  return (got == node2count.end()) ? 0 : got->second;
 }
 
 /*void QDigest::compressFully()
@@ -153,12 +170,6 @@ long QDigest::rangeRight(long id)
   return leaf2value(id);
 }
 
-long QDigest::get(long node)
-{
-  std::unordered_map<long, long>::const_iterator got = node2count.find(node);
-  return (got == node2count.end()) ? 0 : got->second;
-}
-
 double QDigest::clamp(double value)
 {
   if (value < min)
@@ -181,9 +192,49 @@ int highestOneBit(long value)
     return ret;
 }
 
-void rebuildToCapacity(long newCapacity)
+void rebuildToCapacity(long newCapacity) // check accuracy
 {
-	//code needed
+	 std::unordered_map<long, long> newNode2count;
+    // Map<Long, Long> newNode2count = new HashMap<Long, Long>(); //Java syntax 
+    /*
+     rebuild to newLogCapacity.
+     This means that our current tree becomes a leftmost subtree
+     of the new tree.
+     E.g. when rebuilding a tree with logCapacity = 2
+     (i.e. storing values in 0..3) to logCapacity = 5 (i.e. 0..31):
+     node 1 => 8 (+= 7 = 2^0*(2^3-1))
+     nodes 2..3 => 16..17 (+= 14 = 2^1*(2^3-1))
+     nodes 4..7 => 32..35 (+= 28 = 2^2*(2^3-1))
+     This is easy to see if you draw it on paper.
+     Process the keys by "layers" in the original tree.
+    */
+    long scaleR = newCapacity / capacity - 1;
+    
+    std::vector<long> keys;
+	keys.reserve(node2count.size());
+	
+	for(auto k : node2count) 
+   	 	keys.push_back(k.first);
+	
+	std::sort(keys.begin(), keys.end(), keys);
+    //Long[] keys = node2count.keySet().toArray(new Long[node2count.size()]); // Java syntax	
+    //the place i find how to rewrite
+    //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
+    //Arrays.sort(keys);
+    
+    long scaleL = 1;
+    for (long k : keys)
+	{
+		while (scaleL <= k / 2)
+		{
+			scaleL <<= 1;
+		 }
+		//newNode2count.put(k + scaleL * scaleR, node2count.get(k)); // Java syntax
+		newNode2count.insert(std::make_pair<long, long>(k + scaleL * scaleR, node2count.get(k)));
+	 }
+    node2count = newNode2count;
+    capacity = newCapacity;
+    compressFully();
 }
 
 void compressFully()
