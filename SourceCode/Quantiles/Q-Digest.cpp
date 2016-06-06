@@ -26,17 +26,16 @@ void QDigest::insert(double x)
 
 /*double QDigest::getQuantile(double p)
 {
-  // List <long [] > ranges = toAscRanges();
+  List <long [] > ranges = toAscRanges();
   long s = 0;
   for (long[] r : ranges)
   {
-    if (s > q * size)
-      return clamp(longToDouble(r[1]));
+    if (s > p * size)
+      return r[1];
     s += r[2];
   }
-  long v = ranges.get(ranges.size() - 1)[1];
-  return clamp(longToDouble(v));
-  }*/
+  return ranges.get(ranges.size() - 1)[1];
+}*/
 
 void QDigest::offer(long value)
 {
