@@ -12,19 +12,11 @@ QDigest::QDigest(double compression)
 {
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
-  range = 1000000000.0;
-  precision = 1000000000.0;
-  min = range;
-  max = -range;
 }
 
 void QDigest::insert(double x)
 {
-  if (x < min)
-    min = x;
-  if (x > max)
-    max = x;
-  offer(doubleToLong(x));
+  offer(x);
 }
 
 double QDigest::getQuantile(double p)
@@ -170,6 +162,7 @@ long QDigest::rangeRight(long id)
   return leaf2value(id);
 }
 
+<<<<<<< HEAD
 double QDigest::clamp(double value)
 {
   if (value < min)
@@ -177,6 +170,12 @@ double QDigest::clamp(double value)
   if (value > max)
     return max;
   return value;
+=======
+long QDigest::get(long node)
+{
+  std::unordered_map<long, long>::const_iterator got = node2count.find(node);
+  return (got == node2count.end()) ? 0 : got->second;
+>>>>>>> b5b5506d21935ede059eb913a6ce259c63b500da
 }
 
 int highestOneBit(long value)

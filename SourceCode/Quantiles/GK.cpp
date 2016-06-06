@@ -20,27 +20,31 @@ GK::~GK()
 void GK::insert(double val)
 {
 	int index= findIndex(val);
-	Tuple* tuple=summary[index];
-	if(tuple==NULL)
-		insertTuple(new Tuple(val,1,0),index); 
+	if(summary[index]==NULL)
+	{	
+		insertTuple(new Tuple(val),index); 
+	}
 	else
-		insertTuple(new Tuple(val,1,(tuple->g+tuple->delta)-1),index); 
+	{
+		double store=summary[index]->g+summary[index]->delta-1;
+		insertTuple(new Tuple(val,1.0,store),index); 
+	}
 	if(numTuples==max)
 		deleteMerge();
 	numObservations++;
 }
 void GK::insertTuple(Tuple* t,int index)
 {	
-	int pos=index;
+	int destpos=numTuples;
+	int srcpos=numTuples-1;
 	for(int i=0;i<numTuples-index;i++)
-	{
-		summary[pos]=summary[pos+1];
-		pos++;
-	}	
-	
+	{	
+		summary[destpos]=summary[srcpos];
+		srcpos--;
+		destpos--;
+	}
 	summary[index]=t;
 	numTuples++;
-	
 }
 
 int GK::findIndex(double val)
