@@ -5,6 +5,9 @@
 #include "QuantileSketch.h"
 #include <stdbool.h>
 #include <vector>
+#include <math.h>
+#include <algorithm>    // std::sort
+
 
 #ifndef QDIGEST_H
 #define QDIGEST_H
@@ -45,7 +48,8 @@ class QDigest : public QuantileSketch
   bool compare_ranges(long *a, long *b);
   	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
-  long size, capacity; 
+  long size;
+  long capacity = 1; 
   double k; // compression factor
   double range; // assume all value in range [-range, range]
   double precision;
