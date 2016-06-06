@@ -41,7 +41,27 @@ void QDigest::insert(double x)
 std::vector<long*> QDigest::toAscRanges()
 {
   std::vector<long*> ranges;
+  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+  {
+    long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
+    ranges.push_back(hold);
+  }
+  //std::sort(ranges.begin(), ranges.end(), compare_ranges);
   return ranges;
+}
+
+bool QDigest::compare_ranges(long *a, long *b)
+{
+  long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
+  if (rightA < rightB)
+    return -1;
+  else if (rightA > rightB)
+    return 1;
+  else if (sizeA < sizeB)
+    return -1;
+  else if (sizeA > sizeB)
+    return 1;
+  return 0;
 }
 
 void QDigest::offer(long value)
