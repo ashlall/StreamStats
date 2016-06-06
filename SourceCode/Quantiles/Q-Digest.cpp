@@ -66,8 +66,7 @@ bool QDigest::compare_ranges(long *a, long *b)
 
 void QDigest::offer(long value)
 {
-    	
-    if (value < 0 || value == Long.MAX_VALUE)
+    if (value < 0 || value == MAX_VALUE)
 	{
 	    try 
 	    {
@@ -75,7 +74,7 @@ void QDigest::offer(long value)
 	    }
 	    catch (long value)
 	    {
-	    	cout << "Can only accept values in the range 0.. " <<  Long.MAX_VALUE - 1 << endl;
+	    	cout << "Can only accept values in the range 0.. " <<  MAX_VALUE - 1 << endl;
 	    }
 	}
 	
@@ -87,22 +86,26 @@ void QDigest::offer(long value)
    		 of the highest-order ("leftmost") one-bit in the specified int value. 
    	 	For example, value = 220
 		Binary = 11011100
-		Highest one bit = 128 
+		Highest one bit = 128 */
 	}	
     
    long leaf = value2leaf(value);
-   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
+   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1)); //??? not sure about how get(leaf) works 
+   //Java syntax: node2count.put(leaf, get(leaf) + 1);
+   // value put(Key k, Value v): Inserts key value mapping into the map. 
+   //The get(Object key) method is used to return the value to which the specified key is mapped, 
+   // or null if this map contains no mapping for the key.
+   
    size++;
    /*
           Always compress at the inserted node, and recompress fully
           if the tree becomes too large.
           This is one sensible strategy which both is fast and keeps
           the tree reasonably small (within the theoretical bound of 3k nodes)
-   
+   */
    compressUpward(leaf);
-   //if (node2count.size() > 3 * k) // java syntax
-  //compressFully(); 
-  */
+   if (node2count.size() > 3 * k) 
+      compressFully();
 }
 
 /*void QDigest::compressFully()
@@ -164,17 +167,26 @@ double QDigest::clamp(double value)
     return max;
   return value;
 }
-/*
+
 int highestOneBit(long value)
 {
-    if (!num)
+    if (!value)
     	return 0;
 
     int ret = 1;
 
-    while (num >>= 1)
+    while (value >>= 1)
     	ret <<= 1;
 
     return ret;
-}*/
+}
 
+void rebuildToCapacity(long newCapacity)
+{
+	//code needed
+}
+
+void compressFully()
+{
+	//code needed
+}
