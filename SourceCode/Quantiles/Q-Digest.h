@@ -46,7 +46,7 @@ class QDigest : public QuantileSketch
   	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size;
-  long capacity = 1; 
+  long capacity; 
   double k; // compression factor
 };
 
