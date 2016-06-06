@@ -40,34 +40,41 @@ void QDigest::insert(double x)
 
 void QDigest::offer(long value)
 {
-	/*
+	
     if (value < 0 || value == Long.MAX_VALUE)
 	{
-	    throw new IllegalArgumentException("Can only accept values in the range 0.." + (Long.MAX_VALUE - 1));
+	    try 
+	    {
+	    	throw value;
+	    }
+	    catch (long value)
+	    {
+	    	cout << "Can only accept values in the range 0.. " <<  Long.MAX_VALUE - 1 << endl;
+	    }
 	}
-	*/
+	
     // Rebuild if the value is too large for the current tree height
     if (value >= capacity)
 	{
 	   	rebuildToCapacity(highestOneBit(value) << 1);   
-	   	/* Long.highestOneBit() returns a long value with at most a single one-bit, in the position 
+	   	/* highestOneBit() returns a long value with at most a single one-bit, in the position 
    		 of the highest-order ("leftmost") one-bit in the specified int value. 
    	 	For example, value = 220
 		Binary = 11011100
 		Highest one bit = 128 */ 
 	}	
     
-  long leaf = value2leaf(value);
-  node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
-  size++;
-  /*
+   long leaf = value2leaf(value);
+   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
+   size++;
+   /*
           Always compress at the inserted node, and recompress fully
           if the tree becomes too large.
           This is one sensible strategy which both is fast and keeps
           the tree reasonably small (within the theoretical bound of 3k nodes)
-   */
-  compressUpward(leaf);
-  //if (node2count.size() > 3 * k) // java syntax
+    */
+   compressUpward(leaf);
+   //if (node2count.size() > 3 * k) // java syntax
       //compressFully();
 }
 
