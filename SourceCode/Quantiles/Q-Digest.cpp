@@ -196,8 +196,13 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
     std::vector<long> keys;
 	keys.reserve(node2count.size());
 	
+	
+	for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+   		 keys.push_back(i->first);
+	/* 	Alternative of for loop:
 	for(auto k : node2count) 
    	 	keys.push_back(k.first);
+	*/
 	
 	std::sort(keys.begin(), keys.end(), keys);
     //Long[] keys = node2count.keySet().toArray(new Long[node2count.size()]); // Java syntax	
@@ -206,14 +211,17 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
     //Arrays.sort(keys);
     
     long scaleL = 1;
-    for (long k : keys)
+    //for (long k : keys)
+    for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
 	{
-		while (scaleL <= k / 2)
+		while (scaleL <= *i / 2) // see the use of iterator: 
+								 // http://stackoverflow.com/questions/12702561/c-iterate-through-vector-using-for-loop
 		{
 			scaleL <<= 1;
 		 }
 		//newNode2count.put(k + scaleL * scaleR, node2count.get(k)); // Java syntax
-		//newNode2count.insert(std::make_pair<long, long>(k + scaleL * scaleR, node2count.get(k)));
+		//newNode2count.insert(std::make_pair<long, long>(k + scaleL * scaleR, node2count.get(k))); 
+		//don't forget to take off the above comment!!!!!
 	 }
     node2count = newNode2count;
     capacity = newCapacity;
