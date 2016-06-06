@@ -134,7 +134,6 @@ double QDigest::clamp(double value)
   return value;
 }
 
-<<<<<<< HEAD
 int highestOneBit(long value)
 {
     if (!num)
@@ -147,5 +146,4 @@ int highestOneBit(long value)
 
     return ret;
 }
-=======
->>>>>>> 64d5854291097d4ff380e977c69eb041856f850a
+
