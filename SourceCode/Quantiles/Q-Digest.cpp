@@ -10,19 +10,11 @@ QDigest::QDigest(double compression)
 {
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
-  range = 1000000000.0;
-  precision = 1000000000.0;
-  min = range;
-  max = -range;
 }
 
 void QDigest::insert(double x)
 {
-  if (x < min)
-    min = x;
-  if (x > max)
-    max = x;
-  offer(doubleToLong(x));
+  offer(x);
 }
 
 double QDigest::getQuantile(double p)

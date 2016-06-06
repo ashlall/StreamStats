@@ -16,7 +16,12 @@ class QDigestDouble : public QDigest
     max = -range; };
   QDigestDouble(const QDigestDouble& q) : QDigest(q) {};
   
-  void insert(double x) { QDigest::insert(doubleToLong(x)); };
+  void insert(double x) { 
+    if (x < min)
+      min = x;
+    if (x > max)
+      max = x;
+    QDigest::insert(doubleToLong(x)); };
   double getQuantile(double f) { return clamp(longToDouble(QDigest::getQuantile(f))); };
 
  private:
