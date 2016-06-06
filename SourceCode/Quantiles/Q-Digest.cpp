@@ -118,9 +118,6 @@ long QDigest::rangeRight(long id)
 long QDigest::get(long node)
 {
   std::unordered_map<long, long>::const_iterator got = node2count.find(node);
-  //cout << "here: " << node << " " << endl;
-  //if (got != node2count.end())
-  //cout << got->first << " " << got->second << endl;
   return (got == node2count.end()) ? 0 : got->second;
 }
 
