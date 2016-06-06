@@ -43,7 +43,6 @@ void QDigest::offer(long value)
   //if (value >= capacity)
     //rebuild
   long leaf = value2leaf(value);
-  //node2count.insert(leaf, get(leaf) + 1); // java syntax, insert may require a pair: 
   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
   size++;
   compressUpward(leaf);
@@ -99,6 +98,9 @@ long QDigest::rangeRight(long id)
 long QDigest::get(long node)
 {
   std::unordered_map<long, long>::const_iterator got = node2count.find(node);
+  //cout << "here: " << node << " " << endl;
+  //if (got != node2count.end())
+  //cout << got->first << " " << got->second << endl;
   return (got == node2count.end()) ? 0 : got->second;
 }
 
@@ -110,3 +112,4 @@ double QDigest::clamp(double value)
     return max;
   return value;
 }
+
