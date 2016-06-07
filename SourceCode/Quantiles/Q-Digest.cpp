@@ -117,12 +117,20 @@ long QDigest::get(long node)
   return (got == node2count.end()) ? 0 : got->second;
 }
 
-/*void QDigest::compressFully()
+void QDigest::compressFully()
 {
-  long [] allNodes = node2count.keySet().toArray(new long[0]);
-  for (long node : allNodes)
-    compressDownward(node);   // java syntax
-}*/
+    //long [] allNodes = node2count.keySet().toArray(new long[0]); //java syntax 
+    std::vector<long> keys;
+	keys.reserve(node2count.size());
+	for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+   		 keys.push_back(i->first);
+
+ 	//for (long node : allNodes)
+    for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
+    {
+   		compressDownward(*i);   // java syntax
+   	}
+}
 
 void QDigest::compressUpward(long node)
 {
@@ -147,6 +155,43 @@ void QDigest::compressUpward(long node)
     atNode = atParent + atNode + atSibling;
   }
 }
+
+ /**
+  * Restore 2nd property at seedNode and guarantee that no new violations of P2 appeared.
+  */
+void QDigest::compressDownward(long seedNode)
+{
+	double threshold = std :: floor(size/k); // java syntax
+	// 2nd property check same as above but shorter and slower (and invoked rarely)
+	
+	//for (Queue<Long> q = new LinkedList<Long>(Arrays.asList(seedNode)); !q.isEmpty(); )
+	for (std::queue <long, std::list<long>([seedNode]) > q; !q.empty();) // not sure??? ask
+	{
+		long node = q.poll();
+		long atNode = get(node);
+		long atSibling = get(sibling(node));
+		if (atNode == 0 && atSibling == 0)
+		{
+			continue;
+		}
+		long atParent = get(parent(node));
+		if (atParent + atNode + atSibling > threshold)
+		{
+			continue;
+		}
+		//node2count.put(parent(node), atParent + atNode + atSibling);
+		node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
+		node2count.erase(node);
+		node2count.erase(sibling(node));
+		// Now P2 could have vanished at the node's and sibling's subtrees since they decreased.
+		if (!isLeaf(node))
+		    {
+			q.offer(leftChild(node));
+			q.offer(leftChild(sibling(node)));
+		    }
+		
+	}
+}	
 
 long QDigest::rangeLeft(long id)
 {
@@ -196,7 +241,6 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
     std::vector<long> keys;
 	keys.reserve(node2count.size());
 	
-	
 	for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
    		 keys.push_back(i->first);
 	/* 	Alternative of for loop:
@@ -215,20 +259,16 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
     for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
 	{
 		while (scaleL <= *i / 2) // see the use of iterator: 
-								 // http://stackoverflow.com/questions/12702561/c-iterate-through-vector-using-for-loop
+								 // http://www.cplusplus.com/reference/vector/vector/begin/
 		{
 			scaleL <<= 1;
 		 }
 		//newNode2count.put(k + scaleL * scaleR, node2count.get(k)); // Java syntax
 		//newNode2count.insert(std::make_pair<long, long>(k + scaleL * scaleR, node2count.get(k))); 
-		//don't forget to take off the above comment!!!!!
+		//don't forget to take off the above comment.
 	 }
     node2count = newNode2count;
     capacity = newCapacity;
     compressFully();
 }
 
-void QDigest::compressFully()
-{
-	//code needed
-}
