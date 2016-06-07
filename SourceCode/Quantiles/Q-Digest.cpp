@@ -165,7 +165,7 @@ void QDigest::compressDownward(long seedNode)
 	// 2nd property check same as above but shorter and slower (and invoked rarely)
 	
 	//for (Queue<Long> q = new LinkedList<Long>(Arrays.asList(seedNode)); !q.isEmpty(); )
-	for (std::queue <long, std::list<long>([seedNode]) > q; !q.empty();) // not sure??? ask
+	for (std::queue <long, std::list<long>([seedNode])> q; !q.empty();) // not sure??? ask
 	{
 		long node = q.poll();
 		long atNode = get(node);
@@ -248,7 +248,7 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
    	 	keys.push_back(k.first);
 	*/
 	
-	std::sort(keys.begin(), keys.end(), keys);
+	std::sort(keys.begin(), keys.end());
     //Long[] keys = node2count.keySet().toArray(new Long[node2count.size()]); // Java syntax	
     //the place i find how to rewrite
     //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
