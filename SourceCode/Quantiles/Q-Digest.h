@@ -7,7 +7,8 @@
 #include <vector>
 #include <math.h>
 #include <algorithm>    // std::sort
-
+#include <list>           // std::list
+#include <queue>          // std::queue
 
 #ifndef QDIGEST_H
 #define QDIGEST_H
@@ -36,6 +37,7 @@ class QDigest : public QuantileSketch
   long rangeRight(long id);
   void offer(long value);
   void compressUpward(long node);
+  void compressDownward(long seedNode);
   void compressFully();
   long get(long node);
   int highestOneBit(long value); 
