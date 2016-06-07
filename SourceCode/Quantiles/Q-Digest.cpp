@@ -252,7 +252,7 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
    	 	keys.push_back(k.first);
 	*/
 	
-	std::sort(keys.begin(), keys.end(), keys);
+	std::sort(keys.begin(), keys.end());
     //Long[] keys = node2count.keySet().toArray(new Long[node2count.size()]); // Java syntax	
     //the place i find how to rewrite
     //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
