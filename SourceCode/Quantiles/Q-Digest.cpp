@@ -1,6 +1,5 @@
-// Q-Digest.cpp, implemented with a hash table
-// a lot of the syntax with the unordered_map (node2count) is wrong so not compiling
-// to do: work on getQuantile, specifically toAscRanges()
+// Q-Digest.cpp, implemented with a hash table, adapted from: 
+// to do: debug
 
 #include <math.h>
 #include <stdlib.h>
@@ -40,6 +39,8 @@ std::vector<long*> QDigest::toAscRanges()
     long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
     ranges.push_back(hold);
   }
+  for (int i = 0; i < ranges.size(); i++)
+    cout << ranges[i][0] << " here" << endl;
   std::sort(ranges.begin(), ranges.end(), compare_ranges);
   return ranges;
 }
@@ -75,6 +76,7 @@ void QDigest::offer(long value)
     // Rebuild if the value is too large for the current tree height
     if (value >= capacity)
 	{
+	  cout << "here2 " << highestOneBit(value) << endl;
 	   	rebuildToCapacity(highestOneBit(value) << 1);   
 	   	/* 
 	   	highestOneBit() returns a long value with at most a single one-bit, in the position 
@@ -85,8 +87,17 @@ void QDigest::offer(long value)
 		*/
 	}	
    long leaf = value2leaf(value);
-   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
-   
+   cout << "value leaf: " << value << " " << leaf << endl;
+   if (node2count.find(leaf) == node2count.end())
+     node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
+   else
+   {
+     long hold = node2count[leaf];
+     node2count[leaf] = hold + 1;
+   }
+   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+     cout << i->first << " " << i->second << "   ";
+   cout << endl;
    /*
    Java syntax: node2count.put(leaf, get(leaf) + 1);
    value put(Key k, Value v): Inserts key value mapping into the map. 
@@ -95,6 +106,7 @@ void QDigest::offer(long value)
    */
    
    size++;
+   cout << "size: " << size << endl;
    /*
           Always compress at the inserted node, and recompress fully
           if the tree becomes too large.
@@ -114,6 +126,7 @@ long QDigest::get(long node)
   		how find() works: ttp://www.cplusplus.com/reference/unordered_map/unordered_map/find/
   */ 
   std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
+  if (got != node2count.end()) cout << "get: " << got->first << " "<< got->second << endl;
   return (got == node2count.end()) ? 0 : got->second;
 }
 
@@ -146,7 +159,6 @@ void QDigest::compressUpward(long node)
     long atParent = get(parent(node));
     if (atNode + atSibling + atParent > threshold)
       break;
-    //node2count.insert(parent(node), atParent + atNode + atSibling);
     node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
     node2count.erase(node);
     if (atSibling > 0)
@@ -154,6 +166,11 @@ void QDigest::compressUpward(long node)
     node = parent(node);
     atNode = atParent + atNode + atSibling;
   }
+  cout << "compress Upward";
+  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
+       i != node2count.end(); i++)
+    cout << i->first << " " << i->second << "   ";
+  cout << endl;
 }
 
  /**
