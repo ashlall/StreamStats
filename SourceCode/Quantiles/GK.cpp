@@ -66,8 +66,8 @@ void GK::insertTuple(Tuple* t,int index)
 	numTuples++;
 }
 /*
-Pre-Condition:
-Post-Condition:
+Pre-Condition: A double value
+Post-Condition: Finds the index of a tuple whose value is greater than value
 */
 int GK::findIndex(double val)
 {
