@@ -44,7 +44,7 @@ class QDigest : public QuantileSketch
   std::vector<long*> toAscRanges();
   void rebuildToCapacity(long newCapacity);  	
 
-  bool compare_ranges(long *a, long *b);
+  static bool compare_ranges(long *a, long *b);
   	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size;

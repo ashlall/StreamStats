@@ -40,7 +40,7 @@ std::vector<long*> QDigest::toAscRanges()
     long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
     ranges.push_back(hold);
   }
-  //std::sort(ranges.begin(), ranges.end(), compare_ranges);
+  std::sort(ranges.begin(), ranges.end(), compare_ranges);
   return ranges;
 }
 
