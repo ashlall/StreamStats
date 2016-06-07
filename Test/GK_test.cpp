@@ -3,6 +3,10 @@
 #include "../SourceCode/Quantiles/GK.h"
 #include <iostream>
 
+/*
+Complile with g++ -o gk.o -std=c++11 GK_test.cpp
+*/
+
 void test_GK()
 {
   GK a(1000);
@@ -32,6 +36,8 @@ void test_GK()
   	  quantA=a.getQuantile(interval); //getting quantile for each probability interval
   	  quantB=b.getQuantile(interval);//getting quantile for each probability interval
   	  quantC=c.getQuantile(interval);//getting quantile for each probability interval
+  	  
+  	  cout<<"QuantA "<<quantA<<endl;
   	  
   	  lower=(interval-0.003)*n;
   	  upper=(interval+0.003)*n;
