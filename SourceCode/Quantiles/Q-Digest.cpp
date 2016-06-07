@@ -165,9 +165,13 @@ void QDigest::compressDownward(long seedNode)
 	// 2nd property check same as above but shorter and slower (and invoked rarely)
 	
 	//for (Queue<Long> q = new LinkedList<Long>(Arrays.asList(seedNode)); !q.isEmpty(); )
-	for (std::queue <long, std::list<long>([seedNode]) > q; !q.empty();) // not sure??? ask
+	std::queue<long, std::list<long> > q;
+	q.push(seedNode);
+	while(!q.empty())
+	  //for (std::queue <long, std::list<long>([seedNode]) > q; !q.empty();) // not sure??? ask
 	{
-		long node = q.poll();
+		long node = q.front();
+		q.pop();
 		long atNode = get(node);
 		long atSibling = get(sibling(node));
 		if (atNode == 0 && atSibling == 0)
@@ -186,8 +190,8 @@ void QDigest::compressDownward(long seedNode)
 		// Now P2 could have vanished at the node's and sibling's subtrees since they decreased.
 		if (!isLeaf(node))
 		    {
-			q.offer(leftChild(node));
-			q.offer(leftChild(sibling(node)));
+			q.push(leftChild(node));
+			q.push(leftChild(sibling(node)));
 		    }
 		
 	}
