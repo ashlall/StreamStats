@@ -43,8 +43,8 @@ class QDigest : public QuantileSketch
   int highestOneBit(long value); 
   std::vector<long*> toAscRanges();
   void rebuildToCapacity(long newCapacity);  	
-
-  static bool compare_ranges(long *a, long *b);
+  void delete_ranges(std::vector<long*> ranges);
+  static bool compare_ranges(long a[3], long b[3]);
   	
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size;

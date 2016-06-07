@@ -28,28 +28,60 @@ double QDigest::getQuantile(double p)
       return ranges[i][1];
     s += ranges[i][2];
   }
-  return ranges[ranges.size() - 1][1];
+  double x = ranges[ranges.size() - 1][1];
+  delete_ranges(ranges);
+  return x;
 }
 
 std::vector<long*> QDigest::toAscRanges()
 {
   std::vector<long*> ranges;
+  //ranges.reserve(node2count.size());
+  //std::vector<long*>::const_iterator j = ranges.begin();
   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
   {
-    long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
+    long *hold = new long[3];
+    hold[0] = rangeLeft(i->first);
+    hold[1] = rangeRight(i->first);
+    hold[2] = i->second;
+    //long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
     cout << "*" << i->first << " " << i->second << " " << rangeLeft(i->first) << " " << rangeRight(i->first) << endl;
     ranges.push_back(hold);
+    //ranges.insert(j, hold);
+    //long *x = *j;
+    //cout << x[0] << endl;
+    //cout << x[1] << endl;
+    //cout << x[2] << endl;
+    //cout << *j[0] << endl;
+    //    cout << *j[1] << endl;
+    //cout << *j[2] << endl;
   }
-  for (int i = 0; i < ranges.size(); i++)
+ 
+  /*for (int i = 0; i < ranges.size(); i++)
     {
       long *hold = ranges[i];
-    cout << hold[0] << ranges[i][1] << ranges[i][2] << endl;
-    }
-  std::sort(ranges.begin(), ranges.end(), compare_ranges);
+      cout << hold[0] << hold[1] << hold[2] << endl;
+      }*/
+ std::sort(ranges.begin(), ranges.end(), compare_ranges);
+ /*cout << "after sort: " << endl;
+ for (int i = 0; i < ranges.size(); i++)
+   {
+     long *hold = ranges[i];
+     cout << hold[0] << ranges[i][1] << ranges[i][2] << endl;
+     }*/
   return ranges;
 }
 
-bool QDigest::compare_ranges(long *a, long *b)
+void QDigest::delete_ranges(std::vector<long*> ranges)
+{
+  for (int i = 0; i < ranges.size(); i++)
+  {
+    long *hold = ranges[i];
+    delete [] hold;
+  }
+}
+
+bool QDigest::compare_ranges(long a[3], long b[3])
 {
   long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
   if (rightA < rightB)
@@ -88,13 +120,14 @@ void QDigest::offer(long value)
 		Binary = 11011100
 		Highest one bit = 128 
 		*/
-		cout << "after rebuild " << node2count.size() << endl;;
+		/*cout << "after rebuild " << node2count.size() << endl;;
 		for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
 		     i != node2count.end(); i++)
 		  cout << i->first << " " << i->second << "   ";
-		cout << endl;
+		  cout << endl;*/
 	}	
    long leaf = value2leaf(value);
+   cout << "valueleaf: " << value << " " << leaf << endl;
    if (node2count.find(leaf) == node2count.end())
      node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
    else
@@ -120,7 +153,7 @@ void QDigest::offer(long value)
    for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
 	i != node2count.end(); i++)
      cout << i->first << " " << i->second << "   ";
-   cout << endl;
+     cout << endl;
    compressUpward(leaf);
    if (node2count.size() > 3 * k) 
       compressFully();
@@ -128,7 +161,7 @@ void QDigest::offer(long value)
    for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
 	i != node2count.end(); i++)
      cout << i->first << " " << i->second << "   ";
-   cout << endl;
+     cout << endl;
 }
 
 long QDigest::get(long node)
@@ -171,7 +204,7 @@ void QDigest::compressUpward(long node)
     long atParent = get(parent(node));
     if (atNode + atSibling + atParent > threshold)
       break;
-    cout << "hereee" << endl;
+    //cout << "hereee" << endl;
     node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
     node2count.erase(node);
     if (atSibling > 0)
