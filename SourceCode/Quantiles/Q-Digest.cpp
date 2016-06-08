@@ -11,6 +11,7 @@ QDigest::QDigest(double compression)
 {
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
+  size = 0;
 }
 
 void QDigest::insert(double x)
@@ -36,25 +37,14 @@ double QDigest::getQuantile(double p)
 std::vector<long*> QDigest::toAscRanges()
 {
   std::vector<long*> ranges;
-  //ranges.reserve(node2count.size());
-  //std::vector<long*>::const_iterator j = ranges.begin();
   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
   {
     long *hold = new long[3];
     hold[0] = rangeLeft(i->first);
     hold[1] = rangeRight(i->first);
     hold[2] = i->second;
-    //long hold[3] = {rangeLeft(i->first), rangeRight(i->first), i->second};
-    cout << "*" << i->first << " " << i->second << " " << rangeLeft(i->first) << " " << rangeRight(i->first) << endl;
+    //cout << "*" << i->first << " " << i->second << " " << rangeLeft(i->first) << " " << rangeRight(i->first) << endl;
     ranges.push_back(hold);
-    //ranges.insert(j, hold);
-    //long *x = *j;
-    //cout << x[0] << endl;
-    //cout << x[1] << endl;
-    //cout << x[2] << endl;
-    //cout << *j[0] << endl;
-    //    cout << *j[1] << endl;
-    //cout << *j[2] << endl;
   }
  
   /*for (int i = 0; i < ranges.size(); i++)
@@ -143,25 +133,30 @@ void QDigest::offer(long value)
    */
    
    size++;
+   cout << size << " size" << endl;
    /*
           Always compress at the inserted node, and recompress fully
           if the tree becomes too large.
           This is one sensible strategy which both is fast and keeps
           the tree reasonably small (within the theoretical bound of 3k nodes)
    */
-   cout << "before compressed: ";
+   /*cout << "before compressed: ";
    for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
 	i != node2count.end(); i++)
      cout << i->first << " " << i->second << "   ";
-     cout << endl;
+     cout << endl;*/
    compressUpward(leaf);
+   cout << "before compressed 2: ";
+   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+     cout << i->first << " " << i->second << "   ";
+   cout << endl;
    if (node2count.size() > 3 * k) 
       compressFully();
-   cout << "after compressed: ";
+   /*cout << "after compressed: ";
    for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
 	i != node2count.end(); i++)
      cout << i->first << " " << i->second << "   ";
-     cout << endl;
+     cout << endl;*/
 }
 
 long QDigest::get(long node)
@@ -177,13 +172,11 @@ long QDigest::get(long node)
 
 void QDigest::compressFully()
 {
-    //long [] allNodes = node2count.keySet().toArray(new long[0]); //java syntax 
     std::vector<long> keys;
 	keys.reserve(node2count.size());
 	for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
    		 keys.push_back(i->first);
 
- 	//for (long node : allNodes)
     for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
     {
    		compressDownward(*i);   // java syntax
@@ -193,7 +186,9 @@ void QDigest::compressFully()
 void QDigest::compressUpward(long node)
 {
   double threshold = std::floor(size / k); // java syntax
+  //cout << threshold << " " << size << " " << k << "threshold size k" << endl;
   long atNode = get(node);
+  //cout << "node and get: " << node << " " << atNode << endl;
   while (!isRoot(node))
   {
     if (atNode > threshold)
@@ -205,12 +200,22 @@ void QDigest::compressUpward(long node)
     if (atNode + atSibling + atParent > threshold)
       break;
     //cout << "hereee" << endl;
-    node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
+    if (node2count.find(parent(node)) == node2count.end())
+	node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
+    else
+      {
+	long hold = node2count[parent(node)];
+	node2count[parent(node)] = hold + 1;
+      }
     node2count.erase(node);
     if (atSibling > 0)
       node2count.erase(sibling(node));
     node = parent(node);
     atNode = atParent + atNode + atSibling;
+    cout << "in compress: ";
+    for (std::unordered_map<long, long>::const_iterator i = node2count.begin();  i != node2count.end(); i++)
+      cout << i->first << " " << i->second << "   ";
+    cout << endl;
   }
 }
 
