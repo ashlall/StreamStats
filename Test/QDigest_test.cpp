@@ -1,4 +1,5 @@
-// unit tests for QDigest class
+// Unit tests for origin QDigest class
+// Where only the input is limited to integer, ranging from 0 to MAX_NUMBER
 
 #include<cassert>
 #include "../SourceCode/Quantiles/Q-Digest.h"
