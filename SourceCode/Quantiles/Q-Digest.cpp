@@ -12,10 +12,16 @@ QDigest::QDigest(double compression)
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
   size = 0;
+  min = 100000000000;
+  max = -100000000000;
 }
 
 void QDigest::insert(double x)
 {
+  if (x < min)
+    min = x;
+  if (x > max)
+    max = x;
   offer(x);
 }
 
@@ -26,11 +32,20 @@ double QDigest::getQuantile(double p)
   for (int i = 0; i < ranges.size(); i++)
   {
     if (s > p * size)
-      return ranges[i][1];
+      return clamp(ranges[i][1]);
     s += ranges[i][2];
   }
   double x = ranges[ranges.size() - 1][1];
   delete_ranges(ranges);
+  return clamp(x);
+}
+
+long QDigest::clamp(long x)
+{
+  if (x < min)
+    return min;
+  if (x > max)
+    return max;
   return x;
 }
 
@@ -43,23 +58,10 @@ std::vector<long*> QDigest::toAscRanges()
     hold[0] = rangeLeft(i->first);
     hold[1] = rangeRight(i->first);
     hold[2] = i->second;
-    //cout << "*" << i->first << " " << i->second << " " << rangeLeft(i->first) << " " << rangeRight(i->first) << endl;
     ranges.push_back(hold);
   }
- 
-  /*for (int i = 0; i < ranges.size(); i++)
-    {
-      long *hold = ranges[i];
-      cout << hold[0] << hold[1] << hold[2] << endl;
-      }*/
  std::sort(ranges.begin(), ranges.end(), compare_ranges);
- /*cout << "after sort: " << endl;
- for (int i = 0; i < ranges.size(); i++)
-   {
-     long *hold = ranges[i];
-     cout << hold[0] << ranges[i][1] << ranges[i][2] << endl;
-     }*/
-  return ranges;
+ return ranges;
 }
 
 void QDigest::delete_ranges(std::vector<long*> ranges)
@@ -75,13 +77,13 @@ bool QDigest::compare_ranges(long a[3], long b[3])
 {
   long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
   if (rightA < rightB)
-    return -1;
+    return 1;
   else if (rightA > rightB)
-    return 1;
+    return NULL;
   else if (sizeA < sizeB)
-    return -1;
-  else if (sizeA > sizeB)
     return 1;
+  else if (sizeA > sizeB)
+    return NULL;
   return 0;
 }
 
@@ -110,14 +112,9 @@ void QDigest::offer(long value)
 		Binary = 11011100
 		Highest one bit = 128 
 		*/
-		/*cout << "after rebuild " << node2count.size() << endl;;
-		for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
-		     i != node2count.end(); i++)
-		  cout << i->first << " " << i->second << "   ";
-		  cout << endl;*/
+	
 	}	
    long leaf = value2leaf(value);
-   cout << "valueleaf: " << value << " " << leaf << endl;
    if (node2count.find(leaf) == node2count.end())
      node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
    else
@@ -133,30 +130,15 @@ void QDigest::offer(long value)
    */
    
    size++;
-   cout << size << " size" << endl;
    /*
           Always compress at the inserted node, and recompress fully
           if the tree becomes too large.
           This is one sensible strategy which both is fast and keeps
           the tree reasonably small (within the theoretical bound of 3k nodes)
    */
-   /*cout << "before compressed: ";
-   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
-	i != node2count.end(); i++)
-     cout << i->first << " " << i->second << "   ";
-     cout << endl;*/
    compressUpward(leaf);
-   cout << "before compressed 2: ";
-   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
-     cout << i->first << " " << i->second << "   ";
-   cout << endl;
    if (node2count.size() > 3 * k) 
       compressFully();
-   /*cout << "after compressed: ";
-   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); \
-	i != node2count.end(); i++)
-     cout << i->first << " " << i->second << "   ";
-     cout << endl;*/
 }
 
 long QDigest::get(long node)
@@ -186,9 +168,7 @@ void QDigest::compressFully()
 void QDigest::compressUpward(long node)
 {
   double threshold = std::floor(size / k); // java syntax
-  //cout << threshold << " " << size << " " << k << "threshold size k" << endl;
   long atNode = get(node);
-  //cout << "node and get: " << node << " " << atNode << endl;
   while (!isRoot(node))
   {
     if (atNode > threshold)
@@ -199,7 +179,6 @@ void QDigest::compressUpward(long node)
     long atParent = get(parent(node));
     if (atNode + atSibling + atParent > threshold)
       break;
-    //cout << "hereee" << endl;
     if (node2count.find(parent(node)) == node2count.end())
 	node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
     else
@@ -212,10 +191,6 @@ void QDigest::compressUpward(long node)
       node2count.erase(sibling(node));
     node = parent(node);
     atNode = atParent + atNode + atSibling;
-    cout << "in compress: ";
-    for (std::unordered_map<long, long>::const_iterator i = node2count.begin();  i != node2count.end(); i++)
-      cout << i->first << " " << i->second << "   ";
-    cout << endl;
   }
 }
 
@@ -227,11 +202,9 @@ void QDigest::compressDownward(long seedNode)
 	double threshold = std :: floor(size/k); // java syntax
 	// 2nd property check same as above but shorter and slower (and invoked rarely)
 	
-	//for (Queue<Long> q = new LinkedList<Long>(Arrays.asList(seedNode)); !q.isEmpty(); )
 	std::queue<long, std::list<long> > q;
 	q.push(seedNode);
 	while(!q.empty())
-	  //for (std::queue <long, std::list<long>([seedNode]) > q; !q.empty();) // not sure??? ask
 	{
 		long node = q.front();
 		q.pop();
@@ -246,7 +219,7 @@ void QDigest::compressDownward(long seedNode)
 		{
 			continue;
 		}
-		//node2count.put(parent(node), atParent + atNode + atSibling);
+		// fix insert here as well?
 		node2count.insert(std::make_pair<long, long>(parent(node), atParent + atNode + atSibling));
 		node2count.erase(node);
 		node2count.erase(sibling(node));
@@ -290,7 +263,6 @@ int QDigest::highestOneBit(long value)
 void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
 {
 	 std::unordered_map<long, long> newNode2count;
-    // Map<Long, Long> newNode2count = new HashMap<Long, Long>(); //Java syntax 
     /*
      rebuild to newLogCapacity.
      This means that our current tree becomes a leftmost subtree
@@ -316,13 +288,10 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
 	*/
 	
 	std::sort(keys.begin(), keys.end());
-    //Long[] keys = node2count.keySet().toArray(new Long[node2count.size()]); // Java syntax	
     //the place i find how to rewrite
     //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
-    //Arrays.sort(keys);
     
     long scaleL = 1;
-    //for (long k : keys)
     for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
 	{
 		while (scaleL <= *i / 2) // see the use of iterator: 
@@ -330,7 +299,6 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
 		{
 			scaleL <<= 1;
 		 }
-		//newNode2count.put(k + scaleL * scaleR, node2count.get(k)); // Java syntax
 		newNode2count.insert(std::make_pair<long, long>(*i + scaleL * scaleR, get(*i))); 
 		//don't forget to take off the above comment.
 	 }

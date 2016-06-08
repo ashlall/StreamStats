@@ -25,6 +25,7 @@ class QDigest : public QuantileSketch
   double getQuantile(double f);
 
  private:
+  long clamp(long x);
   long value2leaf(long x) { return capacity + x; };
   long leaf2value(long id) { return id - capacity; };
   bool isRoot(long id) { return id == 1; }; // Check if the input index is root or not. (Root index is 1)
@@ -50,6 +51,7 @@ class QDigest : public QuantileSketch
   long size;
   long capacity; 
   double k; // compression factor
+  long min, max;
 };
 
 #include "Q-Digest.cpp"
