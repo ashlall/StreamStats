@@ -29,16 +29,6 @@ QDigest& QDigest::operator=(const QDigest& q)
   return *this;
 }
 
-void QDigest::copy(const QDigest& q)
-{
-  node2count = q.node2count;
-  k = q.k;
-  capacity = q.capacity;
-  size = q.size;
-  min = q.min;
-  max = q.max;
-}
-
 void QDigest::insert(double x)
 {
   if (x < min)
@@ -61,53 +51,6 @@ double QDigest::getQuantile(double p)
   double x = ranges[ranges.size() - 1][1];
   delete_ranges(ranges);
   return clamp(x);
-}
-
-long QDigest::clamp(long x)
-{
-  if (x < min)
-    return min;
-  if (x > max)
-    return max;
-  return x;
-}
-
-std::vector<long*> QDigest::toAscRanges()
-{
-  std::vector<long*> ranges;
-  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
-  {
-    long *hold = new long[3];
-    hold[0] = rangeLeft(i->first);
-    hold[1] = rangeRight(i->first);
-    hold[2] = i->second;
-    ranges.push_back(hold);
-  }
- std::sort(ranges.begin(), ranges.end(), compare_ranges);
- return ranges;
-}
-
-void QDigest::delete_ranges(std::vector<long*> ranges)
-{
-  for (int i = 0; i < ranges.size(); i++)
-  {
-    long *hold = ranges[i];
-    delete [] hold;
-  }
-}
-
-bool QDigest::compare_ranges(long a[3], long b[3])
-{
-  long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
-  if (rightA < rightB)
-    return 1;
-  else if (rightA > rightB)
-    return 0;
-  else if (sizeA < sizeB)
-    return 1;
-  else if (sizeA > sizeB)
-    return 0;
-  return 0;
 }
 
 void QDigest::offer(long value)
@@ -159,26 +102,42 @@ void QDigest::offer(long value)
    compressFully();
 }
 
-long QDigest::get(long node)
+void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
 {
+  std::unordered_map<long, long> newNode2count;
   /*
-    Given the index of the index, then search the container/map.
-    Return the corresponding key's value if found, 0 otherwise.
-    how find() works: ttp://www.cplusplus.com/reference/unordered_map/unordered_map/find/
-  */ 
-  std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
-  return (got == node2count.end()) ? 0 : got->second;
-}
-
-void QDigest::compressFully()
-{
+     rebuild to newLogCapacity.
+     This means that our current tree becomes a leftmost subtree
+     of the new tree.
+     E.g. when rebuilding a tree with logCapacity = 2
+     (i.e. storing values in 0..3) to logCapacity = 5 (i.e. 0..31):
+     node 1 => 8 (+= 7 = 2^0*(2^3-1))
+     nodes 2..3 => 16..17 (+= 14 = 2^1*(2^3-1))
+     nodes 4..7 => 32..35 (+= 28 = 2^2*(2^3-1))
+     This is easy to see if you draw it on paper.
+     Process the keys by "layers" in the original tree.
+  */
+  long scaleR = newCapacity / capacity - 1;  
   std::vector<long> keys;
   keys.reserve(node2count.size());
+	
   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
     keys.push_back(i->first);
-
+	
+  std::sort(keys.begin(), keys.end());
+    //the place i find how to rewrite
+    //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
+    
+  long scaleL = 1;
   for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
-    compressDownward(*i);   // java syntax
+  {
+    while (scaleL <= *i / 2) // see the use of iterator: // http://www.cplusplus.com/reference/vector/vector/begin/
+      scaleL <<= 1;
+    newNode2count.insert(std::make_pair<long, long>(*i + scaleL * scaleR, get(*i))); 
+   }
+  node2count = newNode2count;
+  capacity = newCapacity;
+  compressFully();
 }
 
 void QDigest::compressUpward(long node)
@@ -209,6 +168,17 @@ void QDigest::compressUpward(long node)
     node = p;
     atNode = atParent + atNode + atSibling;
   }
+}
+
+void QDigest::compressFully()
+{
+  std::vector<long> keys;
+  keys.reserve(node2count.size());
+  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+    keys.push_back(i->first);
+
+  for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
+    compressDownward(*i);   // java syntax
 }
 
  /**
@@ -248,6 +218,54 @@ void QDigest::compressDownward(long seedNode)
   }
 }	
 
+std::vector<long*> QDigest::toAscRanges()
+{
+  std::vector<long*> ranges;
+  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
+  {
+    long *hold = new long[3];
+    hold[0] = rangeLeft(i->first);
+    hold[1] = rangeRight(i->first);
+    hold[2] = i->second;
+    ranges.push_back(hold);
+  }
+ std::sort(ranges.begin(), ranges.end(), compare_ranges);
+ return ranges;
+}
+
+void QDigest::delete_ranges(std::vector<long*> ranges)
+{
+  for (int i = 0; i < ranges.size(); i++)
+  {
+    long *hold = ranges[i];
+    delete [] hold;
+  }
+}
+
+bool QDigest::compare_ranges(long a[3], long b[3])
+{
+  long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
+  if (rightA < rightB)
+    return 1;
+  else if (rightA > rightB)
+    return 0;
+  else if (sizeA < sizeB)
+    return 1;
+  else if (sizeA > sizeB)
+    return 0;
+  return 0;
+}
+
+void QDigest::copy(const QDigest& q)
+{
+  node2count = q.node2count;
+  k = q.k;
+  capacity = q.capacity;
+  size = q.size;
+  min = q.min;
+  max = q.max;
+}
+
 long QDigest::rangeLeft(long id)
 {
   while (!isLeaf(id))
@@ -262,6 +280,26 @@ long QDigest::rangeRight(long id)
   return leaf2value(id);
 }
 
+long QDigest::clamp(long x)
+{
+  if (x < min)
+    return min;
+  if (x > max)
+    return max;
+  return x;
+}
+
+long QDigest::get(long node)
+{
+  /*
+    Given the index of the index, then search the container/map.
+    Return the corresponding key's value if found, 0 otherwise.
+    how find() works: ttp://www.cplusplus.com/reference/unordered_map/unordered_map/find/
+  */ 
+  std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
+  return (got == node2count.end()) ? 0 : got->second;
+}
+
 int QDigest::highestOneBit(long value)
 {
   if (!value)
@@ -271,42 +309,3 @@ int QDigest::highestOneBit(long value)
     ret <<= 1;
   return ret;
 }
-
-void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
-{
-  std::unordered_map<long, long> newNode2count;
-  /*
-     rebuild to newLogCapacity.
-     This means that our current tree becomes a leftmost subtree
-     of the new tree.
-     E.g. when rebuilding a tree with logCapacity = 2
-     (i.e. storing values in 0..3) to logCapacity = 5 (i.e. 0..31):
-     node 1 => 8 (+= 7 = 2^0*(2^3-1))
-     nodes 2..3 => 16..17 (+= 14 = 2^1*(2^3-1))
-     nodes 4..7 => 32..35 (+= 28 = 2^2*(2^3-1))
-     This is easy to see if you draw it on paper.
-     Process the keys by "layers" in the original tree.
-  */
-  long scaleR = newCapacity / capacity - 1;  
-  std::vector<long> keys;
-  keys.reserve(node2count.size());
-	
-  for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
-    keys.push_back(i->first);
-	
-  std::sort(keys.begin(), keys.end());
-    //the place i find how to rewrite
-    //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
-    
-  long scaleL = 1;
-  for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
-  {
-    while (scaleL <= *i / 2) // see the use of iterator: // http://www.cplusplus.com/reference/vector/vector/begin/
-      scaleL <<= 1;
-    newNode2count.insert(std::make_pair<long, long>(*i + scaleL * scaleR, get(*i))); 
-   }
-  node2count = newNode2count;
-  capacity = newCapacity;
-  compressFully();
-}
-
