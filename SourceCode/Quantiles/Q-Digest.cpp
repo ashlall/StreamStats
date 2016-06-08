@@ -16,6 +16,29 @@ QDigest::QDigest(double compression)
   max = -100000000000;
 }
 
+QDigest::QDigest(const QDigest& q)
+{
+  copy(q);
+}
+
+QDigest& QDigest::operator=(const QDigest& q)
+{
+  // if this != q
+  //node2count.clear();
+  copy(q);
+  return *this;
+}
+
+void QDigest::copy(const QDigest& q)
+{
+  node2count = q.node2count;
+  k = q.k;
+  capacity = q.capacity;
+  size = q.size;
+  min = q.min;
+  max = q.max;
+}
+
 void QDigest::insert(double x)
 {
   if (x < min)

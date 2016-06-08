@@ -25,6 +25,7 @@ class QDigest : public QuantileSketch
   double getQuantile(double f);
 
  private:
+  void copy(const QDigest& q);
   long clamp(long x);
   long value2leaf(long x) { return capacity + x; };
   long leaf2value(long id) { return id - capacity; };
