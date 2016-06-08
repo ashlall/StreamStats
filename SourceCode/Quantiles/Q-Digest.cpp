@@ -12,8 +12,8 @@ QDigest::QDigest(double compression)
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
   size = 0;
-  min = 100000000000;
-  max = -100000000000;
+  min = MAX_VALUE;
+  max = -MAX_VALUE;
 }
 
 QDigest::QDigest(const QDigest& q)
