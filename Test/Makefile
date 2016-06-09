@@ -13,7 +13,7 @@ GK_test: QuantileSketch.h GK.h GK.cpp GK_test.cpp
 QDigest_test: QuantileSketch.h Q-Digest.h Q-Digest.cpp QDigest_test.cpp
 	g++ -o QDigest_test QDigest_test.cpp
 
-QDigest_test_Double: QuantileSketch.h Q-Digest.h Q-Digest.cpp QDigestDouble.h
+QDigest_test_Double: QuantileSketch.h Q-Digest.h Q-Digest.cpp QDigestDouble.h QDigest_test_Double.cpp
 	g++ -o QDigest_test_Double QDigest_test_Double.cpp
 
 Reservoir_test: QuantileSketch.h ReservoirSampling.h ReservoirSampling.cpp Reservoir_test.cpp
