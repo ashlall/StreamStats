@@ -5,8 +5,8 @@
 
 #include "../Quantiles/GK.h"
 #include "../Quantiles/ReservoirSampling.h"
-#include "../Quantiles/Q-Digest.h"
-#include "../Quantiles/CMSQuantile.h"
+//#include "../Quantiles/QDigestDouble.h"
+//#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h>
@@ -37,14 +37,14 @@ private:
 	int Q;
 	
 	GK* quantile_GK;
-	QDigest* quantile_QD;
+	//QDigestDouble* quantile_QD;
 	ReservoirSampling* quantile_RS;
-	CMS* quantile_CMS;
+	//CMS* quantile_CMS;
 	
-	double inverse_cmf();
+	double inverse_cmf(double x);
 	
 	
 };
 
-#include"Chi_Squared_1st.cpp"
+#include"Chi_Square_1st.cpp"
 #endif
