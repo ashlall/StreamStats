@@ -29,7 +29,7 @@ ChiSquare::ChiSquare(int q,int n,int k,double m)
 		break;
 	case 2:// quantile_QD=new QDigestDouble(memory);
 		break;
-	case 3: quantile_RS=new ReservoirSampling((int)memory);
+	case 3: //quantile_RS=new ReservoirSampling((int)memory);
 		break;
 	case 4:// quantile_CMS=new CMS((int)memory);
 		break;
@@ -51,7 +51,7 @@ void ChiSquare::insert(double val)
 		break;
 	case 3: //quantile_CMS.insert(val);
 		break;
-	case 4: quantile_RS->insert(val);
+	case 4: //quantile_RS->insert(val);
 		break;
 	default:
 		quantile_GK->insert(val);
@@ -80,8 +80,8 @@ double ChiSquare::calculate_statistic()
 		case 3: //iA=quantile_CMS->reverseQuantile(l,100);
 			//iB=quantile_CMS->reverseQuantile(u,100);
 			break;
-		case 4: iA=quantile_RS->reverseQuantile(l,100);
-			iB=quantile_RS->reverseQuantile(u,100);
+		case 4: //iA=quantile_RS->reverseQuantile(l,100);
+			//iB=quantile_RS->reverseQuantile(u,100);
 			break;
 		default:
 			iA=quantile_GK->reverseQuantile(l,100);
