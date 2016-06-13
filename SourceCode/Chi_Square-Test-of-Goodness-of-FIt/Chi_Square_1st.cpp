@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 //One Sample Chi-Squared Test>
+=======
+//One Sample Chi-Squared Test
+#include<cassert>
+#include "../Quantiles/GK.h"
+#include <iostream>
+#include <stdlib.h> 
+#include<math.h> // import math package
+>>>>>>> 98c23abe8e9d04aed18dd9717d6c30905572fbcc
 
 ChiSquare::ChiSquare(int n,int k,double m)
 {
