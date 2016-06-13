@@ -3,7 +3,7 @@
 #include "../Quantiles/GK.h"
 #include <iostream>
 #include <stdlib.h> 
-#include<math.h>
+#include<math.h> // import math package
 
 
 double inverse_cmf(double x);
