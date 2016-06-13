@@ -16,8 +16,8 @@ class ChiSquare
 {
 public:
 	ChiSquare();
-	ChiSquare(int n,int k,double m); //m is the percent of memory
-	ChiSquare(int q,int n,int k,double m);
+	ChiSquare(double m); //m is the amount of memory
+	ChiSquare(double m,int q);
 	/* q=1: GreenWaldKhanna Sketch
 	   q=2: Q-Digest Sketch
 	   q=3: Count Min Sketch
@@ -26,7 +26,8 @@ public:
 	
 	~ChiSquare();
 	void insert(double val);
-	double calculate_statistic();
+	double calculate_statistic(int k);
+	double calculate_statistic(int k,double (*f)(double));
 	  
 	
 private:
@@ -42,7 +43,8 @@ private:
 	//CMS* quantile_CMS;
 	
 	double inverse_cmf(double x);
-	
+	double RationalApproximation(double t);
+	double NormalCDFInverse(double p);
 	
 };
 
