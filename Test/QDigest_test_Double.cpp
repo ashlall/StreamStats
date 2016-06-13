@@ -9,15 +9,13 @@ using namespace std;
 
 void test_qdigetDouble()
 {
-
+	int n = 50;
 	int k = 5000; //make an arbitrarily large k for testing 	
-	//Compress factor: usually the choose of k ranges from 0.3n to 0.5n in order to get the best query results
-	
-	int n = 1000;
+				//Compress factor: usually the choice of k ranges from 0.3*stream_length to 0.5stream_length  in order to get the best query results
 
 					
-	long quantA,quantB,quantC,quantD,quantE,quantF;
-	bool condA,condB,condC,condD,condE,condF;
+	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
+	bool condA,condB,condC,condD,condE,condF,condG,condH;
     double upper,lower;
     
     int random_fix1 = rand()% RAND_MAX; //used to test corner case where n = 1
@@ -30,7 +28,9 @@ void test_qdigetDouble()
 	QDigest d(k);
     QDigest e(k);
 	QDigest f(k);
-	
+	QDigest g(k);
+	QDigest h(k);
+		
 	for (double i = 0; i <= n; i = i + 0.1) //inserting in increasing order
     {	
   		a.insert(i); 
@@ -42,43 +42,52 @@ void test_qdigetDouble()
     }
   	
   	
-  	for (int m = 1; m <= 3; m++) 
+  	for (int m = 1; m <= 3; m++) //create 3 "random" sequences that holds their randomness every time runs the code
   	{
-  		 srand(m); //use the random number generator seeds 1 - 5.
   		 if (m == 1)
   		 {
+  		 	//cout << "sequence 1: " << endl;
   			 for (int i = 0; i <= n; i++)
    			 {
+   			 	srand(i);
   				double rand_num=rand()%n + 0.5;
-  				c.insert(rand_num); 
-  				//inserting float number from 0 to 1000
-  			 }  
+  				//cout << rand_num << " ";
+  				c.insert(rand_num); //inserting float number from 0 to n
+  			 }
+  			 //cout << ""<<endl;
   		}
   		
   		else if(m == 2)
   		{
+  			 //cout << "sequence 2: " << endl;
   			  for (int i = 0; i <= n; i++)
    			 {
+   			    srand(i^2);
   				double rand_num=rand()%n + 0.5;
-  				d.insert(rand_num); 
-  				//inserting float number from 0 to 1000
+  				//cout << rand_num << " ";
+  				d.insert(rand_num); //inserting float number from 0 to n
   			 }  
+  			 //cout << ""<<endl;
   		}	
   		
   		else 
   		{	
+  			//cout << "sequence 3: " << endl;
   			  for (int i = 0; i <= n; i++)
    			 {
+   			 	srand(n-i);
   				double rand_num=rand()%n + 0.5;
-  				e.insert(rand_num); 
-  				//inserting float number from 0 to 1000
+  				//cout << rand_num << " ";
+  				e.insert(rand_num); //inserting float number from 0 to n
   			 }  
+  			 //cout <<""<<endl;
   		}
   	}
   	
   
   	f.insert(random_fix1); //test corner case where n = 1
-  	
+  	g.insert(random_fix2); 
+  	h.insert(random_fix3); 
   	
 	//random floating number from MIN ~ MAX are needed !!!!!
 	
@@ -93,6 +102,8 @@ void test_qdigetDouble()
   	  quantD=d.getQuantile(interval);
   	  quantE=e.getQuantile(interval);
   	  quantF=f.getQuantile(interval);
+  	  quantG=g.getQuantile(interval);
+  	  quantH=h.getQuantile(interval);
   	  
   	  lower=(interval-0.04)*n;
   	  upper=(interval+0.04)*n;
@@ -110,6 +121,8 @@ void test_qdigetDouble()
   	  
   	  
   	  condF= (random_fix1 = quantF);
+  	  condG= (random_fix2 = quantG);
+  	  condH= (random_fix3 = quantH);
   	  //checking if the condition holds in the corner case where stream size = 1
   	  
   	  assert(condA==true);
@@ -118,6 +131,8 @@ void test_qdigetDouble()
   	  assert(condD==true);
   	  assert(condE==true);
   	  assert(condF==true);
+  	  assert(condG==true);
+  	  assert(condH==true);
   } 
 
 	/*  
@@ -135,6 +150,7 @@ void test_qdigetDouble()
 		cout << "hi" <<endl; 
    */
 }
+
 
 
 int main()
