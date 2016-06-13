@@ -4,7 +4,7 @@
 #define CHI_SQUARED_1ST_H
 
 #include "../Quantiles/GK.h"
-#include "../Quantiles/ReservoirSampling.h"
+//#include "../Quantiles/ReservoirSampling.h"
 //#include "../Quantiles/QDigestDouble.h"
 //#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
@@ -38,7 +38,7 @@ private:
 	
 	GK* quantile_GK;
 	//QDigestDouble* quantile_QD;
-	ReservoirSampling* quantile_RS;
+	//ReservoirSampling* quantile_RS;
 	//CMS* quantile_CMS;
 	
 	double inverse_cmf(double x);
