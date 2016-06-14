@@ -25,10 +25,17 @@ public:
 	*/
 	
 	~ChiSquare();
+	
 	void insert(double val);
-	double calculate_statistic(int k);
+	double calculate_statistic_ifNormal(int k, double mean, double SD);
 	double calculate_statistic(int k,double (*f)(double));
-	  
+	
+	double inverse_normal_CDF(double p, double mean, double SD);
+	/*
+	bool ifBinomial()
+	bool ifExponentianl()
+	..
+	*/
 	
 private:
 	double chi_squared;
@@ -42,9 +49,8 @@ private:
 	//ReservoirSampling* quantile_RS;
 	//CMS* quantile_CMS;
 	
-	double inverse_cmf(double x);
 	double RationalApproximation(double t);
-	double NormalCDFInverse(double p);
+	double NormalCDFInverse(double p, double mean, double SD);
 	
 };
 
