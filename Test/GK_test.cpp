@@ -9,7 +9,7 @@ Complile with g++ -o gk.o -std=c++11 GK_test.cpp
 
 void test_GK()
 {
-	int k = 1000; // Reservoir sample size	
+	int k = 1000; 
 	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
 	bool condA,condB,condC,condD,condE,condF,condG,condH;
 	double upper,lower;
