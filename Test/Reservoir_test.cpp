@@ -168,11 +168,11 @@ void quicktest()
 	cout << "0.3: "<<a.getQuantile(0.3) << endl;
 	cout << "0.4: "<<a.getQuantile(0.4) << endl;
 	cout << "median:" << a.getQuantile(0.5) << endl;
-	cout << "0.8: "<<a.getQuantile(0.6) << endl;
-	cout << "0.8: "<<a.getQuantile(0.7) << endl;
+	cout << "0.6: "<<a.getQuantile(0.6) << endl;
+	cout << "0.7: "<<a.getQuantile(0.7) << endl;
 	cout << "0.8: "<<a.getQuantile(0.8) << endl;
-	cout << "0.8: "<<a.getQuantile(0.9) << endl;
-	cout << "0.8: "<<a.getQuantile(1) << endl;
+	cout << "0.9: "<<a.getQuantile(0.9) << endl;
+	cout << "1: "<<a.getQuantile(1) << endl;
 }
 
 int main()
