@@ -1,5 +1,8 @@
 /*
-Unit tests for Reservoir Sampling class.
+Unit tests for Reservoir Sampling class. The algorithm itself does not restrain the type of numerical data; 
+the input can be either integer or float points. 
+For the function test_reservoir, we only implemented the integer data as input.
+For the function quicktest(), we only implemented the floating points as data.
 
 It doesn't work well for the extrem case when n = 1 due to the implementation itself.
 Modification might needed. 
@@ -155,16 +158,21 @@ void test_reservoir()
 void quicktest()
 {
 	ReservoirSampling a(1000);
-	for(int i=1; i<=1000000; i++)
+	for(int i=1; i<=10000000; i++)
 	{
-		a.insert(i);
+		a.insert(i + 0.13416435);
 	}
 
-	cout << "median:" << a.getQuantile(0.5) << endl;
 	cout << "0.1: "<<a.getQuantile(0.1) << endl;
+	cout << "0.1: "<<a.getQuantile(0.2) << endl;
 	cout << "0.3: "<<a.getQuantile(0.3) << endl;
 	cout << "0.4: "<<a.getQuantile(0.4) << endl;
+	cout << "median:" << a.getQuantile(0.5) << endl;
+	cout << "0.8: "<<a.getQuantile(0.6) << endl;
+	cout << "0.8: "<<a.getQuantile(0.7) << endl;
 	cout << "0.8: "<<a.getQuantile(0.8) << endl;
+	cout << "0.8: "<<a.getQuantile(0.9) << endl;
+	cout << "0.8: "<<a.getQuantile(1) << endl;
 }
 
 int main()
