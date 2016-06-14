@@ -4,13 +4,13 @@
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h> 
+#include<iomanip> // Parametric manipulators. Used to set precision. 
 
 ChiSquare::ChiSquare(double m)
 {
 	Q=0;
 	chi_squared=0;
 	quantile_GK=new GK((int)(m/3));
-	
 }
 
 ChiSquare::ChiSquare(double m,int q)
@@ -31,7 +31,6 @@ ChiSquare::ChiSquare(double m,int q)
 	default:
 		cout<<" Incorrect Case. Valid inputs lie between 1 and 4"<<endl;
 		cout<<"Error Message"<<endl;
-		
 	}
 	
 }
@@ -54,6 +53,7 @@ void ChiSquare::insert(double val)
 	}
 }
 
+
 double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
 	
@@ -62,8 +62,8 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 	double E=N/K;
 	for (double i=1;i<=K;i++)
 	{
-		double l= inverse_normal_CDF((i-1)/K, mean, SD);
-		double u= inverse_normal_CDF(i/K, mean, SD);
+		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
+		double u= NormalCDFInverse_pub(i/K, mean, SD);
 		double iA,iB;
 		switch(Q)
 		{
@@ -125,27 +125,22 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 		
 		chi_squared=chi_squared+ ((lambda*lambda)/E);
 	}		
-	return chi_squared;
+	return chi_squared;	
 }
+
+
+double ChiSquare :: NormalCDFInverse_pub(double p, double mean, double SD)
+{
+	return NormalCDFInverse(p, mean, SD);
+}
+
 
 /*
-bool ChiSquare::ifNormal(double mean, double SD)
-{
-	return NormalCDFInverse(p, mean, SD)
-}
-*/
+Adapted from John D.Cook.
 
-// Adapted from John D.Cook
-double ChiSquare::RationalApproximation(double t)
-{
-    // Abramowitz and Stegun formula 26.2.23.
-    // The absolute value of the error should be less than 4.5 e-4.
-    double c[] = {2.515517, 0.802853, 0.010328};
-    double d[] = {1.432788, 0.189269, 0.001308};
-    return t - ((c[2]*t + c[1])*t + c[0]) /
-                (((d[2]*t + d[1])*t + d[0])*t + 1.0);
-}
-//Adapted from John D.Cook
+input: p(probability 0-1), mean, standard deviation
+output: corresponding x value
+*/
 double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
 {
     if (p <= 0.0 || p >= 1.0)
@@ -156,12 +151,21 @@ double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
     if (p < 0.5)
     {
         // F^-1(p) = - G^-1(p)
-        return -RationalApproximation( sqrt(-2.0*log(p))*SD + mean );
+        return -RationalApproximation( sqrt(-2.0*log(p)))*SD + mean;
     }
     else
     {
         // F^-1(p) = G^-1(1-p)
-        return RationalApproximation( sqrt(-2.0*log(1-p))*SD + mean );
+        return RationalApproximation( sqrt(-2.0*log(1-p)))*SD + mean;
     }
 }
 
+double ChiSquare::RationalApproximation(double t)
+{
+    // Abramowitz and Stegun formula 26.2.23.
+    // The absolute value of the error should be less than 4.5 e-4.
+    double c[] = {2.515517, 0.802853, 0.010328};
+    double d[] = {1.432788, 0.189269, 0.001308};
+    return t - ((c[2]*t + c[1])*t + c[0]) /
+                (((d[2]*t + d[1])*t + d[0])*t + 1.0);
+}
