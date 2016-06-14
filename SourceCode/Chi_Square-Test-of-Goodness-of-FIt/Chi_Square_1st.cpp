@@ -54,7 +54,7 @@ void ChiSquare::insert(double val)
 	}
 }
 
-double ChiSquare::calculate_statistic(int k)
+double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
 	
 	K=k;
@@ -62,8 +62,8 @@ double ChiSquare::calculate_statistic(int k)
 	double E=N/K;
 	for (double i=1;i<=K;i++)
 	{
-		double l= inverse_cmf((i-1)/K);
-		double u= inverse_cmf(i/K);
+		double l= inverse_normal_CDF((i-1)/K, mean, SD);
+		double u= inverse_normal_CDF(i/K, mean, SD);
 		double iA,iB;
 		switch(Q)
 		{
@@ -126,12 +126,13 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 	}		
 }
 
-
-
-double ChiSquare::inverse_cmf(double x)
+/*
+bool ChiSquare::ifNormal(double mean, double SD)
 {
-	return NormalCDFInverse(x);
+	return NormalCDFInverse(p, mean, SD)
 }
+*/
+
 // Adapted from John D.Cook
 double ChiSquare::RationalApproximation(double t)
 {
@@ -143,7 +144,7 @@ double ChiSquare::RationalApproximation(double t)
                 (((d[2]*t + d[1])*t + d[0])*t + 1.0);
 }
 //Adapted from John D.Cook
-double ChiSquare::NormalCDFInverse(double p)
+double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
 {
     if (p <= 0.0 || p >= 1.0)
     {
@@ -153,12 +154,12 @@ double ChiSquare::NormalCDFInverse(double p)
     if (p < 0.5)
     {
         // F^-1(p) = - G^-1(p)
-        return -RationalApproximation( sqrt(-2.0*log(p)) );
+        return -RationalApproximation( sqrt(-2.0*log(p))*SD + mean );
     }
     else
     {
         // F^-1(p) = G^-1(1-p)
-        return RationalApproximation( sqrt(-2.0*log(1-p)) );
+        return RationalApproximation( sqrt(-2.0*log(1-p))*SD + mean );
     }
 }
 
