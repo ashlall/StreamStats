@@ -24,13 +24,15 @@ public:
 	   q=4 Reservoir Sampling
 	*/
 	
-	~ChiSquare();
-	
+	~ChiSquare(){};
+	//ChiSquare(const ChiSquare& q);
+  	//ChiSquare& operator=(const ChiSquare& q);
+  	
 	void insert(double val);
 	double calculate_statistic_ifNormal(int k, double mean, double SD);
 	double calculate_statistic(int k,double (*f)(double));
 	
-	double inverse_normal_CDF(double p, double mean, double SD);
+	double NormalCDFInverse_pub(double p, double mean, double SD);
 	/*
 	bool ifBinomial()
 	bool ifExponentianl()
