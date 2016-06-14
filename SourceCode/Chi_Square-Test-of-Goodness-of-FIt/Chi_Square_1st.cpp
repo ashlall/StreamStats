@@ -86,8 +86,9 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 		double O=N*(iB-iA);
 		double lambda= fabs(O-E);
 		
-		chi_squared=chi_squared+ ((lambda*lambda)/E);
+	    chi_squared=chi_squared+ ((lambda*lambda)/E);
 	}		
+	return chi_squared;
 }
 
 double ChiSquare::calculate_statistic(int k,double(*f)(double))
@@ -124,6 +125,7 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 		
 		chi_squared=chi_squared+ ((lambda*lambda)/E);
 	}		
+	return chi_squared;
 }
 
 /*
