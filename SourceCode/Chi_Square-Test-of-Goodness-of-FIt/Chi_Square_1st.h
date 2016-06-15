@@ -25,8 +25,6 @@ public:
 	*/
 	
 	~ChiSquare();
-	//ChiSquare(const ChiSquare& q);
-  	//ChiSquare& operator=(const ChiSquare& q);
   	
 	void insert(double val);
 	double calculate_statistic_ifNormal(int k, double mean, double SD);
@@ -46,10 +44,7 @@ private:
 	int K;
 	int Q;
 	
-	GK* quantile_GK;
-	//QDigestDouble* quantile_QD;
-	//ReservoirSampling* quantile_RS;
-	//CMS* quantile_CMS;
+	QuantileSketch* quantile;
 	
 	double RationalApproximation(double t);
 	double NormalCDFInverse(double p, double mean, double SD);
