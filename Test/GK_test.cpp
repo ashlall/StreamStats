@@ -13,7 +13,7 @@ void test_GK()
 	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
 	bool condA,condB,condC,condD,condE,condF,condG,condH;
 	double upper,lower;
-	int n=1000000; //StreamSize
+	int n=10000; 
 	
     int random_fix1 = rand()% RAND_MAX;
     //cout << "random_fix1: " << random_fix1 <<endl;
@@ -36,12 +36,20 @@ void test_GK()
     {	
   		a.insert(j); 
     }
-    
-	for (int i = n; i >= 1; i--) //inserting in desceding order
+    bool condA1;
+	int LA = a.get_stream_size(); //test the function get_stream_size()
+	condA1= (LA == n+1);
+	assert(condA1 == true);
+	
+	for (int i = n; i >= 0; i--) //inserting in desceding order
     {
   		b.insert(i); 
     }
-    
+    bool condB1;
+	int LB = b.get_stream_size(); //test the function get_stream_size()
+	condB1= (LB == n+1);
+	assert(condB1 == true);
+	    
 	for (int m = 1; m <= 3; m++) //create 3 "random" sequences that holds their randomness every time runs the code
   	{
   		 if (m == 1)
@@ -55,6 +63,10 @@ void test_GK()
   				c.insert(rand_num);  //inserting float number from 0 to n
   			 }
   			 //cout << ""<<endl;
+  			 bool condC1;
+			 int LC = c.get_stream_size(); //test the function get_stream_size()
+			 condC1= (LC == n+1);
+			 assert(condC1 == true);
   		}
   		
   		else if(m == 2)
@@ -68,6 +80,10 @@ void test_GK()
   				d.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout << ""<<endl;
+  			 bool condD1;
+			 int LD = d.get_stream_size(); //test the function get_stream_size()
+			 condD1= (LD == n+1);
+			 assert(condD1 == true);  
   		}	
   		
   		else 
@@ -81,13 +97,27 @@ void test_GK()
   				e.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout <<""<<endl;
+  			 bool condE1;
+			 int LE = e.get_stream_size(); //test the function get_stream_size()
+			 condE1= (LE == n+1);
+			 assert(condE1 == true);
   		}
   	}
   	
   	  f.insert(random_fix1); //test corner case where n = 1
   	  g.insert(random_fix2); 
   	  h.insert(random_fix3);   	
-  	
+  	  bool condF1,condG1,condH1;
+	  long LF = f.get_stream_size(); //test the function get_stream_size()
+	  long LG = g.get_stream_size();
+ 	  long LH = h.get_stream_size();
+      condF1 = (LF == 1);
+      condG1 = (LG == 1);
+	  condH1 = (LH == 1);
+	  assert(condF1 == true);
+	  assert(condG1 == true);
+	  assert(condH1 == true);  
+	  	
   for (float i=1;i<=100;i++)
   {
   	  double interval=i/100; //getting each probabilty interval
@@ -116,9 +146,9 @@ void test_GK()
   	  //checking if quantile is within error range
   	  
   	  
-  	  condF= (random_fix1 = quantF);
-  	  condG= (random_fix2 = quantG);
-  	  condH= (random_fix3 = quantH);
+  	  condF= (random_fix1 == quantF);
+  	  condG= (random_fix2 == quantG);
+  	  condH= (random_fix3 == quantH);
   	  //checking if the condition holds in the corner case where stream size = 1
 
   	  

@@ -24,7 +24,7 @@ public:
 	   q=4 Reservoir Sampling
 	*/
 	
-	~ChiSquare(){};
+	~ChiSquare();
 	//ChiSquare(const ChiSquare& q);
   	//ChiSquare& operator=(const ChiSquare& q);
   	

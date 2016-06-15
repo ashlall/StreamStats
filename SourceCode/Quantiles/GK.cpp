@@ -14,6 +14,7 @@ GK::GK(int maxTuples)
 	numObservations=0;
 	max=maxTuples;
 	summary=new Tuple*[maxTuples];
+	stream_size =0;
 }
 /*
 Pre-Condition: None.
@@ -33,6 +34,7 @@ Post-Condition: A tuple holding val as its value is inserted into the summary.
 */
 void GK::insert(double val)
 {
+	stream_size +=1; 
 	int index= findIndex(val);
 	if(summary[index]==NULL)
 	{	

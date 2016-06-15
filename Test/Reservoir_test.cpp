@@ -96,7 +96,7 @@ void test_reservoir()
   			 }  
   			 //cout << ""<<endl;
   			 bool condD1;
-			 int LD = c.get_stream_size(); //test the function get_stream_size()
+			 int LD = d.get_stream_size(); //test the function get_stream_size()
 			 condD1= (LD == n+1);
 			 assert(condD1 == true);
   		}	
@@ -113,7 +113,7 @@ void test_reservoir()
   			 }  
   			 //cout <<""<<endl;
   			 bool condE1;
-			 int LE = c.get_stream_size(); //test the function get_stream_size()
+			 int LE = e.get_stream_size(); //test the function get_stream_size()
 			 condE1= (LE == n+1);
 			 assert(condE1 == true);
   		}

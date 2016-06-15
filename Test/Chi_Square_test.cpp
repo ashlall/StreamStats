@@ -4,12 +4,17 @@
 #include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
 #include <iostream>
 #include<iomanip> 
+#include <random>
+
 
 using namespace std;
 
 void test_chi_square_1st() //One-sample test
 {
-	bool condA;
+
+/*
+	
+	Test function NormalCDFInverse_pub(double p, double mean, double SD); PASSED
 	
     double p[] =	// used for testing the accuracy of the function NormalCDFInverse_pub();
     {
@@ -52,6 +57,7 @@ void test_chi_square_1st() //One-sample test
     };
 
 	ChiSquare a(3000);
+	bool condA;
 	double accurate, estimate;
 	
 	for (int i = 0; i <=15; i++)
@@ -69,8 +75,25 @@ void test_chi_square_1st() //One-sample test
 			}	
 		}
 	}
-
 	
+*/
+	
+	/*
+	Test function calculate_statistic_ifNormal(int k, double mean, double SD);
+	*/
+	ChiSquare b(3000); 
+	int stream_size = 2000;
+	double item;
+	
+	default_random_engine generator;
+    normal_distribution<double> distribution(100.0,20);
+    
+    for (int i=0; i<stream_size; i++) 
+    {
+    	item = distribution(generator);
+    	cout << item << endl;
+  	    b.insert(item);
+  }
 }
 
 

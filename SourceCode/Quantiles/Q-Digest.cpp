@@ -12,6 +12,7 @@ QDigest::QDigest(double compression)
   k = compression; // Initialize the private variable Compress Factor.
   capacity = 1;
   size = 0;
+  stream_size = 0;
   min = MAX_VALUE;
   max = -MAX_VALUE;
 }
@@ -31,6 +32,7 @@ QDigest& QDigest::operator=(const QDigest& q)
 
 void QDigest::insert(double x)
 {
+  stream_size += 1;
   if (x < min)
     min = x;
   if (x > max)

@@ -35,11 +35,20 @@ void test_qdigetDouble()
     {	
   		a.insert(i); 
     }
-    
+	bool condA1;
+	int LA = a.get_stream_size(); //test the function get_stream_size()
+	condA1= (LA == n/0.1);
+	assert(condA1 == true);
+	   
+	   
 	for (double j = n; j >= 0; j = j - 0.1) //inserting in decreasing order
     {	
   		b.insert(j); 
     }
+    bool condB1;
+	int LB = b.get_stream_size(); //test the function get_stream_size()
+	condB1= (LB == n/0.1);
+	assert(condB1 == true); 	
   	
   	
   	for (int m = 1; m <= 3; m++) //create 3 "random" sequences that holds their randomness every time runs the code
@@ -55,6 +64,10 @@ void test_qdigetDouble()
   				c.insert(rand_num); //inserting float number from 0 to n
   			 }
   			 //cout << ""<<endl;
+  			 bool condC1;
+			 int LC = c.get_stream_size(); //test the function get_stream_size()
+			 condC1= (LC == n+1);
+			 assert(condC1 == true); 			 
   		}
   		
   		else if(m == 2)
@@ -68,6 +81,10 @@ void test_qdigetDouble()
   				d.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout << ""<<endl;
+  			 bool condD1;
+			 int LD = d.get_stream_size(); //test the function get_stream_size()
+			 condD1= (LD == n+1);
+			 assert(condD1 == true);  
   		}	
   		
   		else 
@@ -81,6 +98,10 @@ void test_qdigetDouble()
   				e.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout <<""<<endl;
+  			 bool condE1;
+			 int LE = e.get_stream_size(); //test the function get_stream_size()
+			 condE1= (LE == n+1);
+			 assert(condE1 == true);
   		}
   	}
   	
@@ -88,7 +109,17 @@ void test_qdigetDouble()
   	f.insert(random_fix1); //test corner case where n = 1
   	g.insert(random_fix2); 
   	h.insert(random_fix3); 
-  	
+  
+  	  bool condF1,condG1,condH1;
+	  long LF = f.get_stream_size(); //test the function get_stream_size()
+	  long LG = g.get_stream_size();
+ 	  long LH = h.get_stream_size();
+      condF1 = (LF == 1);
+      condG1 = (LG == 1);
+	  condH1 = (LH == 1);
+	  assert(condF1 == true);
+	  assert(condG1 == true);
+	  assert(condH1 == true);
 	//random floating number from MIN ~ MAX are needed !!!!!
 	
 
@@ -120,9 +151,9 @@ void test_qdigetDouble()
   	  //checking if quantile is within error range
   	  
   	  
-  	  condF= (random_fix1 = quantF);
-  	  condG= (random_fix2 = quantG);
-  	  condH= (random_fix3 = quantH);
+  	  condF= (random_fix1 == quantF);
+  	  condG= (random_fix2 == quantG);
+  	  condH= (random_fix3 == quantH);
   	  //checking if the condition holds in the corner case where stream size = 1
   	  
   	  assert(condA==true);

@@ -41,7 +41,7 @@ public:
 	~GK();
 	void insert(double val);
 	double getQuantile(double quant);
-	
+	long get_stream_size(){return stream_size;};
 
 private:
 	int findIndex(double val);
@@ -52,7 +52,7 @@ private:
 	Tuple** summary;
 	int numTuples;
 	long numObservations;
-	
+	long stream_size;	
 };
 
 #include "GK.cpp"
