@@ -1,6 +1,9 @@
 //One Sample Chi-Squared Test
 #include<cassert>
+//#include "../Quantiles/ReservoirSampling.h"
 #include "../Quantiles/GK.h"
+//#include "../Quantiles/Q-Digest.h"
+//#include "../Quantiles/QDigestDouble.h"
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h> 
@@ -74,7 +77,8 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
 	
 	K=k;
-	//N=
+	N= quantile_GK -> get_stream_size();
+	cout << "N: " <<endl;
 	double E=N/K;
 	for (double i=1;i<=K;i++)
 	{
@@ -111,7 +115,7 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 {	
 	
 	K=k;
-	//N=
+	N= quantile_GK -> get_stream_size();
 	double E=N/K;
 	for (double i=1;i<=K;i++)
 	{
