@@ -17,6 +17,7 @@ class QuantileSketch
   virtual void insert(double x) { } ;
   virtual double getQuantile(double f) {return 0;};
   int reverseQuantile(double r, int n);
+  virtual long get_stream_size(){return 0;};
   
   // To do the following:
   void reset();
