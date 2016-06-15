@@ -13,7 +13,7 @@ ChiSquare::ChiSquare(double m)
 {
 	Q=0;
 	chi_squared=0;
-	quantile_GK=new GK((int)(m/3));
+	quantile=new GK((int)(m/3));
 }
 
 ChiSquare::ChiSquare(double m,int q)
@@ -23,7 +23,7 @@ ChiSquare::ChiSquare(double m,int q)
 	memory= m;
 	switch(Q)
 	{
-	case 1: quantile_GK=new GK((int)(memory/3));
+	case 1: quantile=new GK((int)(memory/3));
 		break;
 	case 2:// quantile_QD=new QDigestDouble(memory);
 		break;
@@ -39,37 +39,11 @@ ChiSquare::ChiSquare(double m,int q)
 }
 ChiSquare::~ChiSquare()
 {	
-	switch(Q)
-	{
-	case 1: delete quantile_GK;
-		break;
-	case 2:// delete quantile_QD
-		break;
-	case 3: //delete quantile_RS;
-		break;
-	case 4:// delete quantile_CMS;
-		break;
-	default:
-		delete quantile_GK;
-	}
-	
+	delete quantile;
 }
 void ChiSquare::insert(double val)
 {
-	switch(Q)
-	{
-	case 1: quantile_GK->insert(val);
-		break;
-	case 2: //quantile_QD->insert(val);
-		break;
-	case 3: //quantile_CMS.insert(val);
-		break;
-	case 4: //quantile_RS->insert(val);
-		break;
-	default:
-		quantile_GK->insert(val);
-		
-	}
+		quantile->insert(val);
 }
 
 
@@ -77,7 +51,7 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
 	
 	K=k;
-	N= quantile_GK -> get_stream_size();
+	N= quantile -> get_stream_size();
 	cout << "N: " <<endl;
 	double E=N/K;
 	for (double i=1;i<=K;i++)
@@ -85,24 +59,9 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
 		double u= NormalCDFInverse_pub(i/K, mean, SD);
 		double iA,iB;
-		switch(Q)
-		{
-		case 1:  iA=quantile_GK->reverseQuantile(l,100);
-			 iB=quantile_GK->reverseQuantile(u,100);
-			break;
-		case 2: //iA=quantile_QD->reverseQuantile(l,100);
-			//iB=quantile_QD->reverseQuantile(u,100);
-			break;
-		case 3: //iA=quantile_CMS->reverseQuantile(l,100);
-			//iB=quantile_CMS->reverseQuantile(u,100);
-			break;
-		case 4: //iA=quantile_RS->reverseQuantile(l,100);
-			//iB=quantile_RS->reverseQuantile(u,100);
-			break;
-		default:
-			iA=quantile_GK->reverseQuantile(l,100);
-			iB=quantile_GK->reverseQuantile(u,100);
-		}
+		 iA=quantile->reverseQuantile(l,100);
+		 iB=quantile->reverseQuantile(u,100);
+		
 		double O=N*(iB-iA);
 		double lambda= fabs(O-E);
 		
@@ -115,31 +74,16 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 {	
 	
 	K=k;
-	N= quantile_GK -> get_stream_size();
+	N= quantile-> get_stream_size();
 	double E=N/K;
 	for (double i=1;i<=K;i++)
 	{
 		double l= (*f)((i-1)/K);
 		double u= (*f)(i/K);
 		double iA,iB;
-		switch(Q)
-		{
-		case 1:  iA=quantile_GK->reverseQuantile(l,100);
-			 iB=quantile_GK->reverseQuantile(u,100);
-			break;
-		case 2: //iA=quantile_QD->reverseQuantile(l,100);
-			//iB=quantile_QD->reverseQuantile(u,100);
-			break;
-		case 3: //iA=quantile_CMS->reverseQuantile(l,100);
-			//iB=quantile_CMS->reverseQuantile(u,100);
-			break;
-		case 4: //iA=quantile_RS->reverseQuantile(l,100);
-			//iB=quantile_RS->reverseQuantile(u,100);
-			break;
-		default:
-			iA=quantile_GK->reverseQuantile(l,100);
-			iB=quantile_GK->reverseQuantile(u,100);
-		}
+		iA=quantile->reverseQuantile(l,100);
+		iB=quantile->reverseQuantile(u,100);
+		
 		double O=N*(iB-iA);
 		double lambda= fabs(O-E);
 		
