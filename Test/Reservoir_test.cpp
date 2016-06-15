@@ -18,7 +18,7 @@ void test_reservoir()
 	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
 	bool condA,condB,condC,condD,condE,condF,condG,condH;
 	double upper,lower;
-	int n=10000000; //StreamSize
+	int n=10000000; 
 	
 	/*	Extrem case when n = 1
 	
@@ -49,10 +49,21 @@ void test_reservoir()
 		
 	}
 	
-	for (int i = n; i >= 1; i--) //inserting in desceding order
+	bool condA1;
+	int LA = a.get_stream_size(); //test the function get_stream_size()
+	condA1= (LA == n+1);
+	assert(condA1 == true);
+
+	
+	for (int i = n; i >= 0; i--) //inserting in desceding order
     {
   		b.insert(i); 
     }
+    
+  	bool condB1;
+	int LB = b.get_stream_size(); //test the function get_stream_size()
+	condB1= (LB == n+1);
+	assert(condB1 == true);
   
  	for (int m = 1; m <= 3; m++) //create 3 "random" sequences with certain patterned seed that holds their randomness every time runs the code
   	{
@@ -67,6 +78,10 @@ void test_reservoir()
   				c.insert(rand_num);  //inserting float number from 0 to n
   			 }
   			 //cout << ""<<endl;
+  			 bool condC1;
+			 int LC = c.get_stream_size(); //test the function get_stream_size()
+			 condC1= (LC == n+1);
+			 assert(condC1 == true);
   		}
   		
   		else if(m == 2)
@@ -80,6 +95,10 @@ void test_reservoir()
   				d.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout << ""<<endl;
+  			 bool condD1;
+			 int LD = c.get_stream_size(); //test the function get_stream_size()
+			 condD1= (LD == n+1);
+			 assert(condD1 == true);
   		}	
   		
   		else 
@@ -93,6 +112,10 @@ void test_reservoir()
   				e.insert(rand_num); //inserting float number from 0 to n
   			 }  
   			 //cout <<""<<endl;
+  			 bool condE1;
+			 int LE = c.get_stream_size(); //test the function get_stream_size()
+			 condE1= (LE == n+1);
+			 assert(condE1 == true);
   		}
   	} 
 
@@ -136,9 +159,9 @@ void test_reservoir()
   	  
   	  /*	Extrem case when n = 1
   	  
-  	  condF= (random_fix1 = quantF);
-  	  condG= (random_fix2 = quantG);
-  	  condH= (random_fix3 = quantH);
+  	  condF= (random_fix1 == quantF);
+  	  condG= (random_fix2 == quantG);
+  	  condH= (random_fix3 == quantH);
 	  */
   	  
   	  assert(condA==true);
