@@ -82,18 +82,25 @@ void test_chi_square_1st() //One-sample test
 	Test function calculate_statistic_ifNormal(int k, double mean, double SD);
 	*/
 	ChiSquare b(3000); 
-	int stream_size = 2000;
+	int stream_size = 1000;
 	double item;
+	long sizel;
+	double chi;
 	
 	default_random_engine generator;
     normal_distribution<double> distribution(100.0,20);
     
     for (int i=0; i<stream_size; i++) 
     {
-    	item = distribution(generator);
-    	cout << item << endl;
+    	//item = distribution(generator);
+    	item = rand() % 100000 + 33333;
+    	//cout << item << endl;
   	    b.insert(item);
-  }
+  	}
+  	
+  	chi = b.calculate_statistic_ifNormal(50, 0, 1);
+  	cout << "chi: " << chi << endl;
+
 }
 
 
