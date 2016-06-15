@@ -16,7 +16,7 @@ class QuantileSketch
   ~QuantileSketch() {};
   virtual void insert(double x) { } ;
   virtual double getQuantile(double f) {return 0;};
-  int reverseQuantile(double r, int n);
+  double reverseQuantile(double r, int n);
   virtual long get_stream_size(){return 0;};
   
   // To do the following:
@@ -33,7 +33,7 @@ Member Functions:
 */
 
 // performs a search to find the largest index that has value less than or equal to r
-int QuantileSketch::reverseQuantile(double r, int n)
+double QuantileSketch::reverseQuantile(double r, int n)
 {
   int lo=0, hi= n-1;
   while (lo < hi)

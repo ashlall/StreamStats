@@ -2,7 +2,7 @@
 #include<cassert>
 #include "../SourceCode/Quantiles/GK.h"
 #include <iostream>
-
+#include <random>
 /*
 Complile with g++ -o gk.o -std=c++11 GK_test.cpp
 */
@@ -183,9 +183,35 @@ void quicktest()
 	cout << "0.9: "<<a.getQuantile(0.9) << endl;
 	cout << "1: "<<a.getQuantile(1) << endl;
 }
+
+void test_reverse()
+{
+	GK larry(3000);
+	int stream_size = 1000;
+	double item;
+	
+	default_random_engine generator;
+    normal_distribution<double> distribution(3000,50);
+    
+    for (int i=0; i<stream_size; i++) 
+    {
+    	item = distribution(generator);
+    	//item = i;
+  	    larry.insert(item);
+  	}
+  	
+  	double hi;
+  	hi = larry.getQuantile(0.5);
+  	cout << hi << endl;
+  	double hey;
+  	hey = larry.reverseQuantile(3000, 1000);
+  	cout << hey << endl;
+}
+
 int main()
 {
-  test_GK();
-  quicktest();
+  //test_GK();
+  //quicktest();
+  test_reverse();
   return 0;
 }

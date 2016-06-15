@@ -13,7 +13,7 @@ ChiSquare::ChiSquare(double m)
 {
 	Q=0;
 	chi_squared=0;
-	quantile=new GK((int)(m/3));
+	quantile=new GK(m);
 }
 
 ChiSquare::ChiSquare(double m,int q)
@@ -23,7 +23,7 @@ ChiSquare::ChiSquare(double m,int q)
 	memory= m;
 	switch(Q)
 	{
-	case 1: quantile=new GK((int)(memory/3));
+	case 1: quantile=new GK(memory);
 		break;
 	case 2:// quantile_QD=new QDigestDouble(memory);
 		break;
@@ -49,18 +49,23 @@ void ChiSquare::insert(double val)
 
 double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
-	
 	K=k;
 	N= quantile -> get_stream_size();
-	cout << "N: " <<endl;
+	//K = 2 * pow(N,0.4);
 	double E=N/K;
-	for (double i=1;i<=K;i++)
+	for (double i=1;i<K;i++)
 	{
 		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
-		double u= NormalCDFInverse_pub(i/K, mean, SD);
+		//cout << "l: " << l <<endl;
+		double u= NormalCDFInverse_pub(i/K, mean, SD);	
+		//cout << "u: " << u <<endl;
 		double iA,iB;
-		 iA=quantile->reverseQuantile(l,100);
-		 iB=quantile->reverseQuantile(u,100);
+		
+		 iA= (quantile->reverseQuantile(l,3000))/3000.0;
+		 //cout << "iA: " << iA << endl;
+		 
+		 iB= (quantile->reverseQuantile(u,3000))/3000.0;
+		//cout << iB << endl;
 		
 		double O=N*(iB-iA);
 		double lambda= fabs(O-E);

@@ -11,7 +11,7 @@ Modification might needed.
 #include<cassert>
 #include "../SourceCode/Quantiles/ReservoirSampling.h"
 #include <iostream>
-
+#include <random>
 void test_reservoir()
 {
 	int k = 1000; // Reservoir sample size	
@@ -198,9 +198,35 @@ void quicktest()
 	cout << "1: "<<a.getQuantile(1) << endl;
 }
 
+void test_reverse()
+{
+	ReservoirSampling larry(3000);
+	int stream_size = 1000;
+	double item;
+	
+	default_random_engine generator;
+    normal_distribution<double> distribution(10000,50);
+    
+    for (int i=0; i<stream_size; i++) 
+    {
+    	//item = distribution(generator);
+    	item = i;
+  	    larry.insert(item);
+  	}
+  	
+  	double hi;
+  	hi = larry.getQuantile(0.5);
+  	cout << hi << endl;
+  	double hey;
+  	hey = larry.reverseQuantile(500, 100);
+  	cout << hey << endl;
+}
+
+
 int main()
 {
-  test_reservoir();
-  quicktest();
+  //test_reservoir();
+  //quicktest();
+  test_reverse();
   return 0;
 }
