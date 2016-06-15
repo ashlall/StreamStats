@@ -34,7 +34,23 @@ ChiSquare::ChiSquare(double m,int q)
 	}
 	
 }
-
+ChiSquare::~ChiSquare()
+{	
+	switch(Q)
+	{
+	case 1: delete quantile_GK;
+		break;
+	case 2:// delete quantile_QD
+		break;
+	case 3: //delete quantile_RS;
+		break;
+	case 4:// delete quantile_CMS;
+		break;
+	default:
+		delete quantile_GK;
+	}
+	
+}
 void ChiSquare::insert(double val)
 {
 	switch(Q)
