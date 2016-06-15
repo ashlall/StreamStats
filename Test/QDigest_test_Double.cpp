@@ -14,29 +14,29 @@ void test_qdigetDouble()
 				//Compress factor: usually the choice of k ranges from 0.3*stream_length to 0.5stream_length  in order to get the best query results
 
 					
-	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
+	double quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
 	bool condA,condB,condC,condD,condE,condF,condG,condH;
     double upper,lower;
     
-    int random_fix1 = rand()% RAND_MAX; //used to test corner case where n = 1
-    int random_fix2 = rand()% RAND_MAX;
-    int random_fix3 = rand()% RAND_MAX;
-    
-	QDigest a(k);
-	QDigest b(k);
-	QDigest c(k);
-	QDigest d(k);
-    QDigest e(k);
-	QDigest f(k);
-	QDigest g(k);
-	QDigest h(k);
+    double random_fix1 = rand()% RAND_MAX + 0.12345; //used to test corner case where n = 1
+    double random_fix2 = rand()% RAND_MAX + 0.12345;
+    double random_fix3 = rand()% RAND_MAX + 0.12345;
+
+	QDigestDouble a(k);
+	QDigestDouble b(k);
+	QDigestDouble c(k);
+	QDigestDouble d(k);
+    QDigestDouble e(k);
+	QDigestDouble f(k);
+	QDigestDouble g(k);
+	QDigestDouble h(k);
 		
 	for (double i = 0; i <= n; i = i + 0.1) //inserting in increasing order
     {	
   		a.insert(i); 
     }
 	bool condA1;
-	int LA = a.get_stream_size(); //test the function get_stream_size()
+	long LA = a.get_stream_size(); //test the function get_stream_size()
 	condA1= (LA == n/0.1);
 	assert(condA1 == true);
 	   
@@ -46,7 +46,7 @@ void test_qdigetDouble()
   		b.insert(j); 
     }
     bool condB1;
-	int LB = b.get_stream_size(); //test the function get_stream_size()
+	long LB = b.get_stream_size(); //test the function get_stream_size()
 	condB1= (LB == n/0.1);
 	assert(condB1 == true); 	
   	
@@ -65,7 +65,7 @@ void test_qdigetDouble()
   			 }
   			 //cout << ""<<endl;
   			 bool condC1;
-			 int LC = c.get_stream_size(); //test the function get_stream_size()
+			 long LC = c.get_stream_size(); //test the function get_stream_size()
 			 condC1= (LC == n+1);
 			 assert(condC1 == true); 			 
   		}
@@ -82,7 +82,7 @@ void test_qdigetDouble()
   			 }  
   			 //cout << ""<<endl;
   			 bool condD1;
-			 int LD = d.get_stream_size(); //test the function get_stream_size()
+			 long LD = d.get_stream_size(); //test the function get_stream_size()
 			 condD1= (LD == n+1);
 			 assert(condD1 == true);  
   		}	
@@ -99,7 +99,7 @@ void test_qdigetDouble()
   			 }  
   			 //cout <<""<<endl;
   			 bool condE1;
-			 int LE = e.get_stream_size(); //test the function get_stream_size()
+			 long LE = e.get_stream_size(); //test the function get_stream_size()
 			 condE1= (LE == n+1);
 			 assert(condE1 == true);
   		}
@@ -136,8 +136,8 @@ void test_qdigetDouble()
   	  quantG=g.getQuantile(interval);
   	  quantH=h.getQuantile(interval);
   	  
-  	  lower=(interval-0.04)*n;
-  	  upper=(interval+0.04)*n;
+  	  lower=(interval-0.06)*n;
+  	  upper=(interval+0.06)*n;
   	  
   	  condA= ((lower<=quantA) && (upper>=quantA));
   	  //checking if quantile is within error range
@@ -150,10 +150,12 @@ void test_qdigetDouble()
   	  condE= ((lower<=quantE) && (upper>=quantE));
   	  //checking if quantile is within error range
   	  
+
+  	  condF= ((quantF <= 1.0001*random_fix1) && (quantF >= 0.9999*random_fix1));
+  	  condG= ((quantG <= 1.0001*random_fix2) && (quantG >= 0.9999*random_fix2));
+  	  condH= ((quantH <= 1.0001*random_fix3) && (quantH >= 0.9999*random_fix3));
   	  
-  	  condF= (random_fix1 == quantF);
-  	  condG= (random_fix2 == quantG);
-  	  condH= (random_fix3 == quantH);
+  	  
   	  //checking if the condition holds in the corner case where stream size = 1
   	  
   	  assert(condA==true);
