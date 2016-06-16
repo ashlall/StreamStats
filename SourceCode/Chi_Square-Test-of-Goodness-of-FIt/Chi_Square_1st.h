@@ -5,7 +5,7 @@
 
 #include "../Quantiles/GK.h"
 #include "../Quantiles/ReservoirSampling.h"
-#include "../Quantiles/QDigestDouble.h"
+//#include "../Quantiles/QDigestDouble.h"
 //#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 
@@ -29,19 +29,13 @@ public:
 	void insert(double val);
 	double calculate_statistic_ifNormal(int k, double mean, double SD);
 	double calculate_statistic(int k,double (*f)(double));
-	
 	double NormalCDFInverse_pub(double p, double mean, double SD);
-	/*
-	bool ifBinomial()
-	bool ifExponentianl()
-	..
-	*/
 	
 private:
 	double chi_squared;
 	double memory;
 	int N;
-	int K;
+	double K;
 	int Q;
 	
 	QuantileSketch* quantile;
