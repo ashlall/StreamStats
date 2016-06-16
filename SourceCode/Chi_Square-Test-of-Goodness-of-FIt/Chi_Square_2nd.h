@@ -5,7 +5,7 @@
 
 #include "../Quantiles/GK.h"
 #include "../Quantiles/ReservoirSampling.h"
-#include "../Quantiles/QDigestDouble.h"
+//#include "../Quantiles/QDigestDouble.h"
 //#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 
@@ -32,8 +32,8 @@ public:
 private:
 	double chi_squared;
 	double memory;
-	int N;
-	int M;
+	double N;
+	double M;
 	int K;
 	int Q;
 	
