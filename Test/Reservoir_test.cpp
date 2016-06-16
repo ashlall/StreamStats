@@ -201,25 +201,26 @@ void quicktest()
 void test_reverse()
 {
 	ReservoirSampling larry(3000);
-	int stream_size = 1000;
+	int stream_size =88888;
 	double item;
 	
 	default_random_engine generator;
-    normal_distribution<double> distribution(10000,50);
+    normal_distribution<double> distribution(3000,50);
     
     for (int i=0; i<stream_size; i++) 
     {
-    	//item = distribution(generator);
-    	item = i;
+    	item = distribution(generator);
+    	//item = i;
   	    larry.insert(item);
   	}
   	
-  	double hi;
-  	hi = larry.getQuantile(0.5);
-  	cout << hi << endl;
-  	double hey;
-  	hey = larry.reverseQuantile(500, 100);
-  	cout << hey << endl;
+  	double median;
+  	median = larry.getQuantile(0.5);
+  	cout << median << endl;
+  	
+  	double median_index;
+  	median_index = larry.reverseQuantile(3000, stream_size);
+  	cout << median_index << endl;
 }
 
 

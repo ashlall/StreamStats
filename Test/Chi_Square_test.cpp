@@ -79,16 +79,15 @@ void test_chi_square_1st() //One-sample test
 */
 	
 	/*
-	Test function calculate_statistic_ifNormal(int k, double mean, double SD);
+	Test function calculate_statistic_ifNormal(number of bins, double mean, double SD);
 	*/
-	ChiSquare b(3000); 
+	ChiSquare b(3000,3); //ChiSquare b(memory, sketch method);
 	int stream_size = 10000;
 	double item;
-	long sizel;
 	double chi;
 	
 	default_random_engine generator;
-    normal_distribution<double> distribution(10,20);
+    normal_distribution<double> distribution(88888,20);
     
     for (int i=0; i<stream_size; i++) 
     {
@@ -98,7 +97,7 @@ void test_chi_square_1st() //One-sample test
   	    b.insert(item);
   	}
   	
-  	chi = b.calculate_statistic_ifNormal(50, 10, 20);
+  	chi = b.calculate_statistic_ifNormal(100, 88888, 20);
   	cout << "chi: " << chi << endl;
 }
 

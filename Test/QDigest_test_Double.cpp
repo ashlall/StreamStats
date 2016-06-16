@@ -4,6 +4,7 @@
 #include<cassert>
 #include "../SourceCode/Quantiles/QDigestDouble.h"
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -184,10 +185,36 @@ void test_qdigetDouble()
    */
 }
 
+void test_reverse()
+{
+	QDigestDouble larry(3000);
+	int stream_size =88888;
+	double item;
+	
+	default_random_engine generator;
+    normal_distribution<double> distribution(3000,50);
+    
+    for (int i=0; i<stream_size; i++) 
+    {
+    	item = distribution(generator);
+    	//item = i;
+  	    larry.insert(item);
+  	}
+  	
+  	double median;
+  	median = larry.getQuantile(0.5);
+  	cout << median << endl;
+  	
+  	double median_index;
+  	median_index = larry.reverseQuantile(3000, stream_size);
+  	cout << median_index << endl;
+}
+
 
 
 int main()
 {
-  test_qdigetDouble();
+  //test_qdigetDouble();
+  test_reverse();
   return 0;
 }

@@ -45,29 +45,36 @@ void ChiSquare::insert(double val)
 
 double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
-	K=k;
+	//K=k;
 	N= quantile -> get_stream_size();
-	//K = 2 * pow(N,0.4);
+
+	K = 2 * pow(N,0.4);
 	double E=N/K;
 	for (double i=1;i<K;i++)
 	{
 		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
-		//cout << "l: " << l <<endl;
+		cout << "l: " << l <<endl;
 		double u= NormalCDFInverse_pub(i/K, mean, SD);	
-		//cout << "u: " << u <<endl;
+		cout << "u: " << u <<endl;
 		double iA,iB;
 		
-		 iA= (quantile->reverseQuantile(l,3000))/3000.0;
-		 //cout << "iA: " << iA << endl;
+		 iA= (quantile->reverseQuantile(l,N))/N;
+		 cout << "iA: " << iA << endl;
 		 
-		 iB= (quantile->reverseQuantile(u,3000))/3000.0;
-		//cout << iB << endl;
+		 iB= (quantile->reverseQuantile(u,N))/N;
+		cout << "iB: " << iB << endl;
 		
 		double O=N*(iB-iA);
+	
 		double lambda= fabs(O-E);
 		
+		cout << "O: " << O << " " << "E: " << E <<endl;
+			
 	    chi_squared=chi_squared+ ((lambda*lambda)/E);
+		cout << "chi_squared: " << chi_squared <<endl;
+		cout << " " <<endl;
 	}		
+	cout << "bins: " << K <<endl;
 	return chi_squared;
 }
 
