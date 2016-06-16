@@ -1,14 +1,15 @@
 // Unit tests for One-Sample Chi-square & Two sample Chi-square.
 
 #include<cassert>
-#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
+//./cs.o#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
+#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_2nd.h"
 #include <iostream>
 #include<iomanip> 
 #include <random>
 
 
 using namespace std;
-
+/*
 void test_chi_square_1st() //One-sample test
 {
 
@@ -76,11 +77,9 @@ void test_chi_square_1st() //One-sample test
 		}
 	}
 	
-*/
+
 	
-	/*
-	Test function calculate_statistic_ifNormal(int k, double mean, double SD);
-	*/
+	
 	ChiSquare b(3000); 
 	int stream_size = 10000;
 	double item;
@@ -102,17 +101,41 @@ void test_chi_square_1st() //One-sample test
   	cout << "chi: " << chi << endl;
 }
 
-
+*/
 
 void test_chi_square_2nd() //Two-sample test
 {
+	ChiSquare2 c(100); 
+	int stream_size = 1000;
+	double item;
+	double item2;
+	long sizel;
+	double chi;
+	
+	default_random_engine generator;
+	normal_distribution<double> distribution(10000,200);
+	normal_distribution<double> distribution2(10000,200);
+	
+    
+    for (int i=0; i<stream_size; i++) 
+    {
+    	item = distribution(generator);
+    	item2=distribution2(generator);
+    	
+  	c.insertStreamOne(item);
+  	c.insertStreamTwo(item2);
+  }
+  	
+  	chi = c.calculate_statistic(50);
+  	cout << "chi: " << chi << endl;
+	
 
 }
 
 
 int main()
 {
-	test_chi_square_1st();
-	//test_chi_square_2nd();
+	//test_chi_square_1st();
+	test_chi_square_2nd();
 	return 0;
 }
