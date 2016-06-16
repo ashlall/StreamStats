@@ -2,6 +2,7 @@
 
 #include<cassert>
 //./cs.o#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
+#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
 #include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_2nd.h"
 #include <iostream>
 #include<iomanip> 
@@ -9,12 +10,11 @@
 
 
 using namespace std;
-/*
+
 void test_chi_square_1st() //One-sample test
 {
 
-/*
-	
+    /*
 	Test function NormalCDFInverse_pub(double p, double mean, double SD); PASSED
 	
     double p[] =	// used for testing the accuracy of the function NormalCDFInverse_pub();
@@ -77,7 +77,7 @@ void test_chi_square_1st() //One-sample test
 		}
 	}
 	
-
+ */
 	
 	
 	/*
@@ -104,7 +104,7 @@ void test_chi_square_1st() //One-sample test
   	cout << "chi: " << chi << endl;
 }
 
-*/
+
 
 void test_chi_square_2nd() //Two-sample test
 {
@@ -127,7 +127,7 @@ void test_chi_square_2nd() //Two-sample test
     	
   	c.insertStreamOne(item);
   	c.insertStreamTwo(item2);
-  }
+   }
   	
   	chi = c.calculate_statistic(50);
   	cout << "chi: " << chi << endl;
@@ -138,7 +138,7 @@ void test_chi_square_2nd() //Two-sample test
 
 int main()
 {
-	//test_chi_square_1st();
-	test_chi_square_2nd();
+	test_chi_square_1st();
+	//test_chi_square_2nd();
 	return 0;
 }
