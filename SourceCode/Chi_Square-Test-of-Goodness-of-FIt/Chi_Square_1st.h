@@ -16,8 +16,7 @@ class ChiSquare
 {
 public:
 	ChiSquare();
-	ChiSquare(double m); //m is the amount of memory
-	ChiSquare(double m,int q);
+	ChiSquare(double m,int q=1);
 	/* q=1: GreenWaldKhanna Sketch
 	   q=2: Q-Digest Sketch
 	   q=3: Count Min Sketch
@@ -29,19 +28,17 @@ public:
 	void insert(double val);
 	double calculate_statistic_ifNormal(int k, double mean, double SD);
 	double calculate_statistic(int k,double (*f)(double));
-	
 	double NormalCDFInverse_pub(double p, double mean, double SD);
-	/*
-	bool ifBinomial()
-	bool ifExponentianl()
-	..
-	*/
+	double* GetUpper();
+	double* GetLower();
 	
 private:
 	double chi_squared;
 	double memory;
+	double *UpperBins;
+	double *LowerBins;
 	int N;
-	int K;
+	double K;
 	int Q;
 	
 	QuantileSketch* quantile;

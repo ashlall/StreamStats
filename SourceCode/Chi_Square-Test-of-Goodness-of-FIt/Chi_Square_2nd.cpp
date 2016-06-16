@@ -3,6 +3,7 @@
 
 // CHECK THE LESS K LOOP IN THE STATISTIC
 
+
 ChiSquare2::ChiSquare2(double m)
 {
 	Q=0;
@@ -18,8 +19,8 @@ ChiSquare2::ChiSquare2(double m,int q)
 	switch(Q)
 	{
 	case 1: memory=m;
-		quantile1=new GK((int)(memory));
-		quantile2=new GK((int)(memory));
+		quantile1=new GK((int)memory);
+		quantile2=new GK((int)memory);
 		break;
 	case 2:/*memory=m;
 		quantile1=new QDigestDouble(memory);
