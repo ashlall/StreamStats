@@ -10,27 +10,28 @@
 
 using namespace std;
 
-void test_chi_square_1st()
+
+void test_chi_square_1st() //One-sample test
 {
-	
-	ChiSquare c(1000); 
+
+	ChiSquare b(3000,3); //ChiSquare b(memory, sketch method);
 	int stream_size = 10000;
 	double item;
-	long sizel;
 	double chi;
 	
-    default_random_engine generator(5);
-    normal_distribution<double> distribution(100,20);
+	default_random_engine generator(5);
+	normal_distribution<double> distribution(100,20);
     
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
   	c.insert(item);
     }
-  	
-    //chi = c.calculate_statistic_ifNormal(50,100, 20);
 
 }
+  	chi = b.calculate_statistic_ifNormal(100,100, 20);
+  	cout << "chi: " << chi << endl;
+
 
 /*
 void Chi2TestOne() //Two-sample test
@@ -55,6 +56,8 @@ void Chi2TestOne() //Two-sample test
   	c.insertStreamOne(item);
   	c.insertStreamTwo(item);
     }
+  	c.insertStreamTwo(item2);
+   }
   	
   	chi = c.calculate_statistic(100);
   	cout << "chi: " << chi << endl;

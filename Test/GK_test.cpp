@@ -187,7 +187,7 @@ void quicktest()
 void test_reverse()
 {
 	GK larry(3000);
-	int stream_size = 1000;
+	int stream_size =88888;
 	double item;
 	
 	default_random_engine generator;
@@ -200,12 +200,12 @@ void test_reverse()
   	    larry.insert(item);
   	}
   	
-  	double hi;
-  	hi = larry.getQuantile(0.5);
-  	cout << hi << endl;
-  	double hey;
-  	hey = larry.reverseQuantile(3000, 1000);
-  	cout << hey << endl;
+  	double median;
+  	median = larry.getQuantile(0.5);
+  	cout << median << endl;
+  	double median_index;
+  	median_index = larry.reverseQuantile(3000, stream_size);
+  	cout << median_index << endl;
 }
 
 int main()

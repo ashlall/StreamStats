@@ -5,7 +5,7 @@
 
 #include "../Quantiles/GK.h"
 #include "../Quantiles/ReservoirSampling.h"
-#include "../Quantiles/QDigestDouble.h"
+//#include "../Quantiles/QDigestDouble.h"
 //#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 

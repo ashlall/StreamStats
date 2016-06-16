@@ -8,8 +8,8 @@ ChiSquare2::ChiSquare2(double m)
 	Q=0;
 	chi_squared=0;
 	memory=m;
-	quantile1=new GK((int)(m));
-	quantile2=new GK((int)(m));
+	quantile1=new GK(memory);
+	quantile2=new GK((memory);
 }
 
 ChiSquare2::ChiSquare2(double m,int q)
