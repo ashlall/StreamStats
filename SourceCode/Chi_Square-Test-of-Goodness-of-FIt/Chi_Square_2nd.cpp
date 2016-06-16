@@ -1,10 +1,7 @@
 //Two Sample Chi-Squared Test
-#include<cassert>
-//#include "../Quantiles/GK.h"
-#include <iostream>
-#include <stdlib.h> 
-#include<math.h> 
 #include<iomanip> // Parametric manipulators. Used to set precision. 
+
+// CHECK THE LESS K LOOP IN THE STATISTIC
 
 ChiSquare2::ChiSquare2(double m)
 {
@@ -23,13 +20,13 @@ ChiSquare2::ChiSquare2(double m,int q)
 		quantile1=new GK((int)(memory));
 		quantile2=new GK((int)(memory));
 		break;
-	case 2:memory=m;
+	case 2:/*memory=m;
 		quantile1=new QDigestDouble(memory);
 		quantile2=new QDigestDouble(memory);*/
 		break;
 	case 3: memory=m;
 		quantile1=new ReservoirSampling((int)memory);
-		quantile2=new ReservoirSampling((int)memory)*/
+		quantile2=new ReservoirSampling((int)memory);
 		break;
 	case 4: /*memory=m;
 		quantile1=new CMS((int)memory);
@@ -68,8 +65,8 @@ double ChiSquare2::calculate_statistic(int k)
 		double l= quantile1->getQuantile((i-1)/K);
 		double u= quantile1->getQuantile(i/K);
 		double iA,iB;
-		iA=(quantile2->reverseQuantile(l,memory))/memory;
-		iB=(quantile2->reverseQuantile(u,memory))/memory;
+		iA=quantile2->reverseQuantile(l,memory));
+		iB=quantile2->reverseQuantile(u,memory));
 		double R=M*(iB-iA);
 		
 		chi_squared=chi_squared+ ((((S*sqrt(M/N)-R*sqrt(N/M))*(S*sqrt(M/N)-R*sqrt(N/M)))/ (S+R)));
