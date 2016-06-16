@@ -3,12 +3,14 @@
 
 // CHECK THE LESS K LOOP IN THE STATISTIC
 
+
 ChiSquare2::ChiSquare2(double m)
 {
 	Q=0;
 	chi_squared=0;
-	quantile1=new GK((int)(m));
-	quantile2=new GK((int)(m));
+	memory=m;
+	quantile1=new GK(memory);
+	quantile2=new GK((memory);
 }
 
 ChiSquare2::ChiSquare2(double m,int q)
@@ -60,15 +62,14 @@ double ChiSquare2::calculate_statistic(int k)
 	N=quantile1-> get_stream_size();
 	M=quantile2-> get_stream_size();
 	double S=N/K;
-	for (double i=1;i<=K;i++)
+	for (double i=1;i<K;i++)
 	{
 		double l= quantile1->getQuantile((i-1)/K);
 		double u= quantile1->getQuantile(i/K);
 		double iA,iB;
-		iA=quantile2->reverseQuantile(l,memory);
-		iB=quantile2->reverseQuantile(u,memory);
+		iA=(quantile2->reverseQuantile(l,memory))/memory;
+		iB=(quantile2->reverseQuantile(u,memory))/memory;
 		double R=M*(iB-iA);
-		
 		chi_squared=chi_squared+ ((((S*sqrt(M/N)-R*sqrt(N/M))*(S*sqrt(M/N)-R*sqrt(N/M)))/ (S+R)));
 	}		
 	return chi_squared;	
