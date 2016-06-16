@@ -10,7 +10,7 @@ ChiSquare2::ChiSquare2(double m)
 	chi_squared=0;
 	memory=m;
 	quantile1=new GK(memory);
-	quantile2=new GK((memory);
+	quantile2=new GK(memory);
 }
 
 ChiSquare2::ChiSquare2(double m,int q)
@@ -19,8 +19,8 @@ ChiSquare2::ChiSquare2(double m,int q)
 	switch(Q)
 	{
 	case 1: memory=m;
-		quantile1=new GK((int)(memory));
-		quantile2=new GK((int)(memory));
+		quantile1=new GK((int)memory);
+		quantile2=new GK((int)memory);
 		break;
 	case 2:/*memory=m;
 		quantile1=new QDigestDouble(memory);
