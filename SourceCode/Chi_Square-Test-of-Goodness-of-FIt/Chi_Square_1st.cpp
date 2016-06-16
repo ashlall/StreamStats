@@ -2,18 +2,13 @@
 
 #include<iomanip> // Parametric manipulators. Used to set precision. 
 
-ChiSquare::ChiSquare(double m)
-{
-	Q=0;
-	chi_squared=0;
-	memory=m;
-	quantile=new GK(m);
-}
 
 ChiSquare::ChiSquare(double m,int q)
 {
 	Q=q;
 	chi_squared=0;
+	UpperBins= new double[1];
+	LowerBins=new double[1];
 	switch(Q)
 	{
 	case 1: memory=m;
@@ -37,6 +32,8 @@ ChiSquare::ChiSquare(double m,int q)
 ChiSquare::~ChiSquare()
 {	
 	delete quantile;
+	delete UpperBins;
+	delete LowerBins;
 }
 void ChiSquare::insert(double val)
 {
@@ -49,12 +46,16 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 	K=k;
 	N= quantile -> get_stream_size();
 	double E=N/K;
-	for (double i=1;i<K;i++)
+	UpperBins= new double[k];
+	LowerBins=new double[k];
+	for (double i=1;i<=K;i++)
 	{
 		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
-		double u= NormalCDFInverse_pub(i/K, mean, SD);	
-		double iA,iB;
+		double u= NormalCDFInverse_pub(i/K, mean, SD);
 		
+		double iA,iB;
+		UpperBins[(int)i]= l;
+		LowerBins[(int)i]= u;
 		 iA= (quantile->reverseQuantile(l,memory))/memory;
 		 iB= (quantile->reverseQuantile(u,memory))/memory;
 		double O=N*(iB-iA);
@@ -71,10 +72,14 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 	K=k;
 	N= quantile-> get_stream_size();
 	double E=N/K;
-	for (double i=1;i<=K;i++)
+	UpperBins= new double[k];
+	LowerBins=new double[k];
+	for (double i=1;i<K;i++)//fix this
 	{
 		double l= (*f)((i-1)/K);
 		double u= (*f)(i/K);
+		UpperBins[(int)i]= l;
+		LowerBins[(int)i]= u;
 		double iA,iB;
 		iA=(quantile->reverseQuantile(l,memory))/memory;
 		iB=(quantile->reverseQuantile(u,memory))/memory;
@@ -87,6 +92,15 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 	return chi_squared;	
 }
 
+double* ChiSquare::GetLower()
+{
+	return LowerBins;
+}
+
+double* ChiSquare::GetUpper()
+{
+	return UpperBins;
+}
 
 double ChiSquare :: NormalCDFInverse_pub(double p, double mean, double SD)
 {
@@ -102,10 +116,16 @@ output: corresponding x value
 */
 double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
 {
-    if (p <= 0.0 || p >= 1.0)
+    if (p < 0.0 || p > 1.0)
     {
        //throw an exception
     }
+    
+    if(p==0)
+    	    return 0;
+    
+    if(p==1)
+    	    return 99999999;
     
     if (p < 0.5)
     {
