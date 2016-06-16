@@ -34,7 +34,7 @@ private:
 	double memory;
 	double N;
 	double M;
-	int K;
+	double K;
 	int Q;
 	
 	QuantileSketch* quantile1;
