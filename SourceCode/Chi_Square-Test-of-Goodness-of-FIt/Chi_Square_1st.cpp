@@ -1,9 +1,5 @@
 //One Sample Chi-Squared Test
 #include<cassert>
-//#include "../Quantiles/ReservoirSampling.h"
-#include "../Quantiles/GK.h"
-//#include "../Quantiles/Q-Digest.h"
-//#include "../Quantiles/QDigestDouble.h"
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h> 
@@ -25,9 +21,9 @@ ChiSquare::ChiSquare(double m,int q)
 	{
 	case 1: quantile=new GK(memory);
 		break;
-	case 2:// quantile_QD=new QDigestDouble(memory);
+	case 2: quantile=new QDigestDouble(memory);
 		break;
-	case 3: //quantile_RS=new ReservoirSampling((int)memory);
+	case 3: quantile=new ReservoirSampling((int)memory);
 		break;
 	case 4:// quantile_CMS=new CMS((int)memory);
 		break;

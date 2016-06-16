@@ -25,8 +25,6 @@ class QuantileSketch
   void write(); // write on the disk?
 };
 
-#endif
-
 
 /*
 Member Functions:
@@ -48,8 +46,7 @@ double QuantileSketch::reverseQuantile(double r, int n)
   return lo;
 }
 
-
-
+#endif
 
 
 
