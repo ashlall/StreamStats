@@ -98,7 +98,7 @@ void test_chi_square_1st() //One-sample test
   	    b.insert(item);
   	}
   	
-  	chi = b.calculate_statistic_ifNormal(50, 8, 20);
+  	chi = b.calculate_statistic_ifNormal(50, 10, 20);
   	cout << "chi: " << chi << endl;
 }
 
