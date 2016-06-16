@@ -11,14 +11,15 @@ using namespace std;
 
 void test_chi_square_1st() //One-sample test
 {
-	ChiSquare b(1000); //ChiSquare b(memory, sketch method);
-	int stream_size = 10000;
+	ChiSquare b(100000); //ChiSquare b(memory, sketch method);
+	int stream_size = 10000000;
 	double item;
 	double chi;
+	int k=50;
 	double N=0;
 	double *items=new double[stream_size];
 	default_random_engine generator(5);
-	normal_distribution<double> distribution(10000,200);
+	normal_distribution<double> distribution(10000,2000);
     
     for (int i=0; i<stream_size; i++) 
     {
@@ -27,8 +28,9 @@ void test_chi_square_1st() //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
+    chi = b.calculate_statistic_ifNormal(k,10000,2000);
     
-    int k=50;
+    
     double *Upper=b.GetUpper();
     double *Lower=b.GetLower();
     double E=N/k;
@@ -36,7 +38,6 @@ void test_chi_square_1st() //One-sample test
     for (int i=1;i<=k;i++)
     {		
     	    double O=0;
-    	    cout<<Lower[i]<<" "<< Upper[i]<<endl;
     	    for(int j=0;j<stream_size;j++)
     	    {
     	    	    if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
@@ -47,7 +48,6 @@ void test_chi_square_1st() //One-sample test
     	    
     }
     cout<<chiActual<<" actual"<<endl;
-  	chi = b.calculate_statistic_ifNormal(k,10000,200);
   	cout << "chi: " << chi << endl;
   	delete items;
 }
