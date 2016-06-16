@@ -1,14 +1,12 @@
 //One Sample Chi-Squared Test
-#include<cassert>
-#include <iostream>
-#include <stdlib.h> 
-#include<math.h> 
+
 #include<iomanip> // Parametric manipulators. Used to set precision. 
 
 ChiSquare::ChiSquare(double m)
 {
 	Q=0;
 	chi_squared=0;
+	memory=m;
 	quantile=new GK(m);
 }
 
@@ -16,16 +14,19 @@ ChiSquare::ChiSquare(double m,int q)
 {
 	Q=q;
 	chi_squared=0;
-	memory= m;
 	switch(Q)
 	{
-	case 1: quantile=new GK(memory);
+	case 1: memory=m;
+		quantile=new GK(memory);
 		break;
-	case 2: quantile=new QDigestDouble(memory);
+	case 2: //memory=m;
+		//quantile=new QDigestDouble(memory);
 		break;
-	case 3: quantile=new ReservoirSampling((int)memory);
+	case 3: memory=m;
+		quantile=new ReservoirSampling((int)memory);
 		break;
-	case 4:// quantile_CMS=new CMS((int)memory);
+	case 4:// memory=m;
+		// quantile_CMS=new CMS((int)memory);
 		break;
 	default:
 		cout<<" Incorrect Case. Valid inputs lie between 1 and 4"<<endl;
@@ -45,36 +46,22 @@ void ChiSquare::insert(double val)
 
 double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 {	
-	//K=k;
+	K=k;
 	N= quantile -> get_stream_size();
-
-	K = 2 * pow(N,0.4);
 	double E=N/K;
 	for (double i=1;i<K;i++)
 	{
 		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
-		cout << "l: " << l <<endl;
 		double u= NormalCDFInverse_pub(i/K, mean, SD);	
-		cout << "u: " << u <<endl;
 		double iA,iB;
 		
-		 iA= (quantile->reverseQuantile(l,N))/N;
-		 cout << "iA: " << iA << endl;
-		 
-		 iB= (quantile->reverseQuantile(u,N))/N;
-		cout << "iB: " << iB << endl;
-		
+		 iA= (quantile->reverseQuantile(l,memory))/memory;
+		 iB= (quantile->reverseQuantile(u,memory))/memory;
 		double O=N*(iB-iA);
-	
 		double lambda= fabs(O-E);
-		
-		cout << "O: " << O << " " << "E: " << E <<endl;
 			
 	    chi_squared=chi_squared+ ((lambda*lambda)/E);
-		cout << "chi_squared: " << chi_squared <<endl;
-		cout << " " <<endl;
 	}		
-	cout << "bins: " << K <<endl;
 	return chi_squared;
 }
 
@@ -89,8 +76,8 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 		double l= (*f)((i-1)/K);
 		double u= (*f)(i/K);
 		double iA,iB;
-		iA=quantile->reverseQuantile(l,100);
-		iB=quantile->reverseQuantile(u,100);
+		iA=(quantile->reverseQuantile(l,memory))/memory;
+		iB=(quantile->reverseQuantile(u,memory))/memory;
 		
 		double O=N*(iB-iA);
 		double lambda= fabs(O-E);
