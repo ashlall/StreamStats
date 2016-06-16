@@ -65,8 +65,8 @@ double ChiSquare2::calculate_statistic(int k)
 		double l= quantile1->getQuantile((i-1)/K);
 		double u= quantile1->getQuantile(i/K);
 		double iA,iB;
-		iA=quantile2->reverseQuantile(l,memory));
-		iB=quantile2->reverseQuantile(u,memory));
+		iA=quantile2->reverseQuantile(l,memory);
+		iB=quantile2->reverseQuantile(u,memory);
 		double R=M*(iB-iA);
 		
 		chi_squared=chi_squared+ ((((S*sqrt(M/N)-R*sqrt(N/M))*(S*sqrt(M/N)-R*sqrt(N/M)))/ (S+R)));
