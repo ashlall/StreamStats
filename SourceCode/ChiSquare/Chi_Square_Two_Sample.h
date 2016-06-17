@@ -43,5 +43,5 @@ private:
 	
 };
 
-#include"Chi_Square_2nd.cpp"
+#include"Chi_Square_Two_Sample.h"
 #endif

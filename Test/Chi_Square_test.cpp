@@ -1,8 +1,8 @@
 // Unit tests for One-Sample Chi-square & Two sample Chi-square.
 
 #include<cassert>
-#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_1st.h"
-#include "../SourceCode/Chi_Square-Test-of-Goodness-of-FIt/Chi_Square_2nd.h"
+#include "../SourceCode/ChiSquare/Chi_Square_One_Sample.h"
+#include "../SourceCode/ChiSquare/Chi_Square_Two_Sample.h"
 #include <iostream>
 #include<iomanip> 
 #include <random>
