@@ -12,22 +12,23 @@
 #include<math.h>
 
 
-class ChiSquare
+class ChiSquareContinuous
 {
 public:
-	ChiSquare();
-	ChiSquare(double m,int q=1);
+	ChiSquareContinuous();
+	ChiSquareContinuous(double m,int q=1);
 	/* q=1: GreenWaldKhanna Sketch
 	   q=2: Q-Digest Sketch
 	   q=3: Count Min Sketch
 	   q=4 Reservoir Sampling
 	*/
 	
-	~ChiSquare();
+	~ChiSquareContinuous();
   	
 	void insert(double val);
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
 	double calculate_statistic(int num_buckets, double (*f)(double));
+	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
 	double* GetUpper();
 	double* GetLower();
 	
@@ -44,5 +45,5 @@ private:
 	
 };
 
-#include"ChiSquareContinuous.cpp"
+#include "ChiSquareContinuous.cpp"
 #endif

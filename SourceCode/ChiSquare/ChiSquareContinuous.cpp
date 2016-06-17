@@ -1,10 +1,9 @@
-//One Sample Chi-Squared Test
+// Continuous Chi Squared test
 #include<iomanip> // Parametric manipulators. Used to set precision. 
 
-ChiSquare::ChiSquare(double m,int q)
+ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 {
 	chi_squared = 0;
-
 	switch(q)
 	{
 	case 1: memory = m;
@@ -23,21 +22,22 @@ ChiSquare::ChiSquare(double m,int q)
 		cout<<" Incorrect Case. Valid inputs lie between 1 and 4"<<endl;
 		cout<<"Error Message"<<endl;
 		// throw an exception
-	}
-	
+	}	
 }
-ChiSquare::~ChiSquare()
+
+ChiSquareContinuous::~ChiSquareContinuous()
 {	
 	delete quantile_sketch;
 	delete UpperBins;
 	delete LowerBins;
 }
-void ChiSquare::insert(double val)
+
+void ChiSquareContinuous::insert(double val)
 {
 	quantile_sketch->insert(val);
 }
 
-double ChiSquare::calculate_statistic_ifNormal(int num_buckets, double mean, double SD)
+double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double mean, double SD)
 {	
         int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
@@ -62,7 +62,7 @@ double ChiSquare::calculate_statistic_ifNormal(int num_buckets, double mean, dou
 	return chi_squared;
 }
 
-double ChiSquare::calculate_statistic(int num_buckets, double(*f)(double))
+double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*f)(double))
 {		
 	int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
@@ -86,12 +86,37 @@ double ChiSquare::calculate_statistic(int num_buckets, double(*f)(double))
 	return chi_squared;	
 }
 
-double* ChiSquare::GetLower()
+double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& distribution_2, int num_buckets)
+{
+  QuantileSketch *quantile_sketch_2 = distribution_2.quantile_sketch;
+  int stream_size_1 = quantile_sketch->get_stream_size();
+  int stream_size_2 = quantile_sketch_2->get_stream_size();
+  
+  double frequency_1 = stream_size_1 / num_buckets;
+  for (int i = 1; i <= num_buckets; i++)
+  {
+    double lower_interval = quantile_sketch->getQuantile(((int)i-1)/num_buckets);
+    double upper_interval = quantile_sketch->getQuantile((int)i/num_buckets);
+    UpperBins[i] = upper_interval;
+    LowerBins[i] = lower_interval;
+    
+    double lower_value, upper_value;
+    lower_value = (quantile_sketch_2->reverseQuantile(lower_interval, memory))/memory;
+    upper_value = (quantile_sketch_2->reverseQuantile(upper_interval, memory))/memory;
+
+    double frequency_2 = stream_size_2 * (upper_value - lower_value);
+    double value = frequency_1 * sqrt(stream_size_2/stream_size_1) - frequency_2 * sqrt(stream_size_1/stream_size_2);
+    chi_squared += (value * value) / (frequency_1 + frequency_2);
+  }
+  return chi_squared;
+}
+
+double* ChiSquareContinuous::GetLower()
 {
 	return LowerBins;
 }
 
-double* ChiSquare::GetUpper()
+double* ChiSquareContinuous::GetUpper()
 {
 	return UpperBins;
 }
@@ -102,13 +127,12 @@ Adapted from John D.Cook.
 input: p(probability 0-1), mean, standard deviation
 output: corresponding x value
 */
-double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
+double ChiSquareContinuous::NormalCDFInverse(double p, double mean, double SD)
 {
     if (p < 0.0 || p > 1.0)
     {
        //throw an exception
     }
-    
     if(p==0)
     	    return 0;
     
@@ -127,7 +151,7 @@ double ChiSquare::NormalCDFInverse(double p, double mean, double SD)
     }
 }
 
-double ChiSquare::RationalApproximation(double t)
+double ChiSquareContinuous::RationalApproximation(double t)
 {
     // Abramowitz and Stegun formula 26.2.23.
     // The absolute value of the error should be less than 4.5 e-4.
