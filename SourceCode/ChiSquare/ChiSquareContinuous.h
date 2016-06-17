@@ -29,21 +29,23 @@ public:
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
 	double calculate_statistic(int num_buckets, double (*f)(double));
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
-	double* GetUpper();
-	double* GetLower();
+	double* get_upper();
+	double* get_lower();
 	
 private:
 	double chi_squared;
 	double memory;
-	double *UpperBins;
-	double *LowerBins;
+	double *upper_bins;
+	double *lower_bins;
 	
 	QuantileSketch* quantile_sketch;
 	
-	double RationalApproximation(double t);
-	double NormalCDFInverse(double p, double mean, double SD);
+	double rational_approximation(double t);
+	double normal_cdf_inverse(double p, double mean, double SD);
 	
 };
+
+class IndexError {};
 
 #include "ChiSquareContinuous.cpp"
 #endif
