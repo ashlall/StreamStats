@@ -1,17 +1,12 @@
 
 One-sample
 
-Why is the CM sketch commented out?
+
 The calculate_statistic_ifNormal method should preferably call the calculate_statistic method, giving it the inverse cdf function for the normal distribution. This avoids repeated code.
 Remove extraneous cout statements once debugging is complete.
-For code adapted from another source, give the full reference so that someone can look up that source. So, don’t just say “John D. Cook”, you should also give the URL where you found this code so that someone can go look it up later and see where it came from / if it makes sense. Similarly with Abramowitz and Stegun.
 Remember to check if the value for the bin exceeds the 2sqrt(N) bound (in which case we fail the test).
 
 Two-sample
-
-Same naming convention issues as above.
-
-Why are the CM and QDigest sketches commented out?
 You can compute sqrt(M/N) once and store it so that it doesn’t have to be recomputed every time.
 Don’t forget that if any of the bins’ values is larger than a known threshold, we just declare the test failed (and we don’t have an accurate value for the statistic).
 
