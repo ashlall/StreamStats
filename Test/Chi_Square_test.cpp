@@ -80,11 +80,11 @@ void test_NormalCDFInverse()
  
 void test_chi_square_1st(int x) //One-sample test
 {
-  ChiSquareContinuous b(5000,x); //ChiSquare b(memory, sketch method);
-	int stream_size = 100000;
+  ChiSquareContinuous b(100000,x); //ChiSquare b(memory, sketch method);
+	int stream_size = 30000000;
 	double item;
 	double chi;
-	int k=50;
+	int k=100;
 	double N=0;
 	double *items=new double[stream_size];
 	default_random_engine generator(5);
