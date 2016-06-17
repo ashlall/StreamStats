@@ -7,7 +7,6 @@
 #include<iostream>
 #include<stdlib.h>
 #include<stdio.h>
-#include<array>
 #include <climits>
 #include <math.h> 
 
@@ -44,14 +43,14 @@ public:
 	long get_stream_size(){return stream_size;};
 
 private:
-	int findIndex(double val);
-	void insertTuple(Tuple* t,int index);
-	void deleteMerge();
-	void deleteTuple(int index);
+	int find_index(double val);
+	void insert_tuple(Tuple* t,int index);
+	void delete_merge();
+	void delete_tuple(int index);
 	int max;
 	Tuple** summary;
-	int numTuples;
-	long numObservations;
+	int num_tuples;
+	long num_observations;
 	long stream_size;	
 };
 
