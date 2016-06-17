@@ -2,7 +2,7 @@
 
 all: BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test
 
-VPATH = ../SourceCode/Quantiles:../SourceCode/BasicStats:../SourceCode/Chi_Square-Test-of-Goodness-of-FIt
+VPATH = ../SourceCode/Quantiles:../SourceCode/BasicStats:../SourceCode/ChiSquare
 
 BasicStats_test: BasicStats.h BasicStats.cpp BasicStats_test.cpp
 	g++ -o BasicStats_test BasicStats_test.cpp
@@ -19,7 +19,7 @@ QDigest_test_Double: QuantileSketch.h Q-Digest.h Q-Digest.cpp QDigestDouble.h QD
 Reservoir_test: QuantileSketch.h ReservoirSampling.h ReservoirSampling.cpp Reservoir_test.cpp
 	g++ -o Reservoir_test Reservoir_test.cpp	
 
-Chi_Square_test: Chi_Square_1st.h Chi_Square_1st.cpp Chi_Square_test.cpp
+Chi_Square_test: Chi_Square_One_Sample.h Chi_Square_One_Sample.cpp Chi_Square_test.cpp
 	g++ -o Chi_Square_test Chi_Square_test.cpp
 
 tidy:
