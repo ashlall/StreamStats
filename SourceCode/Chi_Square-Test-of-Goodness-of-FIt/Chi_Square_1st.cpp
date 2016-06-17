@@ -6,8 +6,8 @@ ChiSquare::ChiSquare(double m,int q)
 	Q=q;
 	chi_squared=0;
 
-	UpperBins= new double[1];
-	LowerBins=new double[1];
+	//UpperBins= new double[1];
+	//LowerBins=new double[1];
 
 	switch(Q)
 	{
@@ -54,8 +54,8 @@ double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
 		double u= NormalCDFInverse_pub(i/K, mean, SD);
 		
 		double iA,iB;
-		UpperBins[(int)i]= l;
-		LowerBins[(int)i]= u;
+		UpperBins[(int)i]= u;
+		LowerBins[(int)i]= l;
 
 		 iA= (quantile->reverseQuantile(l,memory))/memory;
 		 iB= (quantile->reverseQuantile(u,memory))/memory;
@@ -75,12 +75,12 @@ double ChiSquare::calculate_statistic(int k,double(*f)(double))
 	double E=N/K;
 	UpperBins= new double[k];
 	LowerBins=new double[k];
-	for (double i=1;i<K;i++)//fix this
+	for (double i=1;i<=K;i++)//fix this
 	{
 		double l= (*f)((i-1)/K);
 		double u= (*f)(i/K);
-		UpperBins[(int)i]= l;
-		LowerBins[(int)i]= u;
+		UpperBins[(int)i]= u;
+		LowerBins[(int)i]= l;
 		double iA,iB;
 		iA=(quantile->reverseQuantile(l,memory))/memory;
 		iB=(quantile->reverseQuantile(u,memory))/memory;
