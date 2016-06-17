@@ -4,8 +4,8 @@
 ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 {
 	chi_squared = 0;
-	UpperBins = new double;
-	LowerBins = new double;
+	upper_bins = new double;
+	lower_bins = new double;
 	switch(q)
 	{
 	case 1: memory = m;
@@ -21,17 +21,15 @@ ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 		// quantile_sketch = new CMS((int)memory);
 		break;
 	default:
-		cout<<" Incorrect Case. Valid inputs lie between 1 and 4"<<endl;
-		cout<<"Error Message"<<endl;
-		// throw an exception
+		throw IndexError();
 	}	
 }
 
 ChiSquareContinuous::~ChiSquareContinuous()
 {	
 	delete quantile_sketch;
-	delete UpperBins;
-	delete LowerBins;
+	delete upper_bins;
+	delete lower_bins;
 }
 
 void ChiSquareContinuous::insert(double val)
@@ -43,23 +41,22 @@ double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double
 {	
         int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
-	delete UpperBins;
-	delete LowerBins;
-      	UpperBins = new double[num_buckets];
-	LowerBins = new double[num_buckets];
+	delete upper_bins;
+	delete lower_bins;
+      	upper_bins = new double[num_buckets];
+	lower_bins = new double[num_buckets];
 	for (int i = 1; i <= num_buckets; i++)
 	{
-	        double lower_interval = NormalCDFInverse(((double)i-1)/num_buckets, mean, SD);
-	        double upper_interval = NormalCDFInverse((double)i/num_buckets, mean, SD);
+	        double lower_interval = normal_cdf_inverse(((double)i-1)/num_buckets, mean, SD);
+	        double upper_interval = normal_cdf_inverse((double)i/num_buckets, mean, SD);
 		
 		double lower_value, upper_value;
-		UpperBins[i] = upper_interval;
-		LowerBins[i] = lower_interval;
+		upper_bins[i] = upper_interval;
+		lower_bins[i] = lower_interval;
 
 		lower_value = (quantile_sketch->reverseQuantile(lower_interval, memory))/memory;
 		upper_value = (quantile_sketch->reverseQuantile(upper_interval, memory))/memory;
 		double observed_frequency = stream_size * (upper_value - lower_value);
-		//cout <<"O: " << observed_frequency << endl;
 		double lambda = fabs(observed_frequency - expected_frequency);
 	        chi_squared = chi_squared + ((lambda*lambda)/expected_frequency);
 	}		
@@ -70,16 +67,16 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*f)(doub
 {		
 	int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
-	delete UpperBins;
-	delete LowerBins;
-	UpperBins = new double[num_buckets];
-	LowerBins = new double[num_buckets];
+	delete upper_bins;
+	delete lower_bins;
+	upper_bins = new double[num_buckets];
+	lower_bins = new double[num_buckets];
 	for (int i = 1; i <= num_buckets; i++)
 	{
 	        double lower_interval = (*f)(((double)i-1)/num_buckets);
 	        double upper_interval = (*f)((double)i/num_buckets);
-		UpperBins[i] = upper_interval;
-		LowerBins[i] = lower_interval;
+		upper_bins[i] = upper_interval;
+		lower_bins[i] = lower_interval;
 		double lower_value, upper_value;
 	        lower_value = (quantile_sketch->reverseQuantile(lower_interval, memory))/memory;
 		upper_value = (quantile_sketch->reverseQuantile(upper_interval, memory))/memory;
@@ -99,16 +96,16 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   int stream_size_2 = quantile_sketch_2->get_stream_size();
   double frequency_1 = stream_size_1 / num_buckets;
 
-  delete UpperBins;
-  delete LowerBins;
-  UpperBins = new double[num_buckets];
-  LowerBins = new double[num_buckets];
+  delete upper_bins;
+  delete lower_bins;
+  upper_bins = new double[num_buckets];
+  lower_bins = new double[num_buckets];
   for (int i = 1; i <= num_buckets; i++)
   {
     double lower_interval = quantile_sketch->getQuantile(((int)i-1)/num_buckets);
     double upper_interval = quantile_sketch->getQuantile((int)i/num_buckets);
-    UpperBins[i] = upper_interval;
-    LowerBins[i] = lower_interval;
+    upper_bins[i] = upper_interval;
+    lower_bins[i] = lower_interval;
 
     double lower_value, upper_value;
     lower_value = (quantile_sketch_2->reverseQuantile(lower_interval, memory))/memory;
@@ -121,14 +118,14 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   return chi_squared;
 }
 
-double* ChiSquareContinuous::GetLower()
+double* ChiSquareContinuous::get_lower()
 {
-	return LowerBins;
+	return lower_bins;
 }
 
-double* ChiSquareContinuous::GetUpper()
+double* ChiSquareContinuous::get_upper()
 {
-	return UpperBins;
+	return upper_bins;
 }
 
 /*
@@ -137,7 +134,7 @@ Adapted from John D.Cook.
 input: p(probability 0-1), mean, standard deviation
 output: corresponding x value
 */
-double ChiSquareContinuous::NormalCDFInverse(double p, double mean, double SD)
+double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD)
 {
     if (p < 0.0 || p > 1.0)
     {
@@ -152,16 +149,16 @@ double ChiSquareContinuous::NormalCDFInverse(double p, double mean, double SD)
     if (p < 0.5)
     {
         // F^-1(p) = - G^-1(p)
-        return -RationalApproximation( sqrt(-2.0*log(p)))*SD + mean;
+        return -rational_approximation( sqrt(-2.0*log(p)))*SD + mean;
     }
     else
     {
         // F^-1(p) = G^-1(1-p)
-        return RationalApproximation( sqrt(-2.0*log(1-p)))*SD + mean;
+        return rational_approximation( sqrt(-2.0*log(1-p)))*SD + mean;
     }
 }
 
-double ChiSquareContinuous::RationalApproximation(double t)
+double ChiSquareContinuous::rational_approximation(double t)
 {
     // Abramowitz and Stegun formula 26.2.23.
     // The absolute value of the error should be less than 4.5 e-4.
