@@ -130,7 +130,7 @@ double* ChiSquareContinuous::get_upper()
 
 /*
 Adapted from John D.Cook.
-http://www.johndcook.com/blog/normal_cdf_inverse/
+URL:: http://www.johndcook.com/blog/normal_cdf_inverse/
 
 input: p(probability 0-1), mean, standard deviation
 output: corresponding x value
