@@ -35,10 +35,8 @@ Remember to check if the value for the bin exceeds the 2sqrt(N) bound (in which 
 Two-sample
 
 Same naming convention issues as above.
-Design-wise, we may want to think about having a single chi-square data structure that you can use for either a one-sample or two-sample test. For the two-sample, either one could take another chi-square data structure as a parameter and do the two-sample algorithm.
+
 Why are the CM and QDigest sketches commented out?
-I don’t see a reason for N, M, and K to be private data members. N and M can be accessed from the two sketches and K is dependent on the parameter given to the calculate_statistic method.
-See comment above about iterator variable being a double and how it goes from 1 to k-1 (one fewer buckets).
 Why does the reverse_quantile method for the quantile sketches need to pass in the memory as a parameter? The sketch should know how much memory it has.
 Why do you divide the reverse_quantile by the memory? Shouldn’t the reverse_quantile just return exactly that—the reverse quantile (a number between 0 and 1)?
 You can compute sqrt(M/N) once and store it so that it doesn’t have to be recomputed every time.
