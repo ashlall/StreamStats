@@ -100,6 +100,9 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   delete lower_bins;
   upper_bins = new double[num_buckets];
   lower_bins = new double[num_buckets];
+
+  double constant_1 = sqrt(stream_size_2/stream_size_1);
+  double constant_2 = sqrt(stream_size_1/stream_size_2);
   for (int i = 1; i <= num_buckets; i++)
   {
     double lower_interval = quantile_sketch->getQuantile(((int)i-1)/num_buckets);
@@ -112,7 +115,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
     upper_value = (quantile_sketch_2->reverseQuantile(upper_interval, memory))/memory;
 
     double frequency_2 = stream_size_2 * (upper_value - lower_value);
-    double value = frequency_1 * sqrt(stream_size_2/stream_size_1) - frequency_2 * sqrt(stream_size_1/stream_size_2);
+    double value = frequency_1 * constant_1 - frequency_2 * constant_2;
     chi_squared += (value * value) / (frequency_1 + frequency_2);
   }
   return chi_squared;
