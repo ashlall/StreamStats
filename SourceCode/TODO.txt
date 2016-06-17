@@ -7,3 +7,60 @@ Things that are yet to be done:
 - ability to reset the sketch (i.e., re-initialize to empty stream)
 - ability to write the sketch to a stream
 - ability to read the sketch from a stream
+
+
+Here are some comments on the chi-square code. Please divide these fixes amongst yourselves.
+
+
+
+
+
+/****
+FIX FIRST !!!!
+****/
+
+
+Naming conventions
+
+The Chi2 directory has a mix of _ and - in the name—it should be all of one or both.
+The files in the Chi2 directory have non-descriptive names. It looks like there are two implementations, but they are really the one-sample and two-sample tests. Rename the files (copy to new name, add to repository and check in, remove old name) to something like Chi_Square_One_Sample.* (and similar with two sample).
+BE VERY CAREFUL when you do renaming. Make sure everything is checked in and one of you do these steps while no one is changing anything in the code.
+
+
+One-sample
+
+The one-sample include guard should also be renamed as above.
+The class should be called ChiSquareOneSample (to distinguish from the two sample version).
+The quantile sketch could have a more descriptive name (like quantile_sketch).
+Why is the CM sketch commented out?
+Why is there a public version of NormalCDFInverse?
+Do you need two constructors? Can’t you use a default value of q=1?
+The “default” switch statement should do more than just print an error message; it should throw an exception. Otherwise, the program will continue to try and run with the class having no initialized quantile sketch.
+The calculate_statistic_ifNormal method should preferably call the calculate_statistic method, giving it the inverse cdf function for the normal distribution. This avoids repeated code.
+Remove extraneous cout statements once debugging is complete.
+Avoid using an iterator variable that is a double. Instead, you should use an int and cast it to double when needed in the loop. 
+The for loop goes from 1 to k-1 ( < k), so you are only adding up k-1 bins.
+For code adapted from another source, give the full reference so that someone can look up that source. So, don’t just say “John D. Cook”, you should also give the URL where you found this code so that someone can go look it up later and see where it came from / if it makes sense. Similarly with Abramowitz and Stegun.
+Remember to check if the value for the bin exceeds the 2sqrt(N) bound (in which case we fail the test).
+
+Two-sample
+
+Same naming convention issues as above.
+Design-wise, we may want to think about having a single chi-square data structure that you can use for either a one-sample or two-sample test. For the two-sample, either one could take another chi-square data structure as a parameter and do the two-sample algorithm.
+Why are the CM and QDigest sketches commented out?
+I don’t see a reason for N, M, and K to be private data members. N and M can be accessed from the two sketches and K is dependent on the parameter given to the calculate_statistic method.
+See comment above about iterator variable being a double and how it goes from 1 to k-1 (one fewer buckets).
+Why does the reverse_quantile method for the quantile sketches need to pass in the memory as a parameter? The sketch should know how much memory it has.
+Why do you divide the reverse_quantile by the memory? Shouldn’t the reverse_quantile just return exactly that—the reverse quantile (a number between 0 and 1)?
+You can compute sqrt(M/N) once and store it so that it doesn’t have to be recomputed every time.
+Don’t forget that if any of the bins’ values is larger than a known threshold, we just declare the test failed (and we don’t have an accurate value for the statistic).
+
+Commenting
+
+There should be class comments for each class:
+https://google.github.io/styleguide/cppguide.html#Class_Comments
+
+Also, function/method comments for each class:
+https://google.github.io/styleguide/cppguide.html#Function_Comments
+
+There are also many other comment guidelines in this webpage. These comments won’t get written by someone in the future. If they’re going to be done, you have to spend the time and do them now.
