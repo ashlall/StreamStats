@@ -80,15 +80,15 @@ void test_NormalCDFInverse()
  
 void test_chi_square_1st(int x) //One-sample test
 {
-  ChiSquareContinuous b(1000,x); //ChiSquare b(memory, sketch method);
-	int stream_size = 1000000;
+  ChiSquareContinuous b(5000,x); //ChiSquare b(memory, sketch method);
+	int stream_size = 100000;
 	double item;
 	double chi;
-	int k=20;
+	int k=50;
 	double N=0;
 	double *items=new double[stream_size];
 	default_random_engine generator(5);
-	normal_distribution<double> distribution(10000,2000);
+	normal_distribution<double> distribution(1000,20);
     
     for (int i=0; i<stream_size; i++) 
     {
@@ -97,14 +97,14 @@ void test_chi_square_1st(int x) //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
-    chi = b.calculate_statistic_ifNormal(k,10000,2000);
+    chi = b.calculate_statistic_ifNormal(k,1000,20);
     
     
     double *Upper=b.get_upper();
     double *Lower=b.get_lower();
     double E=N/k;
     double chiActual=0, chiActual2 = 0;
-    int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
+    //int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i=1;i<=k;i++)
     {		
       double O=0;
@@ -113,17 +113,17 @@ void test_chi_square_1st(int x) //One-sample test
     	    	    if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
 		          O++;
     	    }
-	    cout << "O: "<< O << " freq: " << frequencies[i] << endl;
+	   // cout << "O: "<< O << " freq: " << frequencies[i] << endl;
     	    double lambda= fabs(O-E);
-	    chiActual2 += (frequencies[i]-E)*(frequencies[i]-E)/E;
+	    //chiActual2 += (frequencies[i]-E)*(frequencies[i]-E)/E;
     	    chiActual=chiActual+((lambda*lambda)/E);
     	    
     }
         cout<<chiActual<<" actual"<<endl;
   	cout << "chi: " << chi << endl;
-	cout << "other way: " << chiActual2 << endl;
+	//cout << "other way: " << chiActual2 << endl;
   	delete []items;
-	delete [] frequencies;
+	//delete [] frequencies;
 }
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
