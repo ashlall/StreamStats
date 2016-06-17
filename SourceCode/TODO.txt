@@ -3,7 +3,6 @@ One-sample
 
 
 The calculate_statistic_ifNormal method should preferably call the calculate_statistic method, giving it the inverse cdf function for the normal distribution. This avoids repeated code.
-Remove extraneous cout statements once debugging is complete.
 Remember to check if the value for the bin exceeds the 2sqrt(N) bound (in which case we fail the test).
 
 Two-sample
