@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h>
-
+#include<iomanip> // Parametric manipulators. Used to set precision. 
 
 class ChiSquareContinuous
 {
