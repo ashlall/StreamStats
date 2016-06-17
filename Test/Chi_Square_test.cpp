@@ -2,12 +2,13 @@
 
 #include<cassert>
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
-#include "../SourceCode/ChiSquare/Chi_Square_Two_Sample.h"
 #include <iostream>
 #include<iomanip> 
 #include <random>
 
 using namespace std;
+
+int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size);
 
 void test_NormalCDFInverse()
 {
@@ -77,13 +78,13 @@ void test_NormalCDFInverse()
  */
  }
  
-void test_chi_square_1st() //One-sample test
+void test_chi_square_1st(int x) //One-sample test
 {
-        ChiSquareContinuous b(1000); //ChiSquare b(memory, sketch method);
-	int stream_size = 100000;
+  ChiSquareContinuous b(1000,x); //ChiSquare b(memory, sketch method);
+	int stream_size = 1000000;
 	double item;
 	double chi;
-	int k=50;
+	int k=20;
 	double N=0;
 	double *items=new double[stream_size];
 	default_random_engine generator(5);
@@ -99,25 +100,65 @@ void test_chi_square_1st() //One-sample test
     chi = b.calculate_statistic_ifNormal(k,10000,2000);
     
     
-    double *Upper=b.GetUpper();
-    double *Lower=b.GetLower();
+    double *Upper=b.get_upper();
+    double *Lower=b.get_lower();
     double E=N/k;
-    double chiActual=0;
+    double chiActual=0, chiActual2 = 0;
+    int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i=1;i<=k;i++)
     {		
-    	    double O=0;
-    	    for(int j=0;j<stream_size;j++)
+      double O=0;
+            for(int j=0;j<stream_size;j++)
     	    {
     	    	    if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
-    	    	    O++;
+		          O++;
     	    }
+	    cout << "O: "<< O << " freq: " << frequencies[i] << endl;
     	    double lambda= fabs(O-E);
+	    chiActual2 += (frequencies[i]-E)*(frequencies[i]-E)/E;
     	    chiActual=chiActual+((lambda*lambda)/E);
     	    
     }
-    cout<<chiActual<<" actual"<<endl;
+        cout<<chiActual<<" actual"<<endl;
   	cout << "chi: " << chi << endl;
+	cout << "other way: " << chiActual2 << endl;
   	delete []items;
+	delete [] frequencies;
+}
+
+int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
+{
+  int *frequencies = new int[num_buckets];
+  for (int i = 0; i < stream_size; i++)
+  {
+    int lo = 1, hi = num_buckets;
+    while (lo < hi)
+    {
+      int mid = (lo + hi) / 2;
+      if (items[i] <= upper[mid] && items[i] >= lower[mid])
+      {
+	frequencies[mid]++;
+	break;
+      }
+      /*else if (items[i] < upper[0])
+      {
+	cout << "hello" << endl;
+	frequencies[0]++;
+	break;
+      }
+      else if (items[i] > lower[num_buckets-1])
+      {
+	cout << "hi" << endl;
+	frequencies[num_buckets-1]++;
+	break;
+	}*/
+      else if (items[i] < lower[mid])
+	hi = mid;
+      else
+	lo = mid + 1;
+    }
+  }
+  return frequencies;
 }
 
 void test_chi_square_2nd() //Two-sample test
@@ -157,8 +198,10 @@ void test_chi_square_2nd() //Two-sample test
 
 int main()
 {
-	test_chi_square_1st();
-	test_chi_square_2nd();
+  //test_chi_square_1st(1);
+  //test_chi_square_1st(2);
+	test_chi_square_1st(1);
+	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
