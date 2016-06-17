@@ -48,5 +48,5 @@ private:
 	
 };
 
-#include"Chi_Square_One_Sample.cpp"
+#include"ChiSquareContinuous.cpp"
 #endif

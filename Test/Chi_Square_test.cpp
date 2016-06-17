@@ -1,7 +1,7 @@
 // Unit tests for One-Sample Chi-square & Two sample Chi-square.
 
 #include<cassert>
-#include "../SourceCode/ChiSquare/Chi_Square_One_Sample.h"
+#include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
 #include "../SourceCode/ChiSquare/Chi_Square_Two_Sample.h"
 #include <iostream>
 #include<iomanip> 
@@ -120,7 +120,7 @@ void test_chi_square_1st() //One-sample test
   	delete []items;
 }
 
-void test_chi_square_2nd() //Two-sample test
+/*void test_chi_square_2nd() //Two-sample test
 {
 	ChiSquare2 c(500); 
 	int stream_size = 10000;
@@ -147,7 +147,7 @@ void test_chi_square_2nd() //Two-sample test
   	chi = c.calculate_statistic(100);
   	cout << "chi: " << chi << endl;
 
-}
+}*/
 
 
 int main()
