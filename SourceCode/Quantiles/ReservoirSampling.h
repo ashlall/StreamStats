@@ -19,6 +19,7 @@ class ReservoirSampling: public QuantileSketch
   void insert(double x);
   double getQuantile(double f);
   long get_stream_size(){return n;};
+  
  protected:
   int n,k;
   double *s;
