@@ -79,8 +79,8 @@ void test_NormalCDFInverse()
  
 void test_chi_square_1st() //One-sample test
 {
-	ChiSquare b(100000); //ChiSquare b(memory, sketch method);
-	int stream_size = 10000000;
+        ChiSquareContinuous b(1000); //ChiSquare b(memory, sketch method);
+	int stream_size = 100000;
 	double item;
 	double chi;
 	int k=50;
@@ -120,9 +120,9 @@ void test_chi_square_1st() //One-sample test
   	delete []items;
 }
 
-/*void test_chi_square_2nd() //Two-sample test
+void test_chi_square_2nd() //Two-sample test
 {
-	ChiSquare2 c(500); 
+  ChiSquareContinuous c(500), c2(500); 
 	int stream_size = 10000;
 	double item;
 	double item2;
@@ -138,23 +138,27 @@ void test_chi_square_1st() //One-sample test
     {
     	item = distribution(generator);
     	//item2=distribution2(generator);
-    	cout<<item<<endl;
-  	c.insertStreamOne(item);
-  	c.insertStreamTwo(item);
+    	//cout<<item<<endl;
+  	c.insert(item);
+  	//c.insertStreamTwo(item);
     }
 
-  	
-  	chi = c.calculate_statistic(100);
-  	cout << "chi: " << chi << endl;
+    for (int i = 0; i < stream_size; i++)
+    {
+      item = distribution(generator);
+      c2.insert(item);
+    }
 
-}*/
+        chi = c.two_sample_statistic(c2, 100);
+	cout << "here" << endl;
+  	cout << "chi: " << chi << endl;
+}
 
 
 int main()
 {
 	test_chi_square_1st();
-
-	//test_chi_square_2nd();
+	test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }

@@ -1,9 +1,12 @@
 // Continuous Chi Squared test
+// for upper and lower bins we could require the user in the test file to delete them?
 #include<iomanip> // Parametric manipulators. Used to set precision. 
 
 ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 {
 	chi_squared = 0;
+	UpperBins = new double;
+	LowerBins = new double;
 	switch(q)
 	{
 	case 1: memory = m;
@@ -41,6 +44,8 @@ double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double
 {	
         int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
+	delete UpperBins;
+	delete LowerBins;
       	UpperBins = new double[num_buckets];
 	LowerBins = new double[num_buckets];
 	for (int i = 1; i <= num_buckets; i++)
@@ -66,6 +71,8 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*f)(doub
 {		
 	int stream_size = quantile_sketch->get_stream_size();
 	double expected_frequency = stream_size/num_buckets;
+	delete UpperBins;
+	delete LowerBins;
 	UpperBins = new double[num_buckets];
 	LowerBins = new double[num_buckets];
 	for (int i = 1; i <= num_buckets; i++)
@@ -91,15 +98,19 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   QuantileSketch *quantile_sketch_2 = distribution_2.quantile_sketch;
   int stream_size_1 = quantile_sketch->get_stream_size();
   int stream_size_2 = quantile_sketch_2->get_stream_size();
-  
   double frequency_1 = stream_size_1 / num_buckets;
+
+  delete UpperBins;
+  delete LowerBins;
+  UpperBins = new double[num_buckets];
+  LowerBins = new double[num_buckets];
   for (int i = 1; i <= num_buckets; i++)
   {
     double lower_interval = quantile_sketch->getQuantile(((int)i-1)/num_buckets);
     double upper_interval = quantile_sketch->getQuantile((int)i/num_buckets);
     UpperBins[i] = upper_interval;
     LowerBins[i] = lower_interval;
-    
+
     double lower_value, upper_value;
     lower_value = (quantile_sketch_2->reverseQuantile(lower_interval, memory))/memory;
     upper_value = (quantile_sketch_2->reverseQuantile(upper_interval, memory))/memory;
