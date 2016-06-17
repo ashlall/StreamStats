@@ -1,6 +1,5 @@
 // Continuous Chi Squared test
 // for upper and lower bins we could require the user in the test file to delete them?
-#include<iomanip> // Parametric manipulators. Used to set precision. 
 
 ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 {
