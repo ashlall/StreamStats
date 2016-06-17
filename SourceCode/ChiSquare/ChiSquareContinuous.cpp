@@ -3,92 +3,85 @@
 
 ChiSquare::ChiSquare(double m,int q)
 {
-	Q=q;
-	chi_squared=0;
+	chi_squared = 0;
 
-	//UpperBins= new double[1];
-	//LowerBins=new double[1];
-
-	switch(Q)
+	switch(q)
 	{
-	case 1: memory=m;
-		quantile=new GK(memory);
+	case 1: memory = m;
+		quantile_sketch = new GK(memory);
 		break;
-	case 2: //memory=m;
-		//quantile=new QDigestDouble(memory);
+	case 2: //memory = m;
+		//quantile_sketch = new QDigestDouble(memory);
 		break;
-	case 3: memory=m;
-		quantile=new ReservoirSampling((int)memory);
+	case 3: memory = m;
+		quantile_sketch = new ReservoirSampling((int)memory);
 		break;
-	case 4:// memory=m;
-		// quantile_CMS=new CMS((int)memory);
+	case 4:// memory = m;
+		// quantile_sketch = new CMS((int)memory);
 		break;
 	default:
 		cout<<" Incorrect Case. Valid inputs lie between 1 and 4"<<endl;
 		cout<<"Error Message"<<endl;
+		// throw an exception
 	}
 	
 }
 ChiSquare::~ChiSquare()
 {	
-	delete quantile;
+	delete quantile_sketch;
 	delete UpperBins;
 	delete LowerBins;
 }
 void ChiSquare::insert(double val)
 {
-	quantile->insert(val);
+	quantile_sketch->insert(val);
 }
 
-double ChiSquare::calculate_statistic_ifNormal(int k, double mean, double SD)
+double ChiSquare::calculate_statistic_ifNormal(int num_buckets, double mean, double SD)
 {	
-	K=k;
-	N= quantile -> get_stream_size();
-	double E=N/K;
-
-	UpperBins= new double[k];
-	LowerBins=new double[k];
-	for (double i=1;i<=K;i++)
+        int stream_size = quantile_sketch->get_stream_size();
+	double expected_frequency = stream_size/num_buckets;
+      	UpperBins = new double[num_buckets];
+	LowerBins = new double[num_buckets];
+	for (int i = 1; i <= num_buckets; i++)
 	{
-		double l= NormalCDFInverse_pub((i-1)/K, mean, SD);
-		double u= NormalCDFInverse_pub(i/K, mean, SD);
+	        double lower_interval = NormalCDFInverse(((double)i-1)/num_buckets, mean, SD);
+	        double upper_interval = NormalCDFInverse((double)i/num_buckets, mean, SD);
 		
-		double iA,iB;
-		UpperBins[(int)i]= u;
-		LowerBins[(int)i]= l;
+		double lower_value, upper_value;
+		UpperBins[i] = upper_interval;
+		LowerBins[i] = lower_interval;
 
-		 iA= (quantile->reverseQuantile(l,memory))/memory;
-		 iB= (quantile->reverseQuantile(u,memory))/memory;
-		double O=N*(iB-iA);
-		double lambda= fabs(O-E);
-
-	    chi_squared=chi_squared+ ((lambda*lambda)/E);
+		lower_value = (quantile_sketch->reverseQuantile(lower_interval, memory))/memory;
+		upper_value = (quantile_sketch->reverseQuantile(upper_interval, memory))/memory;
+		double observed_frequency = stream_size * (upper_value - lower_value);
+		//cout <<"O: " << observed_frequency << endl;
+		double lambda = fabs(observed_frequency - expected_frequency);
+	        chi_squared = chi_squared + ((lambda*lambda)/expected_frequency);
 	}		
 	return chi_squared;
 }
 
-double ChiSquare::calculate_statistic(int k,double(*f)(double))
-{	
-	
-	K=k;
-	N= quantile-> get_stream_size();
-	double E=N/K;
-	UpperBins= new double[k];
-	LowerBins=new double[k];
-	for (double i=1;i<=K;i++)//fix this
+double ChiSquare::calculate_statistic(int num_buckets, double(*f)(double))
+{		
+	int stream_size = quantile_sketch->get_stream_size();
+	double expected_frequency = stream_size/num_buckets;
+	UpperBins = new double[num_buckets];
+	LowerBins = new double[num_buckets];
+	for (int i = 1; i <= num_buckets; i++)
 	{
-		double l= (*f)((i-1)/K);
-		double u= (*f)(i/K);
-		UpperBins[(int)i]= u;
-		LowerBins[(int)i]= l;
-		double iA,iB;
-		iA=(quantile->reverseQuantile(l,memory))/memory;
-		iB=(quantile->reverseQuantile(u,memory))/memory;
+	        double lower_interval = (*f)(((double)i-1)/num_buckets);
+	        double upper_interval = (*f)((double)i/num_buckets);
+		UpperBins[i] = upper_interval;
+		LowerBins[i] = lower_interval;
+		double lower_value, upper_value;
+	        lower_value = (quantile_sketch->reverseQuantile(lower_interval, memory))/memory;
+		upper_value = (quantile_sketch->reverseQuantile(upper_interval, memory))/memory;
 		
-		double O=N*(iB-iA);
-		double lambda= fabs(O-E);
+		double observed_frequency = stream_size * (upper_value - lower_value);
+		double lambda = fabs(observed_frequency - expected_frequency);
 		
-		chi_squared=chi_squared+ ((lambda*lambda)/E);
+		chi_squared=chi_squared+ ((lambda*lambda)/ expected_frequency);
 	}		
 	return chi_squared;	
 }
@@ -102,12 +95,6 @@ double* ChiSquare::GetUpper()
 {
 	return UpperBins;
 }
-
-double ChiSquare :: NormalCDFInverse_pub(double p, double mean, double SD)
-{
-	return NormalCDFInverse(p, mean, SD);
-}
-
 
 /*
 Adapted from John D.Cook.

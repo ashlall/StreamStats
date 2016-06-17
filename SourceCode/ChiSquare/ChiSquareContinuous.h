@@ -1,7 +1,7 @@
 // Chi_Squared_1st.h
 
-#ifndef CHI_SQUARED_1ST_H
-#define CHI_SQUARED_1ST_H
+#ifndef CHI_SQUARED_CONTINUOUS_H
+#define CHI_SQUARED_CONTINUOUS_H
 
 #include "../Quantiles/GK.h"
 #include "../Quantiles/ReservoirSampling.h"
@@ -26,9 +26,8 @@ public:
 	~ChiSquare();
   	
 	void insert(double val);
-	double calculate_statistic_ifNormal(int k, double mean, double SD);
-	double calculate_statistic(int k,double (*f)(double));
-	double NormalCDFInverse_pub(double p, double mean, double SD);
+	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
+	double calculate_statistic(int num_buckets, double (*f)(double));
 	double* GetUpper();
 	double* GetLower();
 	
@@ -37,11 +36,8 @@ private:
 	double memory;
 	double *UpperBins;
 	double *LowerBins;
-	int N;
-	double K;
-	int Q;
 	
-	QuantileSketch* quantile;
+	QuantileSketch* quantile_sketch;
 	
 	double RationalApproximation(double t);
 	double NormalCDFInverse(double p, double mean, double SD);

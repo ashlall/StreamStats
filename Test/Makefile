@@ -19,7 +19,7 @@ QDigest_test_Double: QuantileSketch.h Q-Digest.h Q-Digest.cpp QDigestDouble.h QD
 Reservoir_test: QuantileSketch.h ReservoirSampling.h ReservoirSampling.cpp Reservoir_test.cpp
 	g++ -o Reservoir_test Reservoir_test.cpp	
 
-Chi_Square_test: Chi_Square_One_Sample.h Chi_Square_One_Sample.cpp Chi_Square_test.cpp
+Chi_Square_test: ChiSquareContinuous.h ChiSquareContinuous.cpp Chi_Square_test.cpp
 	g++ -o Chi_Square_test Chi_Square_test.cpp
 
 tidy:
