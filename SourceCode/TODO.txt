@@ -1,32 +1,7 @@
-Things that are yet to be done:
-
-1) Implemeneting all the quantile sketches.
-2) Testing all the quantile sketches.
-3) Implementing our algorithm
-
-- ability to reset the sketch (i.e., re-initialize to empty stream)
-- ability to write the sketch to a stream
-- ability to read the sketch from a stream
-
-
-Here are some comments on the chi-square code. Please divide these fixes amongst yourselves.
-
-
-
-
-
-/****
-FIX FIRST !!!!
-****/
-
-
-Naming conventions
-
 
 One-sample
 
 Why is the CM sketch commented out?
-The “default” switch statement should do more than just print an error message; it should throw an exception. Otherwise, the program will continue to try and run with the class having no initialized quantile sketch.
 The calculate_statistic_ifNormal method should preferably call the calculate_statistic method, giving it the inverse cdf function for the normal distribution. This avoids repeated code.
 Remove extraneous cout statements once debugging is complete.
 For code adapted from another source, give the full reference so that someone can look up that source. So, don’t just say “John D. Cook”, you should also give the URL where you found this code so that someone can go look it up later and see where it came from / if it makes sense. Similarly with Abramowitz and Stegun.
@@ -37,8 +12,6 @@ Two-sample
 Same naming convention issues as above.
 
 Why are the CM and QDigest sketches commented out?
-Why does the reverse_quantile method for the quantile sketches need to pass in the memory as a parameter? The sketch should know how much memory it has.
-Why do you divide the reverse_quantile by the memory? Shouldn’t the reverse_quantile just return exactly that—the reverse quantile (a number between 0 and 1)?
 You can compute sqrt(M/N) once and store it so that it doesn’t have to be recomputed every time.
 Don’t forget that if any of the bins’ values is larger than a known threshold, we just declare the test failed (and we don’t have an accurate value for the statistic).
 
