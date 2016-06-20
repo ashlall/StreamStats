@@ -78,17 +78,44 @@ void test_NormalCDFInverse()
  */
  }
  
-void test_chi_square_1st(int x) //One-sample test
+void test_chi_square_1st() //One-sample test
 {
-  ChiSquareContinuous b(100000,x); //ChiSquare b(memory, sketch method);
-	int stream_size = 30000000;
+	int sketch_method = 0;
+	cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
+	cout << "0. Default." <<endl;
+	cout << "1. Greenwald sketch." <<endl;
+	cout << "2. Q-Digest sketch." <<endl;
+	cout << "3. Reservoir Sampling sketch." <<endl;
+	cout << "4. Count-Min Sketch." <<endl;
+	cin >> sketch_method;
+
+	int stream_size;
+	cout << "Enter the stream size: "<<endl;
+	cin >> stream_size;
+
+	int sample_size;
+	cout << "Enter the memory capacity for the sample size: "<<endl;
+	cin >> sample_size;
+	
+	int k;
+	cout << "Enter the number of bins you want to use: " <<endl;
+	cin >> k;
+
+	int mean, SD;
+	cout << "Enter the mean of the normal distribution you want to compare against: "<<endl;
+	cin >> mean;
+	cout << "Enter the standard deviation of the normal distribution you want to compare against: "<<endl;
+	cin >> SD;
+
+ 	ChiSquareContinuous b(sample_size, sketch_method); //ChiSquare b(memory, sketch method);
+
 	double item;
 	double chi;
-	int k=100;
+	
 	double N=0;
 	double *items=new double[stream_size];
 	default_random_engine generator(5);
-	normal_distribution<double> distribution(1000,20);
+	normal_distribution<double> distribution(mean,SD);
     
     for (int i=0; i<stream_size; i++) 
     {
@@ -97,7 +124,7 @@ void test_chi_square_1st(int x) //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
-    chi = b.calculate_statistic_ifNormal(k,1000,20);
+    chi = b.calculate_statistic_ifNormal(k,mean,SD);
     
     
     double *Upper=b.get_upper();
@@ -200,8 +227,9 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	test_chi_square_1st(1);
+	test_chi_square_1st();
 	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
+
