@@ -1,4 +1,5 @@
 // Unit tests for One-Sample Chi-square & Two sample Chi-square.
+// NOTE!!!: the get_frequencies way of calculating the chi^2 statistic doesn't work for negative values
 
 #include<cassert>
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
@@ -131,7 +132,7 @@ void test_chi_square_1st() //One-sample test
     double *Lower=b.get_lower();
     double E=N/k;
     double chiActual=0, chiActual2 = 0;
-    timeval timeBefore, timeAfter;
+    /*timeval timeBefore, timeAfter;
     long diffSeconds, diffUSeconds;
     gettimeofday(&timeBefore, NULL);
     for (int i=1;i<=k;i++)
@@ -152,19 +153,19 @@ void test_chi_square_1st() //One-sample test
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
     cout << "1st way: " << diffSeconds + diffUSeconds/1000000.0 << endl;
 
-    gettimeofday(&timeBefore, NULL);
+    gettimeofday(&timeBefore, NULL);*/
     int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i = 1; i <= k; i++)
       { 
 	chiActual2 += (frequencies[i] - E) * (frequencies[i] - E)/E;
       }
-    gettimeofday(&timeAfter, NULL);
+    /*gettimeofday(&timeAfter, NULL);
     diffSeconds= timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
     cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";
-        cout<<chiActual<<" actual"<<endl;
+    cout<<chiActual<<" actual"<<endl;*/
   	cout << "chi: " << chi << endl;
-	cout << "other way: " << chiActual2 << endl;
+	cout << "actual: " << chiActual2 << endl;
   	delete []items;
 	delete [] frequencies;
 }
@@ -177,6 +178,7 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
   for (int i = 0; i < stream_size; i++)
   {
     int lo = 0, hi = num_buckets;
+    cout << items[i] << endl;
     while (lo <= hi)
     {
       int mid = (lo + hi) / 2;
