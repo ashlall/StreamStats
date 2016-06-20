@@ -79,18 +79,44 @@ void test_NormalCDFInverse()
  */
  }
  
-void test_chi_square_1st(int x) //One-sample test
+void test_chi_square_1st() //One-sample test
 {
-  ChiSquareContinuous b(10000,x); //ChiSquare b(memory, sketch method);
-	int stream_size = 100000;
-	double item;
-	double chi;
-	double k=50;
-	double N=0;
-	double *items=new double[stream_size];
-	default_random_engine generator(5);
-	normal_distribution<double> distribution(10000,2000);
-    
+  int sketch_method = 0;
+  cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
+  cout << "0. Default." <<endl;
+  cout << "1. Greenwald sketch." <<endl;
+  cout << "2. Q-Digest sketch." <<endl;
+  cout << "3. Reservoir Sampling sketch." <<endl;
+  cout << "4. Count-Min Sketch." <<endl;
+  cin >> sketch_method;
+
+  int stream_size;
+  cout << "Enter the stream size: "<<endl;
+  cin >> stream_size;
+
+  int sample_size;
+  cout << "Enter the memory capacity for the sample size: "<<endl;
+  cin >> sample_size;
+  
+  int k;
+  cout << "Enter the number of bins you want to use: " <<endl;
+  cin >> k;
+
+  int mean, SD;
+  cout << "Enter the mean of the normal distribution you want to compare against: "<<endl;
+  cin >> mean;
+  cout << "Enter the standard deviation of the normal distribution you want to compare against: "<<endl;
+  cin >> SD;
+
+  ChiSquareContinuous b(sample_size, sketch_method); //ChiSquare b(memory, sketch method);
+
+  double item;
+  double chi;
+  
+  double N=0;
+  double *items=new double[stream_size];
+  default_random_engine generator(5);
+  normal_distribution<double> distribution(mean,SD);
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
@@ -98,7 +124,7 @@ void test_chi_square_1st(int x) //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
-    chi = b.calculate_statistic_ifNormal(k,10000,2000);
+    chi = b.calculate_statistic_ifNormal(k,mean,SD);
     
     
     double *Upper=b.get_upper();
@@ -129,14 +155,13 @@ void test_chi_square_1st(int x) //One-sample test
     gettimeofday(&timeBefore, NULL);
     int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i = 1; i <= k; i++)
-    {
-      //cout << frequencies[i] << endl;
-      chiActual2 += (frequencies[i] - E) * (frequencies[i] - E)/E;
-    }
+      { 
+	chiActual2 += (frequencies[i] - E) * (frequencies[i] - E)/E;
+      }
     gettimeofday(&timeAfter, NULL);
     diffSeconds= timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
-    cout << "1st way: "<< diffSeconds + diffUSeconds/1000000.0<< endl;
+    cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";
         cout<<chiActual<<" actual"<<endl;
   	cout << "chi: " << chi << endl;
 	cout << "other way: " << chiActual2 << endl;
@@ -220,8 +245,9 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	test_chi_square_1st(1);
+	test_chi_square_1st();
 	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
+
