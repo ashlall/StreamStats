@@ -1,6 +1,11 @@
 // Continuous Chi Squared test
-// for upper and lower bins we could require the user in the test file to delete them?
 
+// Initializes the variables used in the ChiSquareContinuous class.
+// Input: m is a double and the amount of memory the sketch will use, q is an 
+// integer and between 1 and 4, where if the user does not give q it will by 
+// default be 1.
+// Output: this is initialized as a ChiSquareContinuous, throws IndexError if 
+// q is not between 1 and 4.
 ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 {
 	chi_squared = 0;
@@ -8,7 +13,7 @@ ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 	lower_bins = new double;
 	switch(q)
 	{
-	case 1: memory = m;
+	case 1: memory = m/3;
 		quantile_sketch = new GK(memory);
 		break;
 	case 2: //memory = m;
@@ -25,6 +30,7 @@ ChiSquareContinuous::ChiSquareContinuous(double m,int q)
 	}	
 }
 
+// Deallocates the memory.
 ChiSquareContinuous::~ChiSquareContinuous()
 {	
 	delete quantile_sketch;
@@ -32,11 +38,14 @@ ChiSquareContinuous::~ChiSquareContinuous()
 	delete lower_bins;
 }
 
+// Inserts val into the quantile_sketch.
 void ChiSquareContinuous::insert(double val)
 {
 	quantile_sketch->insert(val);
 }
 
+// Calculates the chi-squared statistic for a normal distribution.
+// Input: 
 double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double mean, double SD)
 {	
         int stream_size = quantile_sketch->get_stream_size();
