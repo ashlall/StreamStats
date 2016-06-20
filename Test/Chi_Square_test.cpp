@@ -82,10 +82,9 @@ void test_NormalCDFInverse()
  
 void test_chi_square_1st() //One-sample test
 {
-  int sketch_method = 0;
+  int sketch_method = 1;
   cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
-  cout << "0. Default." <<endl;
-  cout << "1. Greenwald sketch." <<endl;
+  cout << "1. Greenwald sketch/default." <<endl;
   cout << "2. Q-Digest sketch." <<endl;
   cout << "3. Reservoir Sampling sketch." <<endl;
   cout << "4. Count-Min Sketch." <<endl;
