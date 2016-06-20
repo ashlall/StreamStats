@@ -2,15 +2,16 @@
 #define BASICSTATS
 
 #include <iostream>
-
 using namespace std;
 
+// Streams a set of data(doubles), and computes a number of basic statistics: 
+// standard deviation, maximum, minimum, and average.
 class BasicStats
 {
   public: 
     BasicStats();
-    BasicStats(const BasicStats& b);
-    BasicStats& operator=(const BasicStats& b);
+    BasicStats(const BasicStats& other);
+    BasicStats& operator=(const BasicStats& other);
     ~BasicStats() {};
     void insert(double num);
     double SD();
@@ -19,9 +20,9 @@ class BasicStats
     double Average();
 
   private:
-    void copy(const BasicStats& b);
+    void copy(const BasicStats& other);
     double sum, squaredsum, min, max;
-    long long int N;
+    long long int stream_size;
     double if_MAX(double num);
     double if_MIN(double num);
 };

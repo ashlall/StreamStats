@@ -1,38 +1,47 @@
 // BasicStats.cpp
 #include <math.h>
 
+// Initializes all of the variables used by BasicStats
 BasicStats::BasicStats()
 {
   sum = 0;
   squaredsum = 0;
-  N = 0;
-  min = 0; // smallest number possible?
+  stream_size = 0;
+  min = 0; 
   max = 0;
 }
 
-BasicStats::BasicStats(const BasicStats& b)
+// Copy Constructor
+// Input: other is another BasicStats
+// Output: this is initialized with all the values from other
+BasicStats::BasicStats(const BasicStats& other)
 {
-  copy(b);
+  copy(other);
 }
 
-BasicStats& BasicStats::operator=(const BasicStats& b)
+// Assignment Operator
+// Input: other is another BasicStats
+// Output: this is reinitialized will all the values from other
+BasicStats& BasicStats::operator=(const BasicStats& other)
 {
-  copy(b);
+  copy(other);
   return *this;
 }
 
+// Updates all of the statistical variables with the addition of num
 void BasicStats::insert(double num)
 {
-  N = N+1; 
-  sum=sum+num;
-  squaredsum += num*num;
+  stream_size++; 
+  sum = sum + num;
+  squaredsum += num * num;
   min = if_MIN(num);
   max = if_MAX(num);
 }
 
+// Returns the smaller value between num and min.
 double BasicStats::if_MIN(double num)
 {
-  if (N == 1)
+  if (stream_size == 1)
     min = num;
   if (num < min)
     return num;
@@ -40,41 +49,48 @@ double BasicStats::if_MIN(double num)
     return min;
 }
 
+// Returns min.
 double BasicStats::MIN()
 {
   return min;
 }
 
+// Returns the larger value between num and max.
 double BasicStats::if_MAX(double num)
 {
-	if(N==1)
-          max=num;
-	if (num >= max)
-	  return num;
-	else 
-	  return max; 
+  if(stream_size == 1)
+    max = num;
+  if (num >= max)
+    return num;
+  else 
+    return max; 
 }
 
+// Returns the average.
 double BasicStats:: Average()
 {
-	return sum/N;
+  return sum/stream_size;
 }
 
+// Returns max.
 double BasicStats::MAX()
 {
-	return max;
+  return max;
 }
 
+// Returns the standard deviation
 double BasicStats::SD()
 {
-  return sqrt((squaredsum - (N*Average()*Average()))/(N-1));
+  double average = Average();
+  return sqrt((squaredsum - (stream_size*average*average))/(stream_size-1));
 }
 
-void BasicStats::copy(const BasicStats& b)
+// Copies the values from other to this
+void BasicStats::copy(const BasicStats& other)
 {
-  sum = b.sum;
-  squaredsum = b.squaredsum;
-  N = b.N;
-  min = b.min;
-  max = b.max;
+  sum = other.sum;
+  squaredsum = other.squaredsum;
+  stream_size = other.stream_size;
+  min = other.min;
+  max = other.max;
 }
