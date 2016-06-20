@@ -177,7 +177,6 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
   for (int i = 0; i < stream_size; i++)
   {
     int lo = 0, hi = num_buckets;
-    cout << items[i] << endl;
     while (lo <= hi)
     {
       int mid = (lo + hi) / 2;
