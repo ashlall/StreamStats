@@ -133,7 +133,7 @@ void test_chi_square_1st() //One-sample test
     double chiActual=0, chiActual2 = 0;
     /*timeval timeBefore, timeAfter;
     long diffSeconds, diffUSeconds;
-    gettimeofday(&timeBefore, NULL);
+    gettimeofday(&timeBefore, NULL);*/
     for (int i=1;i<=k;i++)
     {		
       double O=0;
@@ -142,31 +142,30 @@ void test_chi_square_1st() //One-sample test
     	    	    if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
 		          O++;
     	    }
-	    //cout << "O: "<< O << endl;//" freq: " << frequencies[i] << endl;
-    	    double lambda= fabs(O-E);
+      	    double lambda= fabs(O-E);
     	    chiActual=chiActual+((lambda*lambda)/E);
     	    
     }
-    gettimeofday(&timeAfter, NULL);
+    /*gettimeofday(&timeAfter, NULL);
     diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
     cout << "1st way: " << diffSeconds + diffUSeconds/1000000.0 << endl;
 
-    gettimeofday(&timeBefore, NULL);*/
+    gettimeofday(&timeBefore, NULL);
     int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i = 1; i <= k; i++)
       { 
 	chiActual2 += (frequencies[i] - E) * (frequencies[i] - E)/E;
-      }
+	}*/
     /*gettimeofday(&timeAfter, NULL);
     diffSeconds= timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
-    cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";
-    cout<<chiActual<<" actual"<<endl;*/
+    cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";*/
+    cout<<chiActual<<" actual"<<endl;
   	cout << "chi: " << chi << endl;
-	cout << "actual: " << chiActual2 << endl;
+	//cout << "actual: " << chiActual2 << endl;
   	delete []items;
-	delete [] frequencies;
+	//delete [] frequencies;
 }
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
@@ -176,10 +175,12 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
     frequencies[i] = 0;
   for (int i = 0; i < stream_size; i++)
   {
+    //cout << "item: " << items[i] << " ***" << endl;
     int lo = 0, hi = num_buckets;
     while (lo <= hi)
     {
       int mid = (lo + hi) / 2;
+      //cout << "mid: " << endl;
       if (items[i] <= upper[mid] && items[i] >= lower[mid])
       {
 	frequencies[mid]++;
@@ -198,7 +199,10 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
 	break;
 	}*/
       else if (items[i] < lower[mid])
+	{
+	  //	  cout << "lower, " << endl;
 	hi = mid;
+	}
       else
 	lo = mid + 1;
     }
