@@ -1,4 +1,5 @@
 // BasicStats.cpp
+#include "BasicStats.h"
 #include <math.h>
 
 // Initializes all of the variables used by BasicStats

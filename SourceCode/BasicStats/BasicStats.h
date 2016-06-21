@@ -27,5 +27,4 @@ class BasicStats
     double if_MIN(double num);
 };
 
-#include "BasicStats.cpp"
 #endif
