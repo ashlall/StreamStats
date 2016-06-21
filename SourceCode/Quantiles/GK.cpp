@@ -1,5 +1,5 @@
 //GK.cpp
-
+#include<string.h>
 /*
 The GreenWald Khanna Sketch: An Algorithm for computing approximate quantile 
 summaries of very large data sequences.
@@ -117,14 +117,10 @@ void GK::delete_tuple(int index)
 	summary[index] = new Tuple(summary[index + 1]->v,
                 summary[index]->g + summary[index + 1]->g,
                 summary[index + 1]->delta);
-	for (int i=0;i<num_tuples-index-2;i++)
-	{	
-		summary[destpos]->v=summary[srcpos]->v;
-		summary[destpos]->g=summary[srcpos]->g;
-		summary[destpos]->delta=summary[srcpos]->delta;
-		srcpos++;
-		destpos++;
-	}
+        
+        int size_of_pointer= sizeof(summary[0]);
+        int total_size=size_of_pointer * (num_tuples-index-2);
+        memmove(&(summary[destpos]),&(summary[srcpos]),total_size);
 	summary[num_tuples-1]=NULL;
 	num_tuples--;
 }
