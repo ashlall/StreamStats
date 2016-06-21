@@ -1,6 +1,6 @@
 // Unit tests for the BasicStats class
 
-#include "../SourceCode/BasicStats/BasicStats.h"
+#include "../SourceCode/BasicStats/BasicStats.cpp"
 #include <cassert>
 #include <iostream>
 #include <cstdlib>
