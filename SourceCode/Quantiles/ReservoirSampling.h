@@ -29,5 +29,4 @@ class ReservoirSampling: public QuantileSketch
   void copy(const ReservoirSampling& other);
 };
 
-#include"ReservoirSampling.cpp"
 #endif

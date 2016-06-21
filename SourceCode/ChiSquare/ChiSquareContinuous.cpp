@@ -1,5 +1,7 @@
 // Continuous Chi Squared test
 
+#include "ChiSquareContinuous.h"
+
 // Initializes the variables used in the ChiSquareContinuous class.
 // Input: memory_ is the amount of memory the sketch will use, num is an 
 // integer between 1 and 4 that decides which quantile sketch the algorithm 

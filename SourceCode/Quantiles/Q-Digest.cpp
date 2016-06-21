@@ -2,6 +2,7 @@
 // Adapted from https://raw.github.com/clearspring/stream-lib/master/src/main/java/com/clearspring/analytics/stream/quantile/QDigest.java
 // TODO: add exception in getQuantile
 
+#include "Q-Digest.h"
 #include <math.h>
 #include <stdlib.h>
 #include <vector>

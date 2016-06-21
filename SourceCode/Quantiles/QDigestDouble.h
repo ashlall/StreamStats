@@ -1,6 +1,6 @@
 // QDigestDouble.h, sub class of Q-Digest that takes doubles and converts them to longs
 
-#include "Q-Digest.h"
+#include "Q-Digest.cpp"
 
 #ifndef QDIGESTDOUBLE_H
 #define QDIGESTDOUBLE_H

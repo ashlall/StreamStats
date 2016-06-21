@@ -47,5 +47,4 @@ private:
 
 class IndexError {};
 
-#include "ChiSquareContinuous.cpp"
 #endif

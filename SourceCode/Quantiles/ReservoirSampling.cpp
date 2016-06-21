@@ -1,5 +1,7 @@
 //ReservoirSamping.cpp
 
+#include "ReservoirSampling.h"
+
 /*
 Parameterized Constructor.
 pre-condition: The number of items to be randomly sampled.

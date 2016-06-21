@@ -61,7 +61,5 @@ class QDigest : public QuantileSketch
   long stream_size;
 };
 
-#include "Q-Digest.cpp"
-
 #endif
 
