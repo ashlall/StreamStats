@@ -100,7 +100,7 @@ void QDigest::offer(long value)
 		
  long leaf = value2leaf(value);
  if (node2count.find(leaf) == node2count.end())
-   node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
+   node2count.insert(std::make_pair (leaf, get(leaf)+1));
  else
    node2count[leaf] += 1;
    
@@ -147,7 +147,7 @@ void QDigest::rebuildToCapacity(long newCapacity)
   {
     while (scaleL <= *i / 2) // see the use of iterator: // http://www.cplusplus.com/reference/vector/vector/begin/
       scaleL <<= 1;
-    newNode2count.insert(std::make_pair<long, long>(*i + scaleL * scaleR, get(*i))); 
+    newNode2count.insert(std::make_pair (*i + scaleL * scaleR, get(*i))); 
    }
   node2count = newNode2count;
   capacity = newCapacity;
@@ -170,7 +170,7 @@ void QDigest::compressUpward(long node)
     if (atNode + atSibling + atParent > threshold)
       break;
     if (node2count.find(parent_) == node2count.end())
-	node2count.insert(std::make_pair<long, long>(parent_, atParent + atNode + atSibling));
+	node2count.insert(std::make_pair (parent_, atParent + atNode + atSibling));
     else
       {
 	long hold = node2count[parent_];
@@ -218,7 +218,7 @@ void QDigest::compressDownward(long seedNode)
     if (atParent + atNode + atSibling > threshold)
        continue;
     if (node2count.find(parent_) == node2count.end())
-      node2count.insert(std::make_pair<long, long>(parent_, atParent + atNode + atSibling));
+      node2count.insert(std::make_pair (parent_, atParent + atNode + atSibling));
     else
       node2count[parent_] += 1;
     node2count.erase(node);
