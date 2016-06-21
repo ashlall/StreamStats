@@ -1,22 +1,24 @@
-// Unit tests for One-Sample Chi-square & Two sample Chi-square.
-// NOTE!!!: the get_frequencies way of calculating the chi^2 statistic doesn't work for negative values
+/*
+Chi_Square_test.cpp
+
+Unit tests for One-Sample Chi-square & Two sample Chi-square.
+NOTE!!!: the get_frequencies way of calculating the chi^2 statistic doesn't work for negative values
+*/
 
 #include<cassert>
-#include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
 #include <iostream>
 #include<iomanip> 
 #include <random>
 #include <sys/time.h>
 
+#include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
 using namespace std;
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size);
 
+//test the function normal_cdf_inverse(double p, double mean, double SD);
 void test_NormalCDFInverse()
-{
-    /*
-	Test function NormalCDFInverse_pub(double p, double mean, double SD); PASSED
-	
+{	
     double p[] =	// used for testing the accuracy of the function NormalCDFInverse_pub();
     {
         0.0000001,
@@ -37,7 +39,7 @@ void test_NormalCDFInverse()
         0.9999999
     };
     
-    double exact[] = // used for testing the accuracy of the function NormalCDFInverse_pub();
+    double exact[] = 
     {
         -5.199337582187471,
         -4.264890793922602,
@@ -57,7 +59,7 @@ void test_NormalCDFInverse()
         5.199337582187471
     };
 
-	ChiSquare a(3000);
+	ChiSquareContinuous a(3000);
 	bool condA;
 	double accurate, estimate;
 	
@@ -69,15 +71,12 @@ void test_NormalCDFInverse()
 			{
 				cout << setprecision(3);
 				accurate = exact[i]*SD+mean;
-				estimate = a.NormalCDFInverse_pub(p[i], mean, SD);
-				//cout << "accurate: " << accurate <<" estimate: " << estimate <<endl; 
+				estimate = a.normal_cdf_inverse(p[i], mean, SD);
 				condA = ((estimate<= accurate+0.05) && (estimate >= accurate - 0.05));
   	  			assert(condA==true);
 			}	
 		}
 	}
-	
- */
  }
  
 void test_chi_square_1st() //One-sample test
@@ -249,9 +248,9 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	test_chi_square_1st();
+	//test_chi_square_1st();
 	//test_chi_square_2nd();
-	//test_NormalCDFInverse();
+	test_NormalCDFInverse();
 	return 0;
 }
 
