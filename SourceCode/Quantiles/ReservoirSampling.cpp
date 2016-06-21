@@ -1,26 +1,26 @@
 //ReservoirSamping.cpp
 
 /*
-Parameterized Constrcutor.
+Parameterized Constructor.
 pre-condition: The number of items to be randomly sampled.
 post-condition: Dynamically Allocated array of specified sample size.
 */
 ReservoirSampling::ReservoirSampling(int items)
 {
-  k = items; //Assigning sample size k to items
-  s = new double[k]; //Dynamically allocating an array of sample size K  
-  n = 0; //Setting the initial size of the stream to be 0. 
+  sample_size = items; //Assigning sample size k to items
+  array = new double[sample_size]; //Dynamically allocating an array of sample size K  
+  stream_size = 0; //Setting the initial size of the stream to be 0. 
 }
 
-ReservoirSampling::ReservoirSampling(const ReservoirSampling& r)
+ReservoirSampling::ReservoirSampling(const ReservoirSampling& other)
 {
-  copy(r);
+  copy(other);
 }
 
-ReservoirSampling& ReservoirSampling::operator=(const ReservoirSampling& r)
+ReservoirSampling& ReservoirSampling::operator=(const ReservoirSampling& other)
 {
-  delete [] s;
-  copy(r);
+  delete [] array;
+  copy(other);
   return *this;
 }
 
@@ -31,46 +31,44 @@ post-condition:Deallocates the dynamically allocated memory.
 */
 ReservoirSampling::~ReservoirSampling()
 {
-	delete []s; //Deallocating the dynamically allocated array.
+  delete [] array; //Deallocating the dynamically allocated array.
 }
-
 
 /*
 Insert Method.
 pre-condition: A floating point number. 
 post-condition:Chooses to insert the number as a random sample or not
 */
-void ReservoirSampling::insert(double x)
+void ReservoirSampling::insert(double value)
 {
-  n += 1; //incrementing the size of the stream as a new element is inserted
-  if (n <= k) //Checking if stream size is less than random sample size
-    s[n-1] = x;
-  else if ((rand() % n + 1) <= k)
-    s[(rand() % k)] = x;
+  stream_size += 1; //incrementing the size of the stream as a new element is inserted
+  if (stream_size <= sample_size) //Checking if stream size is less than random sample size
+    array[stream_size - 1] = value;
+  else if ((rand() % stream_size + 1) <= sample_size)
+    array[(rand() % sample_size)] = value;
 }
-
 
 /*
 getQuantile Method.
 pre-condition: A number from the data set. 
 post-condition: The quantile for the number. 
 */
-double ReservoirSampling::getQuantile(double f)
+double ReservoirSampling::getQuantile(double fraction)
 {
-  sort(s,s+k); // sorting from range s to s+k
-  if (f >= 1) 
-    return s[k-1];// if f is greater than one
-  else if (f < 0) 
-    return s[0];//if f is less than 1
+  sort(array, array + sample_size); // sorting from range s to s+k
+  if (fraction >= 1) 
+    return array[sample_size - 1];// if f is greater than one
+  else if (fraction < 0) 
+    return array[0];//if f is less than 1
   else
-    return s[(int)(f*k)]; //if f is between 0 and 1. 
+    return array[(int)(fraction * sample_size)]; //if f is between 0 and 1. 
 }
 
-void ReservoirSampling::copy(const ReservoirSampling& r)
+void ReservoirSampling::copy(const ReservoirSampling& other)
 {
-  k = r.k;
-  n = r.n;
-  s = new double[k];
-  for (int i = 0; i < k; i++)
-    s[i] = r.s[i];
+  sample_size = other.sample_size;
+  stream_size = other.stream_size;
+  array = new double[sample_size];
+  for (int i = 0; i < sample_size; i++)
+    array[i] = other.array[i];
 }
