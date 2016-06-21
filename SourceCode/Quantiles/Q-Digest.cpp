@@ -1,15 +1,18 @@
-// Q-Digest.cpp, implemented with a hash table, adapted from: 
-// to do: clean
+// Q-Digest.cpp, implemented with a hash table
+// Adapted from https://raw.github.com/clearspring/stream-lib/master/src/main/java/com/clearspring/analytics/stream/quantile/QDigest.java
+// TODO: add exception in getQuantile
 
 #include <math.h>
 #include <stdlib.h>
 #include <vector>
-#include <algorithm>    // std::sort
-#include <vector>       // std::vector
+#include <algorithm>    
+#include <vector>       
 
+// Constructor
+// Initializes all the variables
 QDigest::QDigest(double compression)
 {
-  k = compression; // Initialize the private variable Compress Factor.
+  compression_factor = compression; 
   capacity = 1;
   size = 0;
   stream_size = 0;
@@ -17,44 +20,59 @@ QDigest::QDigest(double compression)
   max = -MAX_VALUE;
 }
 
-QDigest::QDigest(const QDigest& q)
+// Copy Constructor
+// Initializes this with all the variables from other
+QDigest::QDigest(const QDigest& other)
 {
-  copy(q);
+  copy(other);
 }
 
-QDigest& QDigest::operator=(const QDigest& q)
+// Assignment Operator
+// Reinitializes this with the variables from other
+QDigest& QDigest::operator=(const QDigest& other)
 {
-  // if this != q
+  // if this != other
   //node2count.clear();
-  copy(q);
+  copy(other);
   return *this;
 }
 
-void QDigest::insert(double x)
+// Inserts a value into the QDigest
+// Input: value is a double
+// Output: value has been inserted into the QDigest, and min/max may have been
+// updated to reflect the addition of value
+void QDigest::insert(double value)
 {
   stream_size += 1;
-  if (x < min)
-    min = x;
-  if (x > max)
-    max = x;
-  offer(x);
+  if (value < min)
+    min = value;
+  if (value > max)
+    max = value;
+  offer(value);
 }
 
-double QDigest::getQuantile(double p)
+// Returns the value at the given fraction
+// Input: fraction is between 0 and 1
+// Output: returns the value at fraction, throws exception if fraction is 
+// outside of the 0 to 1 range
+double QDigest::getQuantile(double fraction)
 {
+  // throw exception if fraction < 0 || fraction > 1 ??
   std::vector<long*> ranges = toAscRanges();
-  long s = 0;
+  long sum = 0;
   for (int i = 0; i < ranges.size(); i++)
   {
-    if (s > p * size)
+    if (sum > fraction * size)
       return clamp(ranges[i][1]);
-    s += ranges[i][2];
+    sum += ranges[i][2];
   }
-  double x = ranges[ranges.size() - 1][1];
+  double value = ranges[ranges.size() - 1][1];
   delete_ranges(ranges);
-  return clamp(x);
+  return clamp(value);
 }
 
+// Inserts value into the QDigest
+// 
 void QDigest::offer(long value)
 {
   if (value < 0 || value == MAX_VALUE)
@@ -85,12 +103,6 @@ void QDigest::offer(long value)
    node2count.insert(std::make_pair<long, long>(leaf, get(leaf)+1));
  else
    node2count[leaf] += 1;
- /*
-   Java syntax: node2count.put(leaf, get(leaf) + 1);
-   value put(Key k, Value v): Inserts key value mapping into the map. 
-   The get(Object key) method is used to return the value to which the specified key is mapped, 
-   or null if this map contains no mapping for the key. 
- */
    
  size++;
  /*
@@ -100,11 +112,11 @@ void QDigest::offer(long value)
    the tree reasonably small (within the theoretical bound of 3k nodes)
  */
  compressUpward(leaf);
- if (node2count.size() > 3 * k) 
+ if (node2count.size() > 3 * compression_factor) 
    compressFully();
 }
 
-void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
+void QDigest::rebuildToCapacity(long newCapacity) 
 {
   std::unordered_map<long, long> newNode2count;
   /*
@@ -144,7 +156,7 @@ void QDigest::rebuildToCapacity(long newCapacity) // check accuracy
 
 void QDigest::compressUpward(long node)
 {
-  double threshold = std::floor(size / k); // java syntax
+  double threshold = std::floor(size / compression_factor);
   long atNode = get(node);
   while (!isRoot(node))
   {
@@ -153,21 +165,21 @@ void QDigest::compressUpward(long node)
     long atSibling = get(sibling(node));
     if (atNode + atSibling > threshold)
       break;
-    long p = parent(node);
-    long atParent = get(p);
+    long parent_ = parent(node);
+    long atParent = get(parent_);
     if (atNode + atSibling + atParent > threshold)
       break;
-    if (node2count.find(p) == node2count.end())
-	node2count.insert(std::make_pair<long, long>(p, atParent + atNode + atSibling));
+    if (node2count.find(parent_) == node2count.end())
+	node2count.insert(std::make_pair<long, long>(parent_, atParent + atNode + atSibling));
     else
       {
-	long hold = node2count[p];
-	node2count[p] += 1;
+	long hold = node2count[parent_];
+	node2count[parent_] += 1;
       }
     node2count.erase(node);
     if (atSibling > 0)
       node2count.erase(sibling(node));
-    node = p;
+    node = parent_;
     atNode = atParent + atNode + atSibling;
   }
 }
@@ -188,34 +200,34 @@ void QDigest::compressFully()
   */
 void QDigest::compressDownward(long seedNode)
 {
-  double threshold = std :: floor(size/k); // java syntax
+  double threshold = std :: floor(size/compression_factor); 
   // 2nd property check same as above but shorter and slower (and invoked rarely)
 	
-  std::queue<long, std::list<long> > q;
-  q.push(seedNode);
-  while(!q.empty())
+  std::queue<long, std::list<long> > queue;
+  queue.push(seedNode);
+  while(!queue.empty())
   {
-    long node = q.front();
-    q.pop();
+    long node = queue.front();
+    queue.pop();
     long atNode = get(node);
     long atSibling = get(sibling(node));
     if (atNode == 0 && atSibling == 0)
       continue;
-    long p = parent(node);
-    long atParent = get(p);
+    long parent_ = parent(node);
+    long atParent = get(parent_);
     if (atParent + atNode + atSibling > threshold)
        continue;
-    if (node2count.find(p) == node2count.end())
-      node2count.insert(std::make_pair<long, long>(p, atParent + atNode + atSibling));
+    if (node2count.find(parent_) == node2count.end())
+      node2count.insert(std::make_pair<long, long>(parent_, atParent + atNode + atSibling));
     else
-      node2count[p] += 1;
+      node2count[parent_] += 1;
     node2count.erase(node);
     node2count.erase(sibling(node));
     // Now P2 could have vanished at the node's and sibling's subtrees since they decreased.
     if (!isLeaf(node))
     {
-      q.push(leftChild(node));
-      q.push(leftChild(sibling(node)));
+      queue.push(leftChild(node));
+      queue.push(leftChild(sibling(node)));
     }
   }
 }	
@@ -225,11 +237,11 @@ std::vector<long*> QDigest::toAscRanges()
   std::vector<long*> ranges;
   for (std::unordered_map<long, long>::const_iterator i = node2count.begin(); i != node2count.end(); i++)
   {
-    long *hold = new long[3];
-    hold[0] = rangeLeft(i->first);
-    hold[1] = rangeRight(i->first);
-    hold[2] = i->second;
-    ranges.push_back(hold);
+    long *next_range = new long[3];
+    next_range[0] = rangeLeft(i->first);
+    next_range[1] = rangeRight(i->first);
+    next_range[2] = i->second;
+    ranges.push_back(next_range);
   }
  std::sort(ranges.begin(), ranges.end(), compare_ranges);
  return ranges;
@@ -239,8 +251,8 @@ void QDigest::delete_ranges(std::vector<long*> ranges)
 {
   for (int i = 0; i < ranges.size(); i++)
   {
-    long *hold = ranges[i];
-    delete [] hold;
+    long *next = ranges[i];
+    delete [] next;
   }
 }
 
@@ -258,14 +270,14 @@ bool QDigest::compare_ranges(long a[3], long b[3])
   return 0;
 }
 
-void QDigest::copy(const QDigest& q)
+void QDigest::copy(const QDigest& other)
 {
-  node2count = q.node2count;
-  k = q.k;
-  capacity = q.capacity;
-  size = q.size;
-  min = q.min;
-  max = q.max;
+  node2count = other.node2count;
+  compression_factor = other.compression_factor;
+  capacity = other.capacity;
+  size = other.size;
+  min = other.min;
+  max = other.max;
 }
 
 long QDigest::rangeLeft(long id)
@@ -282,22 +294,18 @@ long QDigest::rangeRight(long id)
   return leaf2value(id);
 }
 
-long QDigest::clamp(long x)
+long QDigest::clamp(long value)
 {
-  if (x < min)
+  if (value < min)
     return min;
-  if (x > max)
+  if (value > max)
     return max;
-  return x;
+  return value;
 }
 
+// Searchs the map and returns the key's value if found, 0 otherwise
 long QDigest::get(long node)
 {
-  /*
-    Given the index of the index, then search the container/map.
-    Return the corresponding key's value if found, 0 otherwise.
-    how find() works: ttp://www.cplusplus.com/reference/unordered_map/unordered_map/find/
-  */ 
   std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
   return (got == node2count.end()) ? 0 : got->second;
 }
