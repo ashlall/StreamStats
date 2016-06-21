@@ -1,11 +1,12 @@
 //GK_test
 #include<cassert>
-#include "../SourceCode/Quantiles/GK.h"
 #include <iostream>
 #include <random>
-/*
-Complile with g++ -o gk.o -std=c++11 GK_test.cpp
-*/
+
+#include "../SourceCode/Quantiles/GK.h"
+
+//Complile with g++ -o gk.o -std=c++11 GK_test.cpp
+
 
 void test_GK()
 {
@@ -16,12 +17,9 @@ void test_GK()
 	int n=10000; 
 	
     int random_fix1 = rand()% RAND_MAX;
-    //cout << "random_fix1: " << random_fix1 <<endl;
     int random_fix2 = rand()% RAND_MAX;
-    //cout << "random_fix2: " << random_fix2 <<endl;
     int random_fix3 = rand()% RAND_MAX;
-    //cout << "random_fix2: " << random_fix3 <<endl;
-    
+        
     GK a(k);
  	GK b(k);
 	GK c(k);
@@ -88,15 +86,12 @@ void test_GK()
   		
   		else 
   		{	
-  		  	 //cout << "sequence 3: " << endl;
   			  for (int i = 0; i <= n; i++)
    			 {
    			 	srand(n-i);
   				long rand_num=rand()%n;
-  				//cout << rand_num << " ";
   				e.insert(rand_num); //inserting float number from 0 to n
   			 }  
-  			 //cout <<""<<endl;
   			 bool condE1;
 			 int LE = e.get_stream_size(); //test the function get_stream_size()
 			 condE1= (LE == n+1);
@@ -186,7 +181,7 @@ void quicktest()
 
 void test_reverse()
 {
-	GK larry(3000);
+	GK a(3000);
 	int stream_size =88888;
 	double item;
 	
@@ -196,16 +191,15 @@ void test_reverse()
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
-    	//item = i;
-  	    larry.insert(item);
+  	    a.insert(item);
   	}
   	
   	double median;
-  	median = larry.getQuantile(0.5);
-  	cout << median << endl;
+  	median = a.getQuantile(0.5);
+  	cout << "median:" << median << endl;
   	double median_index;
-  	median_index = larry.reverseQuantile(3000, stream_size);
-  	cout << median_index << endl;
+  	median_index = a.reverseQuantile(3000, stream_size);
+  	cout << "median's index in stream: "median_index << endl;
 }
 
 int main()
