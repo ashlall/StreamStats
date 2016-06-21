@@ -1,5 +1,10 @@
 //GK.h
 
+/*
+The GreenWald Khanna Sketch: An Algorithm for computing approximate quantile 
+summaries of very large data sequences.
+*/
+
 #ifndef GK_H
 #define GK_H
 

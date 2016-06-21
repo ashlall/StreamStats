@@ -1,4 +1,6 @@
-// Q-Digest.h, implemented with hash table data structure, adapted from code from Dr. Lall (*link*)
+// Q-Digest.h, implemented with hash table data structure
+// Adapted from https://raw.github.com/clearspring/stream-lib/master/src/main/
+// java/com/clearspring/analytics/stream/quantile/QDigest.java
 
 #include <unordered_map>
 #include <stdlib.h>
@@ -18,12 +20,12 @@ class QDigest : public QuantileSketch
 {
  public:
   QDigest(double compression);
-  QDigest(const QDigest& q);
-  QDigest& operator=(const QDigest& q);
+  QDigest(const QDigest& other);
+  QDigest& operator=(const QDigest& other);
   ~QDigest() {};
   
-  void insert(double x);
-  double getQuantile(double f);
+  void insert(double value);
+  double getQuantile(double fraction);
   long get_stream_size(){return stream_size;};
   
  private:
@@ -36,15 +38,15 @@ class QDigest : public QuantileSketch
   std::vector<long*> toAscRanges();
   void delete_ranges(std::vector<long*> ranges);
   static bool compare_ranges(long a[3], long b[3]);
-  void copy(const QDigest& q);
+  void copy(const QDigest& other);
 
   long rangeLeft(long id);
   long rangeRight(long id);
-  long clamp(long x);
+  long clamp(long value);
   long get(long node);
   int highestOneBit(long value);
 
-  long value2leaf(long x) { return capacity + x; };
+  long value2leaf(long value) { return capacity + value; };
   long leaf2value(long id) { return id - capacity; };
   bool isRoot(long id) { return id == 1; }; // Check if the input index is root or not. (Root index is 1)
   bool isLeaf(long id) { return id >= capacity; }; // Check if the input index is leaf or not.
@@ -55,7 +57,7 @@ class QDigest : public QuantileSketch
 
   std::unordered_map<long, long> node2count; //= new std::unordered_map<long, long>(), Map<key, value>
   long size, capacity, min, max;
-  double k; // compression factor
+  double compression_factor; // compression factor
   long stream_size;
 };
 

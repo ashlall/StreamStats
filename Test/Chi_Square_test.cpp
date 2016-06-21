@@ -111,11 +111,13 @@ void test_chi_square_1st() //One-sample test
 
   double item;
   double chi;
-  
+  timeval timeBefore, timeAfter;
+    long diffSeconds, diffUSeconds;
   double N=0;
   double *items=new double[stream_size];
   default_random_engine generator(5);
   normal_distribution<double> distribution(mean,SD);
+  gettimeofday(&timeBefore, NULL);
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
@@ -123,16 +125,19 @@ void test_chi_square_1st() //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
+    
     chi = b.calculate_statistic_ifNormal(k,mean,SD);
     
+    gettimeofday(&timeAfter, NULL);
+    diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
+    diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
+    cout << "Chi Estimate: " << diffSeconds + diffUSeconds/1000000.0 << endl;
     
     double *Upper=b.get_upper();
     double *Lower=b.get_lower();
     double E=N/k;
     double chiActual=0, chiActual2 = 0;
-    /*timeval timeBefore, timeAfter;
-    long diffSeconds, diffUSeconds;
-    gettimeofday(&timeBefore, NULL);*/
+    gettimeofday(&timeBefore, NULL);
     for (int i=1;i<=k;i++)
     {		
       double O=0;
@@ -145,12 +150,14 @@ void test_chi_square_1st() //One-sample test
     	    chiActual=chiActual+((lambda*lambda)/E);
     	    
     }
-    /*gettimeofday(&timeAfter, NULL);
+     gettimeofday(&timeAfter, NULL);
     diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
-    cout << "1st way: " << diffSeconds + diffUSeconds/1000000.0 << endl;
+    cout << "Chi Actual " << diffSeconds + diffUSeconds/1000000.0 << endl;
+    
+    
 
-    gettimeofday(&timeBefore, NULL);
+   /* gettimeofday(&timeBefore, NULL);
     int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i = 1; i <= k; i++)
       { 
