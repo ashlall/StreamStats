@@ -19,7 +19,7 @@ QDigest_test_Double: QDigestDouble.h Q-Digest.o QDigest_test_Double.cpp
 Reservoir_test: ReservoirSampling.o Reservoir_test.cpp
 	g++ -o Reservoir_test Reservoir_test.cpp	
 
-Chi_Square_test: ChiSquareContinuous.o ReservoirSampling.o Chi_Square_test.cpp
+Chi_Square_test: ChiSquareContinuous.o Chi_Square_test.cpp
 	g++ -o Chi_Square_test Chi_Square_test.cpp
 
 tidy:
