@@ -199,7 +199,7 @@ void test_reverse()
   	cout << "median:" << median << endl;
   	double median_index;
   	median_index = a.reverseQuantile(3000, stream_size);
-  	cout << "median's index in stream: "median_index << endl;
+  	cout << "median's index in stream: "<<median_index << endl;
 }
 
 int main()
