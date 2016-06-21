@@ -32,7 +32,6 @@ public:
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
 	double* get_upper();
 	double* get_lower();
-	double normal_cdf_inverse(double p, double mean, double SD);
 	
 private:
 	double chi_squared;
@@ -42,7 +41,8 @@ private:
 	
 	QuantileSketch* quantile_sketch;
 	
-	double rational_approximation(double t);	
+	double rational_approximation(double t);
+	double normal_cdf_inverse(double p, double mean, double SD);	
 };
 
 class IndexError {};

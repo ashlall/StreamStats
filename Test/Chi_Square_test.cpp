@@ -16,9 +16,11 @@ using namespace std;
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size);
 
-//test the function normal_cdf_inverse(double p, double mean, double SD);
+/*
 void test_NormalCDFInverse()
-{	
+{
+	Test function NormalCDFInverse_pub(double p, double mean, double SD); PASSED
+	
     double p[] =	// used for testing the accuracy of the function NormalCDFInverse_pub();
     {
         0.0000001,
@@ -39,7 +41,7 @@ void test_NormalCDFInverse()
         0.9999999
     };
     
-    double exact[] = 
+    double exact[] = // used for testing the accuracy of the function NormalCDFInverse_pub();
     {
         -5.199337582187471,
         -4.264890793922602,
@@ -71,13 +73,15 @@ void test_NormalCDFInverse()
 			{
 				cout << setprecision(3);
 				accurate = exact[i]*SD+mean;
-				estimate = a.normal_cdf_inverse(p[i], mean, SD);
+				estimate = a.NormalCDFInverse_pub(p[i], mean, SD);
+				//cout << "accurate: " << accurate <<" estimate: " << estimate <<endl; 
 				condA = ((estimate<= accurate+0.05) && (estimate >= accurate - 0.05));
   	  			assert(condA==true);
 			}	
 		}
 	}
  }
+ */
  
 void test_chi_square_1st() //One-sample test
 {
@@ -111,13 +115,11 @@ void test_chi_square_1st() //One-sample test
 
   double item;
   double chi;
-  timeval timeBefore, timeAfter;
-    long diffSeconds, diffUSeconds;
+  
   double N=0;
   double *items=new double[stream_size];
   default_random_engine generator(5);
   normal_distribution<double> distribution(mean,SD);
-  gettimeofday(&timeBefore, NULL);
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
@@ -125,19 +127,16 @@ void test_chi_square_1st() //One-sample test
     	items[i]=item;
   	b.insert(item);
     }
-    
     chi = b.calculate_statistic_ifNormal(k,mean,SD);
     
-    gettimeofday(&timeAfter, NULL);
-    diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
-    diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
-    cout << "Chi Estimate: " << diffSeconds + diffUSeconds/1000000.0 << endl;
     
     double *Upper=b.get_upper();
     double *Lower=b.get_lower();
     double E=N/k;
     double chiActual=0, chiActual2 = 0;
-    gettimeofday(&timeBefore, NULL);
+    /*timeval timeBefore, timeAfter;
+    long diffSeconds, diffUSeconds;
+    gettimeofday(&timeBefore, NULL);*/
     for (int i=1;i<=k;i++)
     {		
       double O=0;
@@ -150,14 +149,12 @@ void test_chi_square_1st() //One-sample test
     	    chiActual=chiActual+((lambda*lambda)/E);
     	    
     }
-     gettimeofday(&timeAfter, NULL);
+    /*gettimeofday(&timeAfter, NULL);
     diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
-    cout << "Chi Actual " << diffSeconds + diffUSeconds/1000000.0 << endl;
-    
-    
+    cout << "1st way: " << diffSeconds + diffUSeconds/1000000.0 << endl;
 
-   /* gettimeofday(&timeBefore, NULL);
+    gettimeofday(&timeBefore, NULL);
     int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
     for (int i = 1; i <= k; i++)
       { 
@@ -255,9 +252,9 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	//test_chi_square_1st();
+	test_chi_square_1st();
 	//test_chi_square_2nd();
-	test_NormalCDFInverse();
+	//test_NormalCDFInverse();
 	return 0;
 }
 
