@@ -5,8 +5,9 @@ After fixing, dont forget to put the compile command into makefile !!!
 */
 
 #include<cassert>
-#include "../SourceCode/Quantiles/CMS.h"
 #include <iostream>
+
+#include "../SourceCode/Quantiles/CMS.h"
 
 void test_CMS()
 {
@@ -163,7 +164,7 @@ void quicktest()
 	}
 	/*
 	cout << "0.1: "<<a.pointEstimate(0.1) << endl;
-	cout << "0.1: "<<a.pointEstimate(0.2) << endl;
+	cout << "0.2: "<<a.pointEstimate(0.2) << endl;
 	cout << "0.3: "<<a.pointEstimate(0.3) << endl;
 	cout << "0.4: "<<a.pointEstimate(0.4) << endl;
 	cout << "median:" << a.pointEstimate(0.5) << endl;
