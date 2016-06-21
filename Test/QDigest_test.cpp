@@ -2,7 +2,7 @@
 // Where only the input is limited to integer, ranging from 0 to MAX_NUMBER
 
 #include<cassert>
-#include "../SourceCode/Quantiles/Q-Digest.h"
+#include "../SourceCode/Quantiles/Q-Digest.cpp"
 #include <iostream>
 
 using namespace std;

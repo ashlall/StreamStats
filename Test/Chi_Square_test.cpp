@@ -11,7 +11,7 @@ NOTE!!!: the get_frequencies way of calculating the chi^2 statistic doesn't work
 #include <random>
 #include <sys/time.h>
 
-#include "../SourceCode/ChiSquare/ChiSquareContinuous.h"
+#include "../SourceCode/ChiSquare/ChiSquareContinuous.cpp"
 using namespace std;
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size);

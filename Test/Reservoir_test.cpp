@@ -9,7 +9,7 @@ Modification might needed.
 */
 
 #include<cassert>
-#include "../SourceCode/Quantiles/ReservoirSampling.h"
+#include "../SourceCode/Quantiles/ReservoirSampling.cpp"
 #include <iostream>
 #include <random>
 void test_reservoir()

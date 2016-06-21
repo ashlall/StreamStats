@@ -5,8 +5,8 @@
 #define CHI_SQUARED_CONTINUOUS_H
 
 #include "../Quantiles/GK.h"
-#include "../Quantiles/ReservoirSampling.h"
-//#include "../Quantiles/QDigestDouble.h"
+#include "../Quantiles/ReservoirSampling.cpp"
+#include "../Quantiles/QDigestDouble.h"
 //#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 
