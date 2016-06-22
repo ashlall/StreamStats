@@ -4,7 +4,7 @@ all: BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi
 
 CC = g++
 FLAGS = -std=c++11
-VPATH = ../SourceCode/Quantiles:../SourceCode/BasicStats:../SourceCode/ChiSquare
+VPATH = ../SourceCode/ChiSquare:../SourceCode/BasicStats:../SourceCode/Quantiles
 
 BasicStats_test: BasicStats_test.cpp BasicStats.o
 	$(CC) -o $@ $<

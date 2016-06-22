@@ -1,5 +1,4 @@
-#all: BasicStats.o
-#g++ BasicStats.o -o BasicStats
+all: BasicStats.o
 
 BasicStats.o: BasicStats.cpp BasicStats.h
 	g++ -c BasicStats.cpp

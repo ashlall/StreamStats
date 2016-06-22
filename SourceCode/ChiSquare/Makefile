@@ -1,3 +1,5 @@
+all: ChiSquareContinuous.o
+
 VPATH = ../Quantiles
 CC = g++
 FLAGS = -std=c++11
