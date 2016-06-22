@@ -57,14 +57,19 @@ Post-Condition: The Tuple is inserted is inserted at index.
 */
 void GK::insert_tuple(Tuple* t,int index)
 {	
-	int destpos=num_tuples;
-	int srcpos=num_tuples-1;
-	for(int i=0;i<num_tuples-index;i++)
+	//int destpos=num_tuples;
+	//int srcpos=num_tuples-1;
+	/*for(int i=0;i<num_tuples-index;i++)
 	{	
 		summary[destpos]=summary[srcpos];
 		srcpos--;
 		destpos--;
-	}
+	}*/
+	
+	int size_of_pointer= sizeof(summary[0]);
+        int total_size=size_of_pointer * (num_tuples-index);
+        memmove(&(summary[index+1]),&(summary[index]),total_size);
+	
 	summary[index]=t;
 	num_tuples++;
 }
