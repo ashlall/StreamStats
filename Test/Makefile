@@ -24,8 +24,8 @@ Reservoir_test: Reservoir_test.cpp ReservoirSampling.o
 Chi_Square_test: Chi_Square_test.cpp ChiSquareContinuous.o
 	$(CC) $(FLAGS) -o $@ $<
 
-tidy:
-	rm -f ,* .,* *~ core a.out *.err
-
-clean: tidy
+clean: 
 	rm -f *.o
+
+cleanest: clean
+	rm BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test
