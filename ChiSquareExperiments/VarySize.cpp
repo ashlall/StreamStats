@@ -1,6 +1,8 @@
 // VarySize.cpp
 // Experiments that vary in stream_size, user inputs range, number of data repeats, and type/
 // parameters of the distribution
+// TODO: add calculations for other two quantiles, write functions to calculate statistic for all
+// distributions - right now only works for normal distribution, segfaulting at times, not sure why
 
 #include <iostream>
 #include <stdlib.h>
@@ -34,7 +36,7 @@ int main(int argc, char* argv[])
  
 
   int stream_size;
-  double memory_percent = 1; // default, change?
+  double memory_percent = 0.1; // default, change?
   int num_buckets = 5; // default, change
   int num_sizes = 0, size = lower;
   while (size <= upper)
@@ -58,13 +60,23 @@ int main(int argc, char* argv[])
       DataGenerator data(distribution_type, stream_size, seed, location, scale);
       double *stream = data.get_stream();
 
-      // tests GK sketch
+      // computes GK estimate
       ChiSquareContinuous sketch1(memory_percent * stream_size, 1); 
       for (int i = 0; i < stream_size; i++)
 	sketch1.insert(stream[i]);
-
       double GK_stat = sketch1.calculate_statistic_ifNormal(num_buckets, location, scale); //FIX
       //double GK_stat = sketch1.calculate_statistic(num_buckets, ...);
+
+      // computes QDigest estimate
+
+      // computes ReservoirSampling estimate
+      ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
+      for (int i = 0; i < stream_size; i++)
+	sketch3.insert(stream[i]);
+      double RS_stat = sketch3.calculate_statistic_ifNormal(num_buckets, location, scale); // FIX
+      //double RS_stat = sketch3.calculate_statistic(num_buckets, ...);
+
+      // computes actual statistic
       double *upper_interval = sketch1.get_upper();
       double *lower_interval = sketch1.get_lower();
       double actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
@@ -72,6 +84,7 @@ int main(int argc, char* argv[])
 
       data_file << "Real = " << actual << endl;
       data_file << "GK = " << GK_stat << endl;
+      data_file << "Reservoir Sampling = " << RS_stat << endl;
       stream_size *= 10;
     }
     seed++; // changes seed for next repeat?
