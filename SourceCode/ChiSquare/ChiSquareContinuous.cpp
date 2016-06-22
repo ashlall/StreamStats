@@ -18,6 +18,7 @@ ChiSquareContinuous::ChiSquareContinuous(double memory_,int num)
   {
   case 1: 
     memory = memory_/3;
+
     quantile_sketch = new GK(memory);
     break;
   case 2:
