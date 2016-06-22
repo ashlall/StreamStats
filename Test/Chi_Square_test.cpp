@@ -231,6 +231,47 @@ void test_chi_square_2nd() //Two-sample test
 	cout << "chiActual: " << chiActual << endl;
 }
 
+int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
+{
+  int *frequencies = new int[num_buckets];
+  for (int i = 0; i < num_buckets; i++)
+    frequencies[i] = 0;
+  for (int i = 0; i < stream_size; i++)
+  {
+    //cout << "item: " << items[i] << " ***" << endl;
+    int lo = 0, hi = num_buckets;
+    while (lo <= hi)
+    {
+      int mid = (lo + hi) / 2;
+      //cout << "mid: " << endl;
+      if (items[i] <= upper[mid] && items[i] >= lower[mid])
+      {
+	frequencies[mid]++;
+	break;
+      }
+      /*else if (items[i] < upper[0])
+      {
+	cout << "hello" << endl;
+	frequencies[0]++;
+	break;
+      }
+      else if (items[i] > lower[num_buckets-1])
+      {
+	cout << "hi" << endl;
+	frequencies[num_buckets-1]++;
+	break;
+	}*/
+      else if (items[i] < lower[mid])
+	{
+	  //	  cout << "lower, " << endl;
+	hi = mid;
+	}
+      else
+	lo = mid + 1;
+    }
+  }
+  return frequencies;
+}
 
 int main()
 {
