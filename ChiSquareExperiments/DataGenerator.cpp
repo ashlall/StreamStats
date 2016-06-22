@@ -2,6 +2,7 @@
 
 #include "DataGenerator.h"
 #include <random>
+#include <stdio.h>
 
 DataGenerator::DataGenerator(char distribution_type, int size, int seed, double location, double scale)
 {
@@ -9,7 +10,7 @@ DataGenerator::DataGenerator(char distribution_type, int size, int seed, double 
   location_ = location;
   scale_ = scale;
   stream = new double[stream_size];
-  std::default_random_engine generator(seed);
+  std::default_random_engine generator;
   if (distribution_type == 'N')
     {
       std::normal_distribution<double> distribution(location, scale); // mean, SD
@@ -24,9 +25,9 @@ DataGenerator::DataGenerator(char distribution_type, int size, int seed, double 
     }
   else if (distribution_type == 'P')
     {
-      std::poisson_distribution<int> distribution(location); // average rate of occurrence
+      std::uniform_real_distribution<double> distribution(0.0, 1.0);
       for (int i = 0; i < stream_size; i++)
-	stream[i] = (double)distribution(generator);
+	stream[i] = location / std::pow(1.0 - distribution(generator), 1.0/scale);
     }
   else if (distribution_type == 'E')
     {
