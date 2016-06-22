@@ -10,7 +10,7 @@ DataGenerator::DataGenerator(char distribution_type, int size, int seed, double 
   location_ = location;
   scale_ = scale;
   stream = new double[stream_size];
-  std::default_random_engine generator;
+  std::default_random_engine generator(seed);
   if (distribution_type == 'N')
     {
       std::normal_distribution<double> distribution(location, scale); // mean, SD
