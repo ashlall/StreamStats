@@ -1,7 +1,10 @@
-all: QDigest.o ReservoirSampling.o
+all: Q-Digest.o ReservoirSampling.o
 
-QDigest.o: Q-Digest.cpp Q-Digest.h QuantileSketch.h
-	g++ -std=c++11 -c Q-Digest.cpp
+CC = g++
+FLAGS = -std=c++11
 
-ReservoirSampling.o: QuantileSketch.h ReservoirSampling.h ReservoirSampling.cpp
-	g++ -c ReservoirSampling.cpp
+Q-Digest.o: Q-Digest.cpp Q-Digest.h QuantileSketch.h
+	$(CC) $(FLAGS) -c $<
+
+ReservoirSampling.o: ReservoirSampling.cpp QuantileSketch.h ReservoirSampling.h
+	$(CC) -c $<

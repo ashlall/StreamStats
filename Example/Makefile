@@ -3,7 +3,9 @@
 
 all: BasicStats_example
 
+CC = g++
+FLAGS = -std=c++11
 VPATH = ../SourceCode/BasicStats
 
-BasicStats_example: BasicStats.o BasicStats_example.cpp
-	g++ -o BasicStats_example BasicStats_example.cpp
+BasicStats_example: BasicStats_example.cpp BasicStats.o
+	$(CC) -o $@ $<
