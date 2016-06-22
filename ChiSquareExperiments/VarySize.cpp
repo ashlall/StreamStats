@@ -67,10 +67,10 @@ int main(int argc, char* argv[])
       //double GK_stat = sketch1.calculate_statistic(num_buckets, ...);
       double *upper_interval = sketch1.get_upper();
       double *lower_interval = sketch1.get_lower();
-      //int actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
+      double actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
       //VarySize(lower, upper, stream);
 
-      //data_file << "Real = " << actual << endl;
+      data_file << "Real = " << actual << endl;
       data_file << "GK = " << GK_stat << endl;
       stream_size *= 10;
     }
@@ -91,7 +91,7 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
   strcat(str, "-repeats_distribution-");
   strcat(str, distribution);
   strcat(str, "_");
-  strcat(str, "_time"); // need to include the actual time                                         
+  strcat(str, "time"); // need to include the actual time                                         
   //  strcpy(str, timer);
   strcat(str, ".dat");
 }
