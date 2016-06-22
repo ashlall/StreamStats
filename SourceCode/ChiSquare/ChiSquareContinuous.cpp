@@ -155,7 +155,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
 
     upper_bins[i] = upper_interval;
     lower_bins[i] = lower_interval;
-
+    cout << "lower_interval: "<< lower_interval << "   " << "upper_interval: "<<upper_interval<<endl;
     // Finds the upper and lower quantiles from quantile_sketch_2 that 
     // correspond to lower_interval and upper_interval. 
     double lower_value, upper_value;
