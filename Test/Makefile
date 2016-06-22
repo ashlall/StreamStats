@@ -13,13 +13,13 @@ GK_test: GK_test.cpp QuantileSketch.h GK.h GK.cpp
 	$(CC) $(FLAGS) -o $@ $<
 
 QDigest_test: QDigest_test.cpp Q-Digest.o
-	$(CC) -o $@ $<
+	$(CC) $(FLAGS) -o $@ $<
 
 QDigest_test_Double: QDigest_test_Double.cpp Q-Digest.o QDigestDouble.h
-	$(CC) -o $@ $<
+	$(CC) $(FLAGS) -o $@ $<
 
 Reservoir_test: Reservoir_test.cpp ReservoirSampling.o
-	$(CC) -o $@ $<
+	$(CC) $(FLAGS) -o $@ $<
 
 Chi_Square_test: Chi_Square_test.cpp ChiSquareContinuous.o
 	$(CC) $(FLAGS) -o $@ $<
