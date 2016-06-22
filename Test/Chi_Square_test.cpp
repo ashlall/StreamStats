@@ -85,70 +85,70 @@ void test_NormalCDFInverse()
  
 void test_chi_square_1st() //One-sample test
 {
-  int sketch_method = 1;
-  cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
-  cout << "1. Greenwald sketch/default." <<endl;
-  cout << "2. Q-Digest sketch." <<endl;
-  cout << "3. Reservoir Sampling sketch." <<endl;
-  cout << "4. Count-Min Sketch." <<endl;
-  cin >> sketch_method;
+ 	int sketch_method = 1;
+	cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
+	cout << "1. Greenwald sketch/default." <<endl;
+	cout << "2. Q-Digest sketch." <<endl;
+	cout << "3. Reservoir Sampling sketch." <<endl;
+	cout << "4. Count-Min Sketch." <<endl;
+	cin >> sketch_method;
 
-  int stream_size;
-  cout << "Enter the stream size: "<<endl;
-  cin >> stream_size;
+ 	int stream_size;
+ 	cout << "Enter the stream size: "<<endl;
+	cin >> stream_size;
 
-  int sample_size;
-  cout << "Enter the memory capacity for the sample size: "<<endl;
-  cin >> sample_size;
+	int sample_size;
+	cout << "Enter the memory capacity for the sample size: "<<endl;
+ 	cin >> sample_size;
   
-  int k;
-  cout << "Enter the number of bins you want to use: " <<endl;
-  cin >> k;
+	int k;
+ 	cout << "Enter the number of bins you want to use: " <<endl;
+ 	cin >> k;
 
-  int mean, SD;
-  cout << "Enter the mean of the normal distribution you want to compare against: "<<endl;
-  cin >> mean;
-  cout << "Enter the standard deviation of the normal distribution you want to compare against: "<<endl;
-  cin >> SD;
+	int mean, SD;
+	cout << "Enter the mean of the normal distribution you want to compare against: "<<endl;
+	cin >> mean;
+	cout << "Enter the standard deviation of the normal distribution you want to compare against: "<<endl;
+	cin >> SD;
 
-  ChiSquareContinuous b(sample_size, sketch_method); //ChiSquare b(memory, sketch method);
+	ChiSquareContinuous b(sample_size, sketch_method); //ChiSquare b(memory, sketch method);
 
-  double item;
-  double chi;
+ 	double item;
+	double chiEstimated;
   
-  double N=0;
-  double *items=new double[stream_size];
-  default_random_engine generator(5);
-  normal_distribution<double> distribution(mean,SD);
-    for (int i=0; i<stream_size; i++) 
-    {
-    	item = distribution(generator);
-    	N++;
-    	items[i]=item;
-  	b.insert(item);
-    }
-    chi = b.calculate_statistic_ifNormal(k,mean,SD);
+	double N=0;
+	double *items=new double[stream_size];
+	default_random_engine generator(5);
+	normal_distribution<double> distribution(mean,SD);
+	for (int i=0; i<stream_size; i++) 
+	{
+    		item = distribution(generator);
+    		N++;
+    		items[i]=item;
+  		b.insert(item);
+    	}
+    	chiEstimated = b.calculate_statistic_ifNormal(k,mean,SD);
     
     
-    double *Upper=b.get_upper();
-    double *Lower=b.get_lower();
-    double E=N/k;
-    double chiActual=0, chiActual2 = 0;
+    	double *Upper=b.get_upper();
+    	double *Lower=b.get_lower();
+    	double E=N/k;
+    	double chiActual=0, chiActual2 = 0;
     /*timeval timeBefore, timeAfter;
     long diffSeconds, diffUSeconds;
     gettimeofday(&timeBefore, NULL);*/
-    for (int i=1;i<=k;i++)
-    {		
-      double O=0;
-            for(int j=0;j<stream_size;j++)
-    	    {
-    	    	    if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
-		          O++;
-    	    }
-      	    double lambda= fabs(O-E);
-    	    chiActual=chiActual+((lambda*lambda)/E);
-    	    
-    }
+    	for (int i=1;i<=k;i++)
+   	{		
+      		double O=0;
+      		for(int j=0;j<stream_size;j++)
+    		{
+    	    	 	if(( items[j]<=Upper[i]) && (items[j]>=Lower[i]))
+		        	O++;
+    	    	}
+      	    	double lambda= fabs(O-E);
+    	    	chiActual=chiActual+((lambda*lambda)/E);
+    	}
+
     /*gettimeofday(&timeAfter, NULL);
     diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
@@ -164,8 +164,9 @@ void test_chi_square_1st() //One-sample test
     diffSeconds= timeAfter.tv_sec - timeBefore.tv_sec;
     diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
     cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";*/
-    cout<<chiActual<<" actual"<<endl;
-  	cout << "chi: " << chi << endl;
+
+   	cout << "chiActual: "<< chiActual << endl;
+  	cout << "chiEstimated: " << chiEstimated << endl;
 	//cout << "actual: " << chiActual2 << endl;
   	delete []items;
 	//delete [] frequencies;
@@ -173,79 +174,118 @@ void test_chi_square_1st() //One-sample test
 
 void test_chi_square_2nd() //Two-sample test
 {
-  ChiSquareContinuous c(10000), c2(10000); 
-	int stream_size = 100000;
-	int stream_size2 = 100000;
-	double item;
-	double item2;
-	long sizel;
-	double chi;
-	
-	double N=0;
-	double *items=new double[stream_size]; //used for storing all the generated data for calculating the actual chi^2.
+ 	int sketch_method = 1;
+  	cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
+  	cout << "1. Greenwald sketch/default." <<endl;
+  	cout << "2. Q-Digest sketch." <<endl;
+  	cout << "3. Reservoir Sampling sketch." <<endl;
+  	cout << "4. Count-Min Sketch." <<endl;
+  	cin >> sketch_method;
+
+	int stream_size1;
+	int stream_size2;
+  	cout << "Enter the first stream's size: "<<endl;
+  	cin >> stream_size1;
+	cout << "Enter the second stream's size: "<<endl;
+	cin >> stream_size2;
+
+  	int sample_size1;
+	int sample_size2;
+  	cout << "Enter the memory capacity for the first sample size: "<<endl;
+ 	cin >> sample_size1;
+  	cout << "Enter the memory capacity for the second sample size: "<<endl;
+ 	cin >> sample_size2;
+  
+	int k;
+ 	cout << "Enter the number of bins you want to use: " <<endl;
+ 	cin >> k;
+
+	int mean1, SD1;
+	int mean2, SD2;
+	cout << "Enter the mean of the first normal distribution: "<<endl;
+	cin >> mean1;
+	cout << "Enter the mean of the second normal distribution: "<<endl;
+	cin >> mean1;
+ 	cout << "Enter the standard deviation of the first normal distribution: "<<endl;
+	cin >> SD1;
+ 	cout << "Enter the standard deviation of the second normal distribution: "<<endl;
+	cin >> SD2;
+
+	ChiSquareContinuous c1(10000, sketch_method), c2(10000, sketch_method); 
+
+	double *items1=new double[stream_size1]; //used for storing all the generated data for calculating the actual chi^2.
 	double *items2=new double[stream_size2];
-
+	double data1;
+	double data2;
 	default_random_engine generator(5);
-	normal_distribution<double> distribution(1000,2000);
-	//normal_distribution<double> distribution2(10000,200);
-	
+	normal_distribution<double> distribution(mean1,SD1);
+	normal_distribution<double> distribution2(mean2,SD2);
     
-//ASSUME TWO STREAMS ARE SAME SIZE FOR NOW!!
-    for (int i=0; i<stream_size; i++) 
-    {
-    	item = distribution(generator);
-	item2 = distribution(generator);
-	items[i]=item;
-	items2[i]=item2;
-  	c.insert(item);
-	c2.insert(item2);
+	for (int i=0; i<stream_size1; i++) 
+  	{
+   		data1 = distribution(generator);
+		items1[i] = data1;
+  		c1.insert(data1);
+ 	}
+
+	//cout << "i: " << i << "  item1: " << item << "    " << "item2: " << item2 << endl; 
 	
-	cout << "i: " << i << "  item1: " << item << "    " << "item2: " << item2 << endl; 
-    }
+ 	for (int i = 0; i < stream_size2; i++)
+  	{
+		data2 = distribution(generator);
+		items2[i] = data2;
+		c2.insert(data2);
+ 	}
 
-/*
-    for (int i = 0; i < stream_size2; i++)
-    {
-	item2 = distribution(generator);
-	items2[i]=item2;
-	cout << item2 <<endl;
-	c2.insert(item2);
-    }
-*/
-	int k = 30;
-        chi = c.two_sample_statistic(c2, k);
-    double *Upper=c.get_upper();
-    double *Lower=c.get_lower();
-    double E=stream_size/k;
-    double chiActual=0, chiActual2 = 0;
-    /*timeval timeBefore, timeAfter;
-    long diffSeconds, diffUSeconds;
-    gettimeofday(&timeBefore, NULL);*/
-    for (int i=1;i<=k;i++)
-    {		
-      double O=0;
-            for(int j=0;j<stream_size2;j++)
-    	    {
-    	    	    if(( items2[j]<=Upper[i]) && (items2[j]>=Lower[i]))
-		          O++;
-    	    }
-      	    double lambda= E-O;
-		 cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
-    	    chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
-    }	
-    
- int count = 0;  
-   for(int j=0;j<stream_size2;j++)
-   {	
- 	if ((items2[j] >= 4655) && (items2[j]<=9721))
-		count++;
-   }	
-	cout << "count: " << count <<endl;
+	double chiEestimated;
+        chiEestimated = c1.two_sample_statistic(c2, k);
+   	double chiActual=0;
 
-	cout << "here" << endl;
-  	cout << "chi: " << chi << endl;
+   	double *Upper=c1.get_upper();
+   	double *Lower=c1.get_lower();
+   	double E=stream_size1/k;
+	double constant_1 = sqrt((double)stream_size2/stream_size1);
+ 	double constant_2 = sqrt((double)stream_size1/stream_size2);
+
+   	/*timeval timeBefore, timeAfter;
+   	long diffSeconds, diffUSeconds;
+   	gettimeofday(&timeBefore, NULL);*/
+   	for (int i=1;i<=k;i++)
+   	{		
+    		double O=0;
+        	for(int j=0;j<stream_size2;j++)
+    	    	{
+    	    		if(( items2[j]<=Upper[i]) && (items2[j]>=Lower[i]))
+		        	O++;
+    	    	}
+	
+      	    	double lambda= E*constant_1 - O*constant_2;
+	 
+	    	cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
+    	   	chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
+    	}	
+    /*gettimeofday(&timeAfter, NULL);
+    diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
+    diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
+    cout << "1st way: " << diffSeconds + diffUSeconds/1000000.0 << endl;
+
+    gettimeofday(&timeBefore, NULL);
+    int *frequencies = get_frequencies(Upper, Lower, items, k, stream_size);
+    for (int i = 1; i <= k; i++)
+      { 
+	chiActual2 += (frequencies[i] - E) * (frequencies[i] - E)/E;
+	}*/
+    /*gettimeofday(&timeAfter, NULL);
+    diffSeconds= timeAfter.tv_sec - timeBefore.tv_sec;
+    diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
+    cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";*/
+  	cout << "chiEestimated: " << chiEestimated << endl;
 	cout << "chiActual: " << chiActual << endl;
 }
+
+
+
+
 
 int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
 {
@@ -293,8 +333,9 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	//test_chi_square_1st();
-	test_chi_square_2nd();
+
+	test_chi_square_1st();
+	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
