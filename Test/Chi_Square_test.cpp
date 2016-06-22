@@ -173,9 +173,9 @@ void test_chi_square_1st() //One-sample test
 
 void test_chi_square_2nd() //Two-sample test
 {
-  ChiSquareContinuous c(500), c2(500); 
-	int stream_size = 10000;
-	int stream_size2 = 10000;
+  ChiSquareContinuous c(10000), c2(10000); 
+	int stream_size = 100000;
+	int stream_size2 = 100000;
 	double item;
 	double item2;
 	long sizel;
@@ -186,18 +186,24 @@ void test_chi_square_2nd() //Two-sample test
 	double *items2=new double[stream_size2];
 
 	default_random_engine generator(5);
-	normal_distribution<double> distribution(10000,200);
+	normal_distribution<double> distribution(1000,2000);
 	//normal_distribution<double> distribution2(10000,200);
 	
     
+//ASSUME TWO STREAMS ARE SAME SIZE FOR NOW!!
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
+	item2 = distribution(generator);
 	items[i]=item;
+	items2[i]=item2;
   	c.insert(item);
-	//cout << item <<endl; 
+	c2.insert(item2);
+	
+	cout << "i: " << i << "  item1: " << item << "    " << "item2: " << item2 << endl; 
     }
 
+/*
     for (int i = 0; i < stream_size2; i++)
     {
 	item2 = distribution(generator);
@@ -205,7 +211,8 @@ void test_chi_square_2nd() //Two-sample test
 	cout << item2 <<endl;
 	c2.insert(item2);
     }
-	int k = 20;
+*/
+	int k = 30;
         chi = c.two_sample_statistic(c2, k);
     double *Upper=c.get_upper();
     double *Lower=c.get_lower();
@@ -223,9 +230,18 @@ void test_chi_square_2nd() //Two-sample test
 		          O++;
     	    }
       	    double lambda= E-O;
-		 cout << E << " " << O <<endl;
+		 cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
     	    chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
     }	
+    
+ int count = 0;  
+   for(int j=0;j<stream_size2;j++)
+   {	
+ 	if ((items2[j] >= 4655) && (items2[j]<=9721))
+		count++;
+   }	
+	cout << "count: " << count <<endl;
+
 	cout << "here" << endl;
   	cout << "chi: " << chi << endl;
 	cout << "chiActual: " << chiActual << endl;
