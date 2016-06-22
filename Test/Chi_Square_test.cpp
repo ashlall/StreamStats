@@ -171,57 +171,20 @@ void test_chi_square_1st() //One-sample test
 	//delete [] frequencies;
 }
 
-int* get_frequencies(double *upper, double *lower, double *items, int num_buckets, int stream_size)
-{
-  int *frequencies = new int[num_buckets];
-  for (int i = 0; i < num_buckets; i++)
-    frequencies[i] = 0;
-  for (int i = 0; i < stream_size; i++)
-  {
-    //cout << "item: " << items[i] << " ***" << endl;
-    int lo = 0, hi = num_buckets;
-    while (lo <= hi)
-    {
-      int mid = (lo + hi) / 2;
-      //cout << "mid: " << endl;
-      if (items[i] <= upper[mid] && items[i] >= lower[mid])
-      {
-	frequencies[mid]++;
-	break;
-      }
-      /*else if (items[i] < upper[0])
-      {
-	cout << "hello" << endl;
-	frequencies[0]++;
-	break;
-      }
-      else if (items[i] > lower[num_buckets-1])
-      {
-	cout << "hi" << endl;
-	frequencies[num_buckets-1]++;
-	break;
-	}*/
-      else if (items[i] < lower[mid])
-	{
-	  //	  cout << "lower, " << endl;
-	hi = mid;
-	}
-      else
-	lo = mid + 1;
-    }
-  }
-  return frequencies;
-}
-
 void test_chi_square_2nd() //Two-sample test
 {
   ChiSquareContinuous c(500), c2(500); 
 	int stream_size = 10000;
+	int stream_size2 = 10000;
 	double item;
 	double item2;
 	long sizel;
 	double chi;
 	
+	double N=0;
+	double *items=new double[stream_size]; //used for storing all the generated data for calculating the actual chi^2.
+	double *items2=new double[stream_size2];
+
 	default_random_engine generator(5);
 	normal_distribution<double> distribution(10000,200);
 	//normal_distribution<double> distribution2(10000,200);
@@ -230,21 +193,42 @@ void test_chi_square_2nd() //Two-sample test
     for (int i=0; i<stream_size; i++) 
     {
     	item = distribution(generator);
-    	//item2=distribution2(generator);
-    	//cout<<item<<endl;
+	items[i]=item;
   	c.insert(item);
-  	//c.insertStreamTwo(item);
+	//cout << item <<endl; 
     }
 
-    for (int i = 0; i < stream_size; i++)
+    for (int i = 0; i < stream_size2; i++)
     {
-      item = distribution(generator);
-      c2.insert(item);
+	item2 = distribution(generator);
+	items2[i]=item2;
+	cout << item2 <<endl;
+	c2.insert(item2);
     }
-
-        chi = c.two_sample_statistic(c2, 100);
+	int k = 20;
+        chi = c.two_sample_statistic(c2, k);
+    double *Upper=c.get_upper();
+    double *Lower=c.get_lower();
+    double E=stream_size/k;
+    double chiActual=0, chiActual2 = 0;
+    /*timeval timeBefore, timeAfter;
+    long diffSeconds, diffUSeconds;
+    gettimeofday(&timeBefore, NULL);*/
+    for (int i=1;i<=k;i++)
+    {		
+      double O=0;
+            for(int j=0;j<stream_size2;j++)
+    	    {
+    	    	    if(( items2[j]<=Upper[i]) && (items2[j]>=Lower[i]))
+		          O++;
+    	    }
+      	    double lambda= E-O;
+		 cout << E << " " << O <<endl;
+    	    chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
+    }	
 	cout << "here" << endl;
   	cout << "chi: " << chi << endl;
+	cout << "chiActual: " << chiActual << endl;
 }
 
 
@@ -252,8 +236,8 @@ int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
-	test_chi_square_1st();
-	//test_chi_square_2nd();
+	//test_chi_square_1st();
+	test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
