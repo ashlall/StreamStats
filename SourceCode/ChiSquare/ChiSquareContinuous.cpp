@@ -145,13 +145,13 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   upper_bins = new double[num_buckets];
   lower_bins = new double[num_buckets];
 
-  double constant_1 = sqrt(stream_size_2/stream_size_1);
-  double constant_2 = sqrt(stream_size_1/stream_size_2);
+  double constant_1 = sqrt((double)stream_size_2/stream_size_1);
+  double constant_2 = sqrt((double)stream_size_1/stream_size_2);
   for (int i = 1; i <= num_buckets; i++)
   {
     // Finds the upper and lower values from quantile_sketch that mark the bin.
-    double lower_interval = quantile_sketch->getQuantile(((int)i-1)/num_buckets);
-    double upper_interval = quantile_sketch->getQuantile((int)i/num_buckets);
+    double lower_interval = quantile_sketch->getQuantile(((double)i-1)/num_buckets);
+    double upper_interval = quantile_sketch->getQuantile((double)i/num_buckets);
 
     upper_bins[i] = upper_interval;
     lower_bins[i] = lower_interval;
@@ -167,6 +167,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
     double frequency_2 = stream_size_2 * (upper_value - lower_value);
     double value = frequency_1 * constant_1 - frequency_2 * constant_2;
     chi_squared += (value * value) / (frequency_1 + frequency_2);
+   cout << "F1: " <<frequency_1 << "  " << "F2: " << frequency_2 <<endl;
   }
   return chi_squared;
 }
