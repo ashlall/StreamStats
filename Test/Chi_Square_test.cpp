@@ -211,7 +211,7 @@ void test_chi_square_2nd() //Two-sample test
  	cout << "Enter the standard deviation of the second normal distribution: "<<endl;
 	cin >> SD2;
 
-	ChiSquareContinuous c1(10000, sketch_method), c2(10000, sketch_method); 
+	ChiSquareContinuous c1(sample_size1, sketch_method), c2(sample_size2, sketch_method); 
 
 	double *items1=new double[stream_size1]; //used for storing all the generated data for calculating the actual chi^2.
 	double *items2=new double[stream_size2];
@@ -233,7 +233,7 @@ void test_chi_square_2nd() //Two-sample test
  	for (int i = 0; i < stream_size2; i++)
   	{
 		data2 = distribution(generator);
-		items2[i] = data2;
+		items2[i] = items1[i];
 		c2.insert(data2);
  	}
 
@@ -243,7 +243,6 @@ void test_chi_square_2nd() //Two-sample test
 
    	double *Upper=c1.get_upper();
    	double *Lower=c1.get_lower();
-   	double E=stream_size1/k;
 	double constant_1 = sqrt((double)stream_size2/stream_size1);
  	double constant_2 = sqrt((double)stream_size1/stream_size2);
 
@@ -251,7 +250,14 @@ void test_chi_square_2nd() //Two-sample test
    	long diffSeconds, diffUSeconds;
    	gettimeofday(&timeBefore, NULL);*/
    	for (int i=1;i<=k;i++)
-   	{		
+   	{	
+    		double E=0;
+        	for(int j=0;j<stream_size1;j++)
+    	    	{
+    	    		if(( items1[j]<=Upper[i]) && (items1[j]>=Lower[i]))
+		        	E++;
+    	    	}
+	
     		double O=0;
         	for(int j=0;j<stream_size2;j++)
     	    	{
@@ -261,7 +267,7 @@ void test_chi_square_2nd() //Two-sample test
 	
       	    	double lambda= E*constant_1 - O*constant_2;
 	 
-	    	cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
+	    	//cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
     	   	chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
     	}	
     /*gettimeofday(&timeAfter, NULL);
@@ -334,8 +340,8 @@ int main()
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
 
-	test_chi_square_1st();
-	//test_chi_square_2nd();
+	//est_chi_square_1st();
+	test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }
