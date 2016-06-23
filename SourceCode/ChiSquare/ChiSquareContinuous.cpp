@@ -153,7 +153,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
 
     upper_bins[i] = upper_interval;
     lower_bins[i] = lower_interval;
-    cout << "lower_interval: "<< lower_interval << "   " << "upper_interval: "<<upper_interval<<endl;
+    //cout << "lower_interval: "<< lower_interval << "   " << "upper_interval: "<<upper_interval<<endl;
     // Finds the upper and lower quantiles from quantile_sketch_2 that 
     // correspond to lower_interval and upper_interval. 
     double lower_value, upper_value;
@@ -165,7 +165,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
     double frequency_2 = stream_size_2 * (upper_value - lower_value);
     double value = frequency_1 * constant_1 - frequency_2 * constant_2;
     chi_squared += (value * value) / (frequency_1 + frequency_2);
-   cout << "F1: " <<frequency_1 << "  " << "F2: " << frequency_2 <<endl;
+   //cout << "F1: " <<frequency_1 << "  " << "F2: " << frequency_2 <<endl;
   }
   return chi_squared;
 }
