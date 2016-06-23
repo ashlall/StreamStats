@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <fstream>
 #include <time.h>
-#include <string.h>
+//#include <string.h>
+#include <cmath>
 #include "DataGenerator.cpp"
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.cpp"
 using namespace std;
@@ -55,7 +56,7 @@ int main(int argc, char* argv[])
 
   int stream_size;
   double memory_percent = 0.1; // default, change?
-  int num_buckets = 45; // default, change
+  int num_buckets = 20; // default, change
   int num_sizes = 0, size = lower;
   while (size <= upper)
   {
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
   double GK_values[data_repeats][num_sizes];
   double QD_values[data_repeats][num_sizes];
   double RS_values[data_repeats][num_sizes];
+  int sizes[num_sizes];
 
   ofstream data_file;
   char str[150];
@@ -80,6 +82,8 @@ int main(int argc, char* argv[])
     data_file << "Stream " << i+1 << ":" << endl;
     while (stream_size <= upper)
     {
+      if (i == 0)
+        sizes[j] = stream_size;
       data_file << "stream_size = " << stream_size << endl;
       DataGenerator data(distribution_type, stream_size, seed, location, scale);
       double *stream = data.get_stream();
@@ -87,27 +91,27 @@ int main(int argc, char* argv[])
       // computes GK estimate
       ChiSquareContinuous sketch1(memory_percent * stream_size, 1); 
       for (int i = 0; i < stream_size; i++)
-	sketch1.insert(stream[i]);
+	      sketch1.insert(stream[i]);
       double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
       GK_values[i][j] = GK_stat;
       data_file << "GK = " << GK_stat << endl;
 
       if (all_quantiles)
       {
-	// computes QDigest estimate
-	ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
-	for (int i = 0; i < stream_size; i++)
-	  sketch2.insert(stream[i]);
-	double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
-	QD_values[i][j] = QD_stat;
+      	// computes QDigest estimate
+	      ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
+	      for (int i = 0; i < stream_size; i++)
+	        sketch2.insert(stream[i]);
+	      double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
+	      QD_values[i][j] = QD_stat;
         data_file << "QDigest = " << QD_stat << endl;
 
-	// computes ReservoirSampling estimate
-	ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
-	for (int i = 0; i < stream_size; i++)
-	  sketch3.insert(stream[i]);
-	double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
-	RS_values[i][j] = RS_stat;
+	      // computes ReservoirSampling estimate
+	      ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
+	      for (int i = 0; i < stream_size; i++)
+	        sketch3.insert(stream[i]);
+	      double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
+	      RS_values[i][j] = RS_stat;
         data_file << "Reservoir Sampling = " << RS_stat << endl;
       }
 
@@ -128,33 +132,56 @@ int main(int argc, char* argv[])
   // writes data into tab deliminated file
   name_file(str, argv[1], argv[2], argv[3], argv[4], 1);
   data_file.open(str);
+
+  // relative/percent error (|estimate - actual| / actual * 100)
   for (int i = 0; i < num_sizes; i++)
+  {
+    data_file << sizes[i] << "\t";
+    double rel_error = 0;
+    for (int j = 0; j < data_repeats; j++)
+      rel_error += abs(GK_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+    data_file << rel_error / data_repeats;// << "\t";
+
+    if (all_quantiles)
     {
+      rel_error = 0;
       for (int j = 0; j < data_repeats; j++)
-	data_file << actual_values[j][i] << " \t";
+        rel_error += abs(QD_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+      data_file << "\t" << rel_error / data_repeats << "\t";
+      rel_error = 0;
+      for (int j = 0; j < data_repeats; j++)
+        rel_error += abs(RS_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+      data_file << rel_error / data_repeats;// << "\t";
     }
+  }
+
+  /*for (int i = 0; i < num_sizes; i++)
+  {
+    for (int j = 0; j < data_repeats; j++)
+	    data_file << actual_values[j][i] << "\t";
+  }
   data_file << endl;
   for (int i = 0; i < num_sizes; i++)
-    {
-      for(int j = 0; j <data_repeats; j++)
-        data_file << GK_values[j][i] << " \t";
-    }
+  {
+    for(int j = 0; j <data_repeats; j++)
+      data_file << GK_values[j][i] << "\t";
+  }
   data_file << endl;
   if (all_quantiles)
   {
     for (int i = 0; i < num_sizes; i++)
-      {
-	for(int j = 0; j <data_repeats; j++)
-	  data_file << QD_values[j][i] << " \t";
-      }
+    {
+	    for(int j = 0; j <data_repeats; j++)
+	      data_file << QD_values[j][i] << "\t";
+    }
     data_file << endl;
     for (int i = 0; i < num_sizes; i++)
-      {
-	for(int j = 0; j <data_repeats; j++)
-	  data_file << RS_values[j][i] << " \t";
-      }
+    {
+	    for(int j = 0; j <data_repeats; j++)
+	     data_file << RS_values[j][i] << "\t";
+    }
     data_file << endl;
-  }
+  }*/
   data_file.close();
   return 0;
 }
