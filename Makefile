@@ -6,3 +6,4 @@ all:
 	cd SourceCode/ChiSquare; make
 	cd Test; make
 	cd Example; make
+	cd ChiSquareExperiments; make 
