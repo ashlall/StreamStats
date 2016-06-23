@@ -31,9 +31,9 @@ DataGenerator::DataGenerator(char distribution_type, int size, int seed, double 
     }
   else if (distribution_type == 'E')
     {
-      std::exponential_distribution<double> distribution(location); // mean, must be positive
+      std::uniform_real_distribution<double> distribution(0.0, 1.0);
       for (int i = 0; i < stream_size; i++)
-	stream[i] = distribution(generator);
+	stream[i] = location - std::log(1 - distribution(generator))/scale;
     }
   else
     throw ParameterError();
