@@ -22,14 +22,11 @@ ChiSquareContinuous::ChiSquareContinuous(double memory_,int num)
     quantile_sketch = new GK(memory);
     break;
   case 2:
-    // quantile_sketch = new QDigestDouble(memory);
+    quantile_sketch = new QDigestDouble(memory);
     break;
   case 3: 
     quantile_sketch = new ReservoirSampling((int)memory);
     break;
-  case 4:
-    // quantile_sketch = new CMS((int)memory);
-	  break;
   default:
     throw IndexError();
   }	

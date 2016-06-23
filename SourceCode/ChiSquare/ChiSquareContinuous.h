@@ -4,10 +4,9 @@
 #ifndef CHI_SQUARED_CONTINUOUS_H
 #define CHI_SQUARED_CONTINUOUS_H
 
-#include "../Quantiles/GK.h"
+#include "../Quantiles/GK.cpp"
 #include "../Quantiles/ReservoirSampling.cpp"
 #include "../Quantiles/QDigestDouble.h"
-//#include "../Quantiles/CMSQuantile.h"
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h>
@@ -21,8 +20,7 @@ public:
 	ChiSquareContinuous(double m,int q=1);
 	/* q=1: GreenWaldKhanna Sketch
 	   q=2: Q-Digest Sketch
-	   q=3: Count Min Sketch
-	   q=4 Reservoir Sampling
+	   q=3: Reservoir Sampling
 	*/	
 	~ChiSquareContinuous();
   	
