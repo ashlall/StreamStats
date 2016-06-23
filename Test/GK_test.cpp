@@ -5,22 +5,24 @@
 
 #include "../SourceCode/Quantiles/GK.cpp"
 
-//Complile with g++ -o gk.o -std=c++11 GK_test.cpp
+//include -std=c++11 flag when compling
 
 
-void test_GK()
+//Input: Stream size, sample size
+//Output: Nothing. Will exist if the following test did not pass.
+void test_GK(int stream_size, int sample_size)
 {
-	int k = 1000; 
+	int k = sample_size; 
 	long quantA,quantB,quantC,quantD,quantE,quantF,quantG,quantH;
 	bool condA,condB,condC,condD,condE,condF,condG,condH;
 	double upper,lower;
-	int n=10000; 
+	int n=stream_size; 
 	
-    int random_fix1 = rand()% RAND_MAX;
-    int random_fix2 = rand()% RAND_MAX;
-    int random_fix3 = rand()% RAND_MAX;
+	int random_fix1 = rand()% RAND_MAX;
+ 	int random_fix2 = rand()% RAND_MAX;
+ 	int random_fix3 = rand()% RAND_MAX;
         
-    GK a(k);
+    	GK a(k);
  	GK b(k);
 	GK c(k);
 	GK d(k);
@@ -31,23 +33,23 @@ void test_GK()
 
 	
 	for (double j = 0; j <= n; j++) //inserting in decreasing order
-    {	
+   	{	
   		a.insert(j); 
-    }
-    bool condA1;
+    	}
+    	bool condA1;
 	int LA = a.get_stream_size(); //test the function get_stream_size()
 	condA1= (LA == n+1);
 	assert(condA1 == true);
-	
+
 	for (int i = n; i >= 0; i--) //inserting in desceding order
-    {
+    	{
   		b.insert(i); 
-    }
-    bool condB1;
+    	}
+    	bool condB1;
 	int LB = b.get_stream_size(); //test the function get_stream_size()
 	condB1= (LB == n+1);
 	assert(condB1 == true);
-	    
+
 	for (int m = 1; m <= 3; m++) //create 3 "random" sequences that holds their randomness every time runs the code
   	{
   		 if (m == 1)
@@ -106,8 +108,8 @@ void test_GK()
 	  long LF = f.get_stream_size(); //test the function get_stream_size()
 	  long LG = g.get_stream_size();
  	  long LH = h.get_stream_size();
-      condF1 = (LF == 1);
-      condG1 = (LG == 1);
+          condF1 = (LF == 1);
+     	  condG1 = (LG == 1);
 	  condH1 = (LH == 1);
 	  assert(condF1 == true);
 	  assert(condG1 == true);
@@ -155,57 +157,72 @@ void test_GK()
   	  assert(condF==true);
   	  assert(condG==true);
   	  assert(condH==true);
-  } 
-  	  
+  } 	  
 }
 
-void quicktest()
+//Input: Stream size, sample size
+//Output: Nothing. Will exist if the following test did not pass.
+void test_reverseQuantile(double stream_size, double sample_size)
 {
-	GK a(1000);
-	for(int i=1; i<=1000000; i++)
+	//If the sample_size is large enough, then the reverse quantile lookup should return the EXACT index. Here, we transformed into probability.
+	if (sample_size >= stream_size*3)
 	{
-		a.insert(i + 0.13416435);
+		GK m(sample_size);
+		GK n(sample_size);
+		bool check;
+		double hold;
+
+		for(double i = 0; i<=stream_size; i++)
+		{
+			m.insert(i);
+			n.insert(stream_size-i);
+		}
+	
+		for(double i = 0; i<=stream_size; i++)
+		{ 
+			hold = ((m.reverseQuantile(i, stream_size))/stream_size);
+			check = (hold == i/stream_size);
+			assert(check==true);
+
+			hold = ((n.reverseQuantile(i, stream_size))/stream_size);
+			check = (hold == i/stream_size);
+			assert(check==true);
+		}
 	}
 
-	cout << "0.1: "<<a.getQuantile(0.1) << endl;
-	cout << "0.2: "<<a.getQuantile(0.2) << endl;
-	cout << "0.3: "<<a.getQuantile(0.3) << endl;
-	cout << "0.4: "<<a.getQuantile(0.4) << endl;
-	cout << "median:" << a.getQuantile(0.5) << endl;
-	cout << "0.6: "<<a.getQuantile(0.6) << endl;
-	cout << "0.7: "<<a.getQuantile(0.7) << endl;
-	cout << "0.8: "<<a.getQuantile(0.8) << endl;
-	cout << "0.9: "<<a.getQuantile(0.9) << endl;
-	cout << "1: "<<a.getQuantile(1) << endl;
-}
+	//Theoratically, the reverse quantile lookup will generate 3epsilon.
+	else
+	{
+		GK m(sample_size);
+		GK n(sample_size);
+		bool check1, check2;
+		double hold1, hold2;
 
-void test_reverse()
-{
-	GK a(3000);
-	int stream_size =88888;
-	double item;
+		for(double i = 0; i<=stream_size; i++)
+		{
+			m.insert(i);
+			n.insert(stream_size-i);
+		}
 	
-	default_random_engine generator;
-    normal_distribution<double> distribution(3000,50);
-    
-    for (int i=0; i<stream_size; i++) 
-    {
-    	item = distribution(generator);
-  	    a.insert(item);
-  	}
-  	
-  	double median;
-  	median = a.getQuantile(0.5);
-  	cout << "median:" << median << endl;
-  	double median_index;
-  	median_index = a.reverseQuantile(3000, stream_size);
-  	cout << "median's index in stream: "<<median_index << endl;
-}
+		for(double i = 0; i<=stream_size; i++)
+		{ 
+			hold1 = ((m.reverseQuantile(i, stream_size))/stream_size);
+			check1 = ((hold1 >= i/stream_size - (1/stream_size)*3) &&  (hold1 <= i/stream_size + (1/stream_size)*3));
+			assert(check1==true);
+
+			hold2 = ((n.reverseQuantile(i, stream_size))/stream_size);
+			check2 = ((hold2 >= i/stream_size - (1/stream_size)*3) &&  (hold2 <= i/stream_size + (1/stream_size)*3));
+			assert(check2==true);
+		}			
+	}		
+}		
+
 
 int main()
-{
-  //test_GK();
-  //quicktest();
-  test_reverse();
-  return 0;
+{	
+	//test_GK(10000, 20000);
+	test_reverseQuantile(5000,15000); 
+ 	return 0;
 }
+
+
