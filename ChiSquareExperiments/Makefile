@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -std=c++11
-VPATH = ../SourceCode/ChiSquare
+VPATH = ../SourceCode/ChiSquare:../SourceCode/Quantiles
 
 all: VarySize
 
@@ -11,8 +11,8 @@ VarySize: VarySize.cpp DataGenerator.o ChiSquareContinuous.o
 DataGenerator.o: DataGenerator.cpp DataGenerator.h
 	$(CC) $(FLAGS) -c $<
 
-ChiSquareContinuous.o: ChiSquareContinuous.o
-	$(CC)
+ChiSquareContinuous.o: ChiSquareContinuous.cpp ChiSquareContinuous.h ReservoirSampling.o GK.o Q-Digest.o QDigestDouble.h
+	$(CC) $(FLAGS) -c $<
 
 clean:
 	rm *.o
