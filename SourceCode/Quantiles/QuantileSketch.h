@@ -33,12 +33,12 @@ Member Functions:
 // performs a search to find the largest index that has value less than or equal to r
 double QuantileSketch::reverseQuantile(double r, int n)
 {
-  int lo=0, hi= n-1;
+  int lo=0, hi= n;
   while (lo < hi)
   {
     int mid = (lo+hi)/2;
     double value = getQuantile(((double)mid)/n);
-    if (value <= r)
+    if (value < r)
       lo = mid+1;
     else
       hi = mid;
