@@ -27,7 +27,7 @@ ChiSquareCatigorical::~ChiSquareCatigorical()
 /*
 Pre-Condition: Data from category c, where c lies betweeen categories 0 throuh C.
 Post-Condition: c is passed into the hash function and its bucket frequency
-is then incremented.
+is then incremented.g
 */
 void ChiSquareCatigorical::insert(double c)
 {
