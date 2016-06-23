@@ -164,46 +164,35 @@ void test_GK(int stream_size, int sample_size)
 //Output: Nothing. Will exist if the following test did not pass.
 void test_reverseQuantile(double stream_size, double sample_size)
 {
+	GK m(sample_size);
+	GK n(sample_size);
+	bool check1, check2;
+	double hold1, hold2;
+
+	for(double i = 0; i<=stream_size; i++)
+	{
+		m.insert(i);
+		n.insert(stream_size-i);
+	}
+
 	//If the sample_size is large enough, then the reverse quantile lookup should return the EXACT index. Here, we transformed into probability.
 	if (sample_size >= stream_size*3)
 	{
-		GK m(sample_size);
-		GK n(sample_size);
-		bool check;
-		double hold;
-
-		for(double i = 0; i<=stream_size; i++)
-		{
-			m.insert(i);
-			n.insert(stream_size-i);
-		}
-	
 		for(double i = 0; i<=stream_size; i++)
 		{ 
-			hold = ((m.reverseQuantile(i, stream_size))/stream_size);
-			check = (hold == i/stream_size);
-			assert(check==true);
+			hold1 = ((m.reverseQuantile(i, stream_size))/stream_size);
+			check1 = (hold1 == i/stream_size);
+			assert(check1==true);
 
-			hold = ((n.reverseQuantile(i, stream_size))/stream_size);
-			check = (hold == i/stream_size);
-			assert(check==true);
+			hold2 = ((n.reverseQuantile(i, stream_size))/stream_size);
+			check2 = (hold2 == i/stream_size);
+			assert(check2==true);
 		}
 	}
 
 	//Theoratically, the reverse quantile lookup will generate 3epsilon.
 	else
 	{
-		GK m(sample_size);
-		GK n(sample_size);
-		bool check1, check2;
-		double hold1, hold2;
-
-		for(double i = 0; i<=stream_size; i++)
-		{
-			m.insert(i);
-			n.insert(stream_size-i);
-		}
-	
 		for(double i = 0; i<=stream_size; i++)
 		{ 
 			hold1 = ((m.reverseQuantile(i, stream_size))/stream_size);
@@ -221,7 +210,7 @@ void test_reverseQuantile(double stream_size, double sample_size)
 int main()
 {	
 	//test_GK(10000, 20000);
-	test_reverseQuantile(5000,15000); 
+	test_reverseQuantile(5000,3000); 
  	return 0;
 }
 
