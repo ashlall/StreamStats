@@ -26,7 +26,10 @@ public:
   	
 	void insert(double val);
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
-	double calculate_statistic(int num_buckets, double (*f)(double));
+	double calculate_statistic_ifUniform(int num_buckets, double location, double scale);
+	double calculate_statistic_ifPareto(int num_buckets, double location, double scale);
+	double calculate_statistic_ifExponential(int num_buckets, double location, double scale);
+	double calculate_statistic(int num_buckets, double (ChiSquareContinuous::*distribution)(double, double, double), double location, double scale);
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
 	double* get_upper();
 	double* get_lower();
@@ -41,6 +44,9 @@ private:
 	
 	double rational_approximation(double t);
 	double normal_cdf_inverse(double p, double mean, double SD);	
+	double uniform_cdf_inverse(double percent, double location, double scale);
+	double pareto_cdf_inverse(double percent, double location,double scale);
+	double exponential_cdf_inverse(double percent, double location, double scale);
 };
 
 class IndexError {};

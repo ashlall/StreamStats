@@ -92,7 +92,7 @@ double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double
 // however the user must write it.
 // Output: Returns the chi-squared statistic where quantile_sketch is the 
 // observed data and distribution is the expected data.
-double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*distribution)(double))
+double ChiSquareContinuous::calculate_statistic(int num_buckets, double(ChiSquareContinuous::*distribution)(double, double, double), double location, double scale)
 {		
   int stream_size = quantile_sketch->get_stream_size();
   double expected_frequency = stream_size/num_buckets;
@@ -106,8 +106,8 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*distrib
   for (int i = 1; i <= num_buckets; i++)
   {
     // Finds the upper and lower values from distribution that mark the bin.
-    double lower_interval = (*distribution)(((double)i-1)/num_buckets);
-    double upper_interval = (*distribution)((double)i/num_buckets);
+    double lower_interval = (this->*distribution)(((double)i-1)/num_buckets, location, scale);
+    double upper_interval = (this->*distribution)((double)i/num_buckets, location, scale);
 
     upper_bins[i] = upper_interval;
     lower_bins[i] = lower_interval;
@@ -123,6 +123,21 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(*distrib
     chi_squared=chi_squared+ ((lambda*lambda)/ expected_frequency);
   }		
   return chi_squared;	
+}
+
+double ChiSquareContinuous::calculate_statistic_ifUniform(int num_buckets, double location, double scale)
+{
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::uniform_cdf_inverse, location, scale);
+}
+
+double ChiSquareContinuous::calculate_statistic_ifPareto(int num_buckets, double location, double scale)
+{
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::pareto_cdf_inverse, location, scale);
+}
+
+double ChiSquareContinuous::calculate_statistic_ifExponential(int num_buckets, double location, double scale)
+{
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::exponential_cdf_inverse, location, scale);
 }
 
 // Computes and returns the chi-squared statistic compared to another 
@@ -189,8 +204,7 @@ URL:: http://www.johndcook.com/blog/normal_cdf_inverse/
 input: p(probability 0-1), mean, standard deviation
 output: corresponding x value
 */
-double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD)
-{
+double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD){
   if (p < 0.0 || p > 1.0)
   {
     //throw an exception
@@ -212,6 +226,21 @@ double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD)
     // F^-1(p) = G^-1(1-p)
     return rational_approximation( sqrt(-2.0*log(1-p)))*SD + mean;
   }
+}
+
+double ChiSquareContinuous::uniform_cdf_inverse(double percent, double location, double scale)
+{
+  return location + (scale - location) * percent;
+}
+
+double ChiSquareContinuous::pareto_cdf_inverse(double percent, double location, double scale)
+{
+  return location / pow(1 - percent, 1 / scale);
+}
+
+double ChiSquareContinuous::exponential_cdf_inverse(double percent, double location, double scale)
+{
+  return location - log(1 - percent) / scale;
 }
 
 double ChiSquareContinuous::rational_approximation(double t)

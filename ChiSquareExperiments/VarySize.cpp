@@ -1,8 +1,6 @@
 // VarySize.cpp
 // Experiments that vary in stream_size, user inputs range, number of data repeats, and type/
 // parameters of the distribution
-// TODO: write functions to calculate statistic for all distributions - right now only works for 
-// normal distribution, segfaulting at times, not sure why
 
 #include <iostream>
 #include <stdlib.h>
@@ -18,23 +16,42 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
 
 int main(int argc, char* argv[])
 {
-  if (argc < 7)
+  if (argc < 8)
+  {
+    cout << "usage: VarySize lower-size upper-size num-streams(>0) [N|U|P|E] location scale [0|1] seed(optional)" << endl;
     throw ParameterError();
-
+  }
+  
   double lower = atof (argv[1]);
   double upper = atof (argv[2]);
   int data_repeats = atoi (argv[3]);
   char distribution_type = *argv[4];
   double location = atof (argv[5]);
   double scale = atof (argv[6]);
+  int all_quantiles = atoi (argv[7]);
   int seed;
-  if (argc == 8)
-    seed = atoi (argv[7]);
+  if (argc == 9)
+    seed = atoi (argv[8]);
   else
   {
     seed = 1; // change to random based on time
   }
- 
+
+  if (data_repeats <= 0)
+  {
+    cout << "The number of streams must be greater than zero." << endl;
+    throw ParameterError();
+  }
+  if (distribution_type != 'N' && distribution_type != 'U' && distribution_type != 'P' && distribution_type != 'E')
+  {
+    cout << "The distribution is either N, U, P, or E." << endl;
+    throw ParameterError();
+  }
+  if (lower <= 0)
+  {
+    cout << "The lower stream size must be greater than 0." << endl;
+    throw ParameterError();
+  }
 
   int stream_size;
   double memory_percent = 0.1; // default, change?
@@ -50,16 +67,17 @@ int main(int argc, char* argv[])
   double GK_values[data_repeats][num_sizes];
   double QD_values[data_repeats][num_sizes];
   double RS_values[data_repeats][num_sizes];
-  
+
   ofstream data_file;
   char str[150];
   name_file(str, argv[1], argv[2], argv[3], argv[4],0);
   data_file.open(str);
+  data_file << "Distribution: " << distribution_type << ", location = " << location << ", scale = " << scale << endl;
   for (int i = 0; i < data_repeats; i++)
   {
     stream_size = lower;
     int j = 0;
-    data_file << "Data repeat = " << i << endl;
+    data_file << "Stream " << i+1 << ":" << endl;
     while (stream_size <= upper)
     {
       data_file << "stream_size = " << stream_size << endl;
@@ -72,31 +90,33 @@ int main(int argc, char* argv[])
 	sketch1.insert(stream[i]);
       double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
       GK_values[i][j] = GK_stat;
+      data_file << "GK = " << GK_stat << endl;
 
-      // computes QDigest estimate
-      ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
-      for (int i = 0; i < stream_size; i++)
-	sketch2.insert(stream[i]);
-      double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
-      QD_values[i][j] = QD_stat;
+      if (all_quantiles)
+      {
+	// computes QDigest estimate
+	ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
+	for (int i = 0; i < stream_size; i++)
+	  sketch2.insert(stream[i]);
+	double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
+	QD_values[i][j] = QD_stat;
+        data_file << "QDigest = " << QD_stat << endl;
 
-      // computes ReservoirSampling estimate
-      ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
-      for (int i = 0; i < stream_size; i++)
-	sketch3.insert(stream[i]);
-      double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
-      RS_values[i][j] = RS_stat;
+	// computes ReservoirSampling estimate
+	ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
+	for (int i = 0; i < stream_size; i++)
+	  sketch3.insert(stream[i]);
+	double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
+	RS_values[i][j] = RS_stat;
+        data_file << "Reservoir Sampling = " << RS_stat << endl;
+      }
 
       // computes actual statistic
       double *upper_interval = sketch1.get_upper();
       double *lower_interval = sketch1.get_lower();
       double actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
       actual_values[i][j] = actual;
-
       data_file << "Real = " << actual << endl;
-      data_file << "GK = " << GK_stat << endl;
-      data_file << "QDigest = " << QD_stat << endl;
-      data_file << "Reservoir Sampling = " << RS_stat << endl;
 
       stream_size *= 10;
       j++;
@@ -117,42 +137,39 @@ int main(int argc, char* argv[])
   for (int i = 0; i < num_sizes; i++)
     {
       for(int j = 0; j <data_repeats; j++)
-        data_file<< GK_values[j][i] << " \t";
+        data_file << GK_values[j][i] << " \t";
     }
   data_file << endl;
-  for (int i = 0; i < num_sizes; i++)
-    {
-      for(int j = 0; j <data_repeats; j++)
-	data_file<< QD_values[j][i] << " \t";
-    }
-  data_file << endl;
-  for (int i = 0; i < num_sizes; i++)
-    {
-      for(int j = 0; j <data_repeats; j++)
-	data_file<< RS_values[j][i] << " \t";
-    }
+  if (all_quantiles)
+  {
+    for (int i = 0; i < num_sizes; i++)
+      {
+	for(int j = 0; j <data_repeats; j++)
+	  data_file << QD_values[j][i] << " \t";
+      }
+    data_file << endl;
+    for (int i = 0; i < num_sizes; i++)
+      {
+	for(int j = 0; j <data_repeats; j++)
+	  data_file << RS_values[j][i] << " \t";
+      }
+    data_file << endl;
+  }
   data_file.close();
   return 0;
 }
 
-// Fix for other distributions!!!
+
 double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type, int num_buckets, double location, double scale)
 {
   if (distribution_type == 'N')
     return quantile_sketch->calculate_statistic_ifNormal(num_buckets, location, scale);
   else if (distribution_type == 'U')
-    {
-      // return quantile_sketch->calculate_statistic(num_buckets, function);
-      return 1;
-    }
+    return quantile_sketch->calculate_statistic_ifUniform(num_buckets, location, scale);
   else if (distribution_type == 'P')
-    {
-      return 1;
-    }
+    return quantile_sketch->calculate_statistic_ifPareto(num_buckets, location, scale);
   else
-    {
-      return 1;
-    }
+    return quantile_sketch->calculate_statistic_ifExponential(num_buckets, location, scale);
 }
 
 void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, int extra)
