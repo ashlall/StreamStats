@@ -14,6 +14,12 @@ ChiSquareCatigorical::ChiSquareCatigorical()
 	
 }
 
+ChiSquareCatigorical::~ChiSquareCatigorical()
+{
+	delete []count; 	
+}
+
+
 /*
 
 
