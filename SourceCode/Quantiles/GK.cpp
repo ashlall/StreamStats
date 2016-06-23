@@ -1,4 +1,5 @@
 //GK.cpp
+#include "GK.h"
 #include<string.h>
 /*
 The GreenWald Khanna Sketch: An Algorithm for computing approximate quantile 

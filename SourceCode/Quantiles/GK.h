@@ -59,6 +59,5 @@ private:
 	long stream_size;	
 };
 
-#include "GK.cpp"
 #endif 
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <random>
 
-#include "../SourceCode/Quantiles/GK.h"
+#include "../SourceCode/Quantiles/GK.cpp"
 
 //Complile with g++ -o gk.o -std=c++11 GK_test.cpp
 
