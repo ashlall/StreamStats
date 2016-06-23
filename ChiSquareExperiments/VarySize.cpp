@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
   int stream_size;
   double memory_percent = 0.1; // default, change?
-  int num_buckets = 51; // default, change
+  int num_buckets = 45; // default, change
   int num_sizes = 0, size = lower;
   while (size <= upper)
   {
