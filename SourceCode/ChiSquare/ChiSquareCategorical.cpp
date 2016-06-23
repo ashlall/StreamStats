@@ -1,12 +1,10 @@
 //ChiSquareCategorical.cpp
-
-#include "ChiSquareCategorical.h"
-
+#include"ChiSquareCategorical.h"
 /*
 Pre-Condition: None.
 Post-Condition:Initializes the variables used in the ChiSquareCategorical class.
 */
-ChiSquareCatigorical::ChiSquareCatigorical()
+ChiSquareCategorical::ChiSquareCategorical()
 {
 	chi_squared=0;
 	num_buckets=50;
@@ -19,7 +17,7 @@ ChiSquareCatigorical::ChiSquareCatigorical()
 Pre-Condition:None.
 Post-Condition: Deallocates any allocated memory.
 */
-ChiSquareCatigorical::~ChiSquareCatigorical()
+ChiSquareCategorical::~ChiSquareCategorical()
 {	
 	// deallocating the dynamically allocates array count. 
 	delete []count; 	
@@ -27,13 +25,13 @@ ChiSquareCatigorical::~ChiSquareCatigorical()
 /*
 Pre-Condition: Data from category c, where c lies betweeen categories 0 throuh C.
 Post-Condition: c is passed into the hash function and its bucket frequency
-is then incremented.g
+is then incremented.
 */
-void ChiSquareCatigorical::insert(double c)
+void ChiSquareCategorical::insert(double c)
 {
 	stream_size++;
 	
-	// Passing c into the hash functiona and increases the count of
+	// Passing c into the hash function and increases the count of
 	// whichever bucket it falls into. 
 	int bucket= hash_table[c];
 	count[bucket]++;
@@ -44,11 +42,11 @@ Pre-Condition: distribution_2 the second stream of data which has used the
 same number of buckets and hash function.
 Post-Condition: Returns the Chi-Squared statistic for the categorical data.
 */
-double ChiSquareCatigorical::calculate_statistic(const ChiSquareCategorical& second_distribution)
+double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution)
 {	
 	//Getting the size of both streams
 	int stream_size_1=stream_size;
-	int stream_size_2= second_distribution->get_stream_size();
+	int stream_size_2=second_distribution.stream_size;
 	
 	double constant_1 = sqrt((double)stream_size_2/stream_size_1);
 	double constant_2 = sqrt((double)stream_size_1/stream_size_2);
@@ -57,7 +55,7 @@ double ChiSquareCatigorical::calculate_statistic(const ChiSquareCategorical& sec
 	{	
 		 // Getting the frequencies if the i'th bin from the two streams.
 		 double frequency_1= count[i];
-		 double frequency_2= second_distribution->count[i];
+		 double frequency_2= second_distribution.count[i];
 		 
 		 //Calculating the Chi-Squared Statistic
 		 double value = frequency_1 * constant_1 - frequency_2 * constant_2;
