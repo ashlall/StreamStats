@@ -1,4 +1,4 @@
-//categorical_test.cpp
+//Chi_Square_Categorical.cpp
 #include "../SourceCode/ChiSquare/ChiSquareCategorical.h"
 
 void cat_test()
@@ -13,8 +13,6 @@ void cat_test()
 	}
 	
 	cout<<c1.calculate_statistic(c2)<<endl;
-
-
 int main()
 {	
 	cat_test();			
