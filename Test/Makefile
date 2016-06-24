@@ -24,7 +24,7 @@ Reservoir_test: Reservoir_test.cpp ReservoirSampling.o
 Chi_Square_test: Chi_Square_test.cpp ChiSquareContinuous.o Q-Digest.o
 	$(CC) $(FLAGS) -o $@ $<
 	
-categorical_test: categorical_test.cpp ChiSquareCategorical.o
+Chi_Square_Categorical_test: Chi_Square_Categorical_test.cpp ChiSquareCategorical.o
 	$(CC) $(FLAGS) -o $@ $<
 	
 clean: 
