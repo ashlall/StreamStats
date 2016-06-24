@@ -206,12 +206,40 @@ void test_reverseQuantile(double stream_size, double sample_size)
 	}		
 }		
 
+void hello()
+{
+	GK a(1000);
+	GK b(1000);
+	for(int i = 0; i<10000; i++)
+	{
+		a.insert(i);
+		b.insert(i);
+	}
+}
 
 int main()
 {	
-	//test_GK(10000, 20000);
+	//Cant run two functions together. Need to fix.
+	test_GK(10000, 10000);
 	test_reverseQuantile(5000,3000); 
+	//hello();
  	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
