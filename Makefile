@@ -2,8 +2,8 @@
 # TODO: add makefiles for rest of folders
 
 all:
-	cd SourceCode/Quantiles; make
-	cd SourceCode/ChiSquare; make
+	cd SourceCode; make
 	cd Test; make
 	cd Example; make
 	cd ChiSquareExperiments; make 
+
