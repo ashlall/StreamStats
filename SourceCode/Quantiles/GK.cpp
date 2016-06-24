@@ -16,6 +16,8 @@ GK::GK(int maxTuples)
 	num_observations=0;
 	max=maxTuples;
 	summary=new Tuple*[maxTuples];
+	for (int i = 0; i < max; i++)
+		summary[i] = NULL;
 	stream_size =0;
 }
 /*
@@ -35,21 +37,23 @@ Pre-Condition: The value to be inserted.
 Post-Condition: A tuple holding val as its value is inserted into the summary.
 */
 void GK::insert(double val)
-{
+{ 
 	stream_size +=1; 
 	int index= find_index(val);
+cout << index << " index\n";
 	if(summary[index]==NULL)
-	{	
+	{
 		insert_tuple(new Tuple(val),index); 
 	}
 	else
 	{
-		double store=summary[index]->g+summary[index]->delta-1;
-		insert_tuple(new Tuple(val,1.0,store),index); 
+		double store=summary[index]->g+summary[index]->delta-1; 
+		insert_tuple(new Tuple(val,1.0,store),index);
 	}
 	if(num_tuples==max)
 		delete_merge();
 	num_observations++;
+
 }
 /*
 Pre-Condition: The Tuple to be inserted and the index in summary at
@@ -58,18 +62,18 @@ Post-Condition: The Tuple is inserted is inserted at index.
 */
 void GK::insert_tuple(Tuple* t,int index)
 {	
-	//int destpos=num_tuples;
-	//int srcpos=num_tuples-1;
-	/*for(int i=0;i<num_tuples-index;i++)
+	int destpos=num_tuples;
+	int srcpos=num_tuples-1;
+	for(int i=0;i<num_tuples-index;i++)
 	{	
 		summary[destpos]=summary[srcpos];
 		srcpos--;
 		destpos--;
-	}*/
+	}
 	
-	int size_of_pointer= sizeof(summary[0]);
+	/*int size_of_pointer= sizeof(summary[0]);
         int total_size=size_of_pointer * (num_tuples-index);
-        memmove(&(summary[index+1]),&(summary[index]),total_size);
+        memmove(&(summary[index+1]),&(summary[index]),total_size);*/
 	
 	summary[index]=t;
 	num_tuples++;
