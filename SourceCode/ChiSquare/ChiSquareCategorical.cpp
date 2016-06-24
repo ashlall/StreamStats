@@ -33,7 +33,7 @@ void ChiSquareCategorical::insert(double c)
 	
 	// Passing c into the hash function and increases the count of
 	// whichever bucket it falls into. 
-	int bucket= hash_table[c];
+	int bucket= int(hash_table[c]) % num_buckets;
 	count[bucket]++;
 	
 }
