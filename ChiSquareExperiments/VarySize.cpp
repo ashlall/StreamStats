@@ -13,30 +13,26 @@
 using namespace std;
 
 double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type, int num_buckets, double location, double scale);
-void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, int extra);
+void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra);
 
 int main(int argc, char* argv[])
 {
-  if (argc < 8)
+  if (argc < 10)
   {
-    cout << "usage: VarySize lower-size upper-size num-streams(>0) [N|U|P|E] location scale [0|1] seed(optional)" << endl;
+    cout << "usage: VarySize lower-size upper-size num-streams(>0) [N|U|P|E] location scale [0|1] memory-percent num-buckets" << endl;
     throw ParameterError();
   }
   
   double lower = atof (argv[1]);
   double upper = atof (argv[2]);
   int data_repeats = atoi (argv[3]);
-  char distribution_type = *argv[4];
+  char distribution_type = argv[4][0];
   double location = atof (argv[5]);
   double scale = atof (argv[6]);
   int all_quantiles = atoi (argv[7]);
-  int seed;
-  if (argc == 9)
-    seed = atoi (argv[8]);
-  else
-  {
-    seed = 1; // change to random based on time
-  }
+  double memory_percent = atof (argv[8]);
+  int num_buckets = atoi(argv[9]);
+  int seed = 1; 
 
   if (data_repeats <= 0)
   {
@@ -53,10 +49,18 @@ int main(int argc, char* argv[])
     cout << "The lower stream size must be greater than 0." << endl;
     throw ParameterError();
   }
+  if (memory_percent <= 0)
+  {
+    cout << "The memory percent must be greater than 0.\n";
+    throw ParameterError();
+  }
+  if (num_buckets <= 0)
+  {
+    cout << "The number of bins must be greater than 0.\n";
+    throw ParameterError();
+  }
 
   int stream_size;
-  double memory_percent = 0.1; // default, change?
-  int num_buckets = 20; // default, change
   int num_sizes = 0, size = lower;
   while (size <= upper)
   {
@@ -72,7 +76,7 @@ int main(int argc, char* argv[])
 
   ofstream data_file;
   char str[150];
-  name_file(str, argv[1], argv[2], argv[3], argv[4],0);
+  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 0);
   data_file.open(str);
   data_file << "Distribution: " << distribution_type << ", location = " << location << ", scale = " << scale << endl;
   for (int i = 0; i < data_repeats; i++)
@@ -130,29 +134,30 @@ int main(int argc, char* argv[])
   data_file.close();
 
   // writes data into tab deliminated file
-  name_file(str, argv[1], argv[2], argv[3], argv[4], 1);
+  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 1);
   data_file.open(str);
 
-  // relative/percent error (|estimate - actual| / actual * 100)
+  // relative/percent error (|estimate - actual| / actual)
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << sizes[i] << "\t";
     double rel_error = 0;
     for (int j = 0; j < data_repeats; j++)
-      rel_error += abs(GK_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+      rel_error += abs(GK_values[j][i] - actual_values[j][i]) / actual_values[j][i];
     data_file << rel_error / data_repeats;// << "\t";
 
     if (all_quantiles)
     {
       rel_error = 0;
       for (int j = 0; j < data_repeats; j++)
-        rel_error += abs(QD_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+        rel_error += abs(QD_values[j][i] - actual_values[j][i]) / actual_values[j][i];
       data_file << "\t" << rel_error / data_repeats << "\t";
       rel_error = 0;
       for (int j = 0; j < data_repeats; j++)
-        rel_error += abs(RS_values[j][i] - actual_values[j][i]) / actual_values[j][i] * 100;
+        rel_error += abs(RS_values[j][i] - actual_values[j][i]) / actual_values[j][i];
       data_file << rel_error / data_repeats;// << "\t";
     }
+    data_file << endl;
   }
 
   /*for (int i = 0; i < num_sizes; i++)
@@ -199,7 +204,7 @@ double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type
     return quantile_sketch->calculate_statistic_ifExponential(num_buckets, location, scale);
 }
 
-void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, int extra)
+void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra)
 {
   time_t now = time(0);
   struct tm tstruct;
@@ -207,15 +212,27 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
   tstruct = *localtime(&now);
   strftime(buf, sizeof(buf), "%m-%d-%Y.%X", &tstruct);
 
-  strcpy(str, "VarySize_");
+  strcpy(str, "VaryS_");
   strcat(str, lower);
   strcat(str, "-");
   strcat(str, upper);
   strcat(str, "_");
   strcat(str, repeats);
-  strcat(str, "-repeats_dist-");
+  strcat(str, "X_");
   strcat(str, distribution);
+  strcat(str, "-");
+  strcat(str, location);
+  strcat(str, "-");
+  strcat(str, scale);
   strcat(str, "_");
+  strcat(str, mem);
+  strcat(str, "_");
+  strcat(str, num_buckets);
+  strcat(str, "_");
+  if (all)
+    strcat(str, "all_");
+  else
+    strcat(str, "GK_");
   strcat(str, buf);
   if (extra)
     strcat(str, "_table");
