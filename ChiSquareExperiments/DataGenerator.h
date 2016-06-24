@@ -17,7 +17,6 @@ class DataGenerator
  private:
   double* stream;
   int stream_size;
-  double location_, scale_;
 };
 
 class ParameterError {};
