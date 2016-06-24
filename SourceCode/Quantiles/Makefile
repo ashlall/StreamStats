@@ -11,3 +11,6 @@ ReservoirSampling.o: ReservoirSampling.cpp QuantileSketch.h ReservoirSampling.h
 
 GK.o: GK.cpp GK.h QuantileSketch.h
 	$(CC) $(FLAGS) -c $<
+
+clean:
+	rm *.o

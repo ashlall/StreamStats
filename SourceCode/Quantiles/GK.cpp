@@ -40,7 +40,6 @@ void GK::insert(double val)
 { 
 	stream_size +=1; 
 	int index= find_index(val);
-cout << index << " index\n";
 	if(summary[index]==NULL)
 	{
 		insert_tuple(new Tuple(val),index); 
