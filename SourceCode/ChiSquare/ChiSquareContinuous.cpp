@@ -60,8 +60,8 @@ double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double
   // Reallocates the memory for upper_bins and lower_bins.
   delete upper_bins;
   delete lower_bins;
-  upper_bins = new double[num_buckets];
-  lower_bins = new double[num_buckets];
+  upper_bins = new double[num_buckets+1];
+  lower_bins = new double[num_buckets+1];
   for (int i = 1; i <= num_buckets; i++)
   {
     // Finds the upper and lower values from the normal distribution that
@@ -100,8 +100,8 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(ChiSquar
   // Reallocates the memory for upper_bins and lower_bins
   delete upper_bins;
   delete lower_bins;
-  upper_bins = new double[num_buckets];
-  lower_bins = new double[num_buckets];
+  upper_bins = new double[num_buckets+1];
+  lower_bins = new double[num_buckets+1];
 
   for (int i = 1; i <= num_buckets; i++)
   {
@@ -155,8 +155,8 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   // Reallocates the memory for upper_bins and lower_bins
   delete upper_bins;
   delete lower_bins;
-  upper_bins = new double[num_buckets];
-  lower_bins = new double[num_buckets];
+  upper_bins = new double[num_buckets+1];
+  lower_bins = new double[num_buckets+1];
 
   double constant_1 = sqrt((double)stream_size_2/stream_size_1);
   double constant_2 = sqrt((double)stream_size_1/stream_size_2);
@@ -164,23 +164,25 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   {
     // Finds the upper and lower values from quantile_sketch that mark the bin.
     double lower_interval = quantile_sketch->getQuantile(((double)i-1)/num_buckets);
+    //cout << "lower interval: " << lower_interval << endl;
     double upper_interval = quantile_sketch->getQuantile((double)i/num_buckets);
-
+    
     upper_bins[i] = upper_interval;
     lower_bins[i] = lower_interval;
     //cout << "lower_interval: "<< lower_interval << "   " << "upper_interval: "<<upper_interval<<endl;
+
     // Finds the upper and lower quantiles from quantile_sketch_2 that 
     // correspond to lower_interval and upper_interval. 
     double lower_value, upper_value;
     lower_value = (quantile_sketch_2->reverseQuantile(lower_interval, memory))/memory;
     upper_value = (quantile_sketch_2->reverseQuantile(upper_interval, memory))/memory;
-
+    //cout << "lower and upper value: " << lower_value << " " << upper_value << endl;
     // Calculates the chi-squared statistic with an adjusted formula for the 
     // two-sample case.
     double frequency_2 = stream_size_2 * (upper_value - lower_value);
     double value = frequency_1 * constant_1 - frequency_2 * constant_2;
     chi_squared += (value * value) / (frequency_1 + frequency_2);
-   //cout << "F1: " <<frequency_1 << "  " << "F2: " << frequency_2 <<endl;
+    //cout << "F1: " <<frequency_1 << "  " << "F2: " << frequency_2 <<endl;
   }
   return chi_squared;
 }
