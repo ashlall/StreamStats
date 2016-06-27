@@ -28,8 +28,8 @@ public:
 	void insert(double val);
 	double calculate_pvalue(double chi_square_statistic, int DF);
 	
-	double calculate_pvalue_ifNormal(int num_buckets, double mean, double SD);
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
+	double calculate_pvalue_ifNormal(int num_buckets, double mean, double SD);
 	bool   final_decision_ifNormal(int num_buckets, double mean, double SD, double pvalue);
 	
 	double calculate_statistic_ifUniform(int num_buckets, double location, double scale);
