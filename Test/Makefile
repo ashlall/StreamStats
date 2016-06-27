@@ -31,4 +31,4 @@ clean:
 	rm -f *.o
 
 cleanest: clean
-	rm BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test
+	rm BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test Chi_Square_Categorical_test
