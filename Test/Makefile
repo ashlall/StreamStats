@@ -1,6 +1,6 @@
 # Makefile for all the tests
 
-all: BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test
+all: BasicStats_test GK_test QDigest_test QDigest_test_Double Reservoir_test Chi_Square_test Chi_Square_Categorical_test
 
 CC = g++
 FLAGS = -std=c++11
