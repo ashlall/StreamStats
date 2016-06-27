@@ -253,3 +253,39 @@ double ChiSquareContinuous::rational_approximation(double t)
   double d[] = {1.432788, 0.189269, 0.001308};
   return t - ((c[2]*t + c[1])*t + c[0]) / (((d[2]*t + d[1])*t + d[0])*t + 1.0);
 }
+
+
+//Computes the p-value of given chi-square statistics and degree of freedom
+//Input: chi-square statistics, degree of freedom
+//Output: Corresponding p-value
+double ChiSquareContinuous::calculate_pvalue(double chi_square_statistic, int DF)
+{
+	return pchisq(chi_square_statistic, DF);
+}
+
+//Computes the p-value of chi-square test after comparing with a fixed known normal distribution
+//Input: Number of bins, the mean of the fixed known normal distribution, the standard deviation
+// of the fixed known normal distribution.
+//Output: Corresponding p-value;
+double ChiSquareContinuous::calculate_pvalue_ifNormal(int num_buckets, double mean, double SD)
+{
+	double csq_statistic, pvalue;
+	csq_statistic = calculate_statistic_ifNormal(num_buckets, mean, SD);
+	pvalue = calculate_pvalue(csq_statistic, num_buckets-2);
+	return pvalue;
+}
+
+//Compute whether the result is significant or not at estimated p < the given input pvalue
+//Input: Number of bins, the mean of the fixed known normal distribution, the standard deviation
+// of the fixed known normal distribution, the significant value we want to compare against
+//Output: True if the result is significant at p < pvalue
+//        False if the result is not significant at p < pvalue
+bool ChiSquareContinuous::final_decision_ifNormal(int num_buckets, double mean, double SD, double pvalue)
+{
+	double p = calculate_pvalue_ifNormal(num_buckets, mean, SD);
+	if (p < pvalue)
+		return true;
+	else
+		return false;
+}
+

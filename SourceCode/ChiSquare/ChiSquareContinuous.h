@@ -7,6 +7,7 @@
 #include "../Quantiles/GK.cpp"
 #include "../Quantiles/ReservoirSampling.cpp"
 #include "../Quantiles/QDigestDouble.h"
+#include "Chi_Square_Distribution.cpp" // Used for calculating the p-value by given DF and chi-square statistic
 #include <iostream>
 #include <stdlib.h> 
 #include<math.h>
@@ -25,7 +26,12 @@ public:
 	~ChiSquareContinuous();
   	
 	void insert(double val);
+	double calculate_pvalue(double chi_square_statistic, int DF);
+	
+	double calculate_pvalue_ifNormal(int num_buckets, double mean, double SD);
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
+	bool   final_decision_ifNormal(int num_buckets, double mean, double SD, double pvalue);
+	
 	double calculate_statistic_ifUniform(int num_buckets, double location, double scale);
 	double calculate_statistic_ifPareto(int num_buckets, double location, double scale);
 	double calculate_statistic_ifExponential(int num_buckets, double location, double scale);

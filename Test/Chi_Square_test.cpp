@@ -335,14 +335,21 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
   return frequencies;
 }
 
+double test_pvalue(double x, int DF)
+{
+	ChiSquareContinuous a(3000);	
+	return a.calculate_pvalue(x, DF);
+}
+
 int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
 
 	//est_chi_square_1st();
-	test_chi_square_2nd();
+	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
+   cout << "lina: " << test_pvalue(18.307, 10) <<endl; 
 	return 0;
 }
 

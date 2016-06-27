@@ -190,12 +190,3 @@ double pchisq( double x, int df )
 //	return the culmulative function of chi-square distribuition
 //  with df freedom;
 }
-
-
-int main()
-{	
-	double cq_statistic = 18.307;
-	int DF = 10;
-	cout << "The corresponding significant level is:  "<< 1 - pchisq(18.307, 10) << endl;
-	return 0;
-}
