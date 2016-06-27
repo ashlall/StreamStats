@@ -112,6 +112,8 @@ void test_chi_square_1st() //One-sample test
 	cin >> SD;
 
 	ChiSquareContinuous b(sample_size, sketch_method); //ChiSquare b(memory, sketch method);
+	ChiSquareContinuous b1(sample_size, sketch_method);
+	ChiSquareContinuous b2(sample_size, sketch_method);
 
  	double item;
 	double chiEstimated;
@@ -126,6 +128,8 @@ void test_chi_square_1st() //One-sample test
     		N++;
     		items[i]=item;
   		b.insert(item);
+  		b1.insert(item);
+  		b2.insert(item);
     	}
     	chiEstimated = b.calculate_statistic_ifNormal(k,mean,SD);
     
@@ -166,8 +170,15 @@ void test_chi_square_1st() //One-sample test
     cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";*/
 
    	cout << "chiActual: "<< chiActual << endl;
+   	
   	cout << "chiEstimated: " << chiEstimated << endl;
-	//cout << "actual: " << chiActual2 << endl;
+  	
+  	cout << "Estimated p-value by calling calculate_pvalue(x,DF): "<< b.calculate_pvalue(chiEstimated, k-2) <<endl;
+
+  	cout << "Estimated p-value by calling calculate_pvalue_ifNormal(num_bins, mean, SD): " << b1.calculate_pvalue_ifNormal(k, mean, SD) <<endl;
+
+  	cout << "Estimated final decision by calling final_decision_ifNormal(num_bins, mean, SD, com_p): "<<b2.final_decision_ifNormal(k, mean, SD, 0.05) <<endl;
+
   	delete []items;
 	//delete [] frequencies;
 }
@@ -335,21 +346,15 @@ int* get_frequencies(double *upper, double *lower, double *items, int num_bucket
   return frequencies;
 }
 
-double test_pvalue(double x, int DF)
-{
-	ChiSquareContinuous a(3000);	
-	return a.calculate_pvalue(x, DF);
-}
 
 int main()
 {
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
 
-	//est_chi_square_1st();
+	test_chi_square_1st();
 	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
-   cout << "lina: " << test_pvalue(18.307, 10) <<endl; 
 	return 0;
 }
 
