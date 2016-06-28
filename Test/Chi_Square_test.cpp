@@ -177,7 +177,7 @@ void test_chi_square_1st() //One-sample test
 
   	cout << "Estimated p-value by calling calculate_pvalue_ifNormal(num_bins, mean, SD): " << b1.calculate_pvalue_ifNormal(k, mean, SD) <<endl;
 
-  	cout << "Estimated final decision by calling final_decision_ifNormal(num_bins, mean, SD, com_p): "<<b2.final_decision_ifNormal(k, mean, SD, 0.05) <<endl;
+  	cout << "Estimated final decision by calling final_decision_ifNormal(num_bins, mean, SD, com_p	): "<<b2.final_decision_ifNormal(k, mean, SD, 0.05) <<endl;
 
   	delete []items;
 	//delete [] frequencies;
