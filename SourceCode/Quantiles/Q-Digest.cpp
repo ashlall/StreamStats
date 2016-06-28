@@ -72,8 +72,9 @@ double QDigest::getQuantile(double fraction)
   return clamp(value);
 }
 
-// Inserts value into the QDigest
-// 
+// Inserts value into the QDigest and compresses if needed
+// Output: throws error if value is not in the correct range, if value is 
+// greater than capacity if rebuilds the tree structure
 void QDigest::offer(long value)
 {
   if (value < 0 || value == MAX_VALUE)
@@ -86,53 +87,33 @@ void QDigest::offer(long value)
     {
       cout << "Can only accept values in the range 0.. " <<  MAX_VALUE - 1 << endl;
     }  
-}
+  }
 	
   // Rebuild if the value is too large for the current tree height
   if (value >= capacity)
     rebuildToCapacity(highestOneBit(value) << 1);   
-    /* 
-      highestOneBit() returns a long value with at most a single one-bit, in the position 
-      of the highest-order ("leftmost") one-bit in the specified int value. 
-      For example, value = 220
-      Binary = 11011100
-      Highest one bit = 128 
-    */
 		
  long leaf = value2leaf(value);
  if (node2count.find(leaf) == node2count.end())
    node2count.insert(std::make_pair (leaf, get(leaf)+1));
  else
-   node2count[leaf] += 1;
-   
+   node2count[leaf] += 1;   
  size++;
- /*
-   Always compress at the inserted node, and recompress fully
-   if the tree becomes too large.
-   This is one sensible strategy which both is fast and keeps
-   the tree reasonably small (within the theoretical bound of 3k nodes)
- */
+
+ //Always compress at the inserted node, and recompress fully
+ //if the tree becomes too large.
  compressUpward(leaf);
  if (node2count.size() > 3 * compression_factor) 
    compressFully();
 }
 
+// Rebuilds the tree structure with a higher capacity, means that the
+// current tree becomes a leftmost subtree of the new tree
 void QDigest::rebuildToCapacity(long newCapacity) 
 {
   std::unordered_map<long, long> newNode2count;
-  /*
-     rebuild to newLogCapacity.
-     This means that our current tree becomes a leftmost subtree
-     of the new tree.
-     E.g. when rebuilding a tree with logCapacity = 2
-     (i.e. storing values in 0..3) to logCapacity = 5 (i.e. 0..31):
-     node 1 => 8 (+= 7 = 2^0*(2^3-1))
-     nodes 2..3 => 16..17 (+= 14 = 2^1*(2^3-1))
-     nodes 4..7 => 32..35 (+= 28 = 2^2*(2^3-1))
-     This is easy to see if you draw it on paper.
-     Process the keys by "layers" in the original tree.
-  */
   long scaleR = newCapacity / capacity - 1;  
+  long scaleL = 1;
   std::vector<long> keys;
   keys.reserve(node2count.size());
 	
@@ -140,13 +121,11 @@ void QDigest::rebuildToCapacity(long newCapacity)
     keys.push_back(i->first);
 	
   std::sort(keys.begin(), keys.end());
-    //the place i find how to rewrite
-    //http://stackoverflow.com/questions/8483985/obtaining-list-of-keys-and-values-from-unordered-map#comment10496288_8484055
     
-  long scaleL = 1;
+  // adjusts and adds the values from the old tree into the new tree
   for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
   {
-    while (scaleL <= *i / 2) // see the use of iterator: // http://www.cplusplus.com/reference/vector/vector/begin/
+    while (scaleL <= *i / 2)
       scaleL <<= 1;
     newNode2count.insert(std::make_pair (*i + scaleL * scaleR, get(*i))); 
    }
@@ -155,6 +134,8 @@ void QDigest::rebuildToCapacity(long newCapacity)
   compressFully();
 }
 
+// Compress function that restores property 2 of the qdigest at node and upward
+// Input: node is a node in the QDigest
 void QDigest::compressUpward(long node)
 {
   double threshold = std::floor(size / compression_factor);
@@ -170,6 +151,8 @@ void QDigest::compressUpward(long node)
     long atParent = get(parent_);
     if (atNode + atSibling + atParent > threshold)
       break;
+
+    // restores property 2
     if (node2count.find(parent_) == node2count.end())
 	node2count.insert(std::make_pair (parent_, atParent + atNode + atSibling));
     else
@@ -185,6 +168,8 @@ void QDigest::compressUpward(long node)
   }
 }
 
+// Restores property 2 at each node, needed only if compressUpward does not
+// fix all the violations of property 2
 void QDigest::compressFully()
 {
   std::vector<long> keys;
@@ -193,16 +178,14 @@ void QDigest::compressFully()
     keys.push_back(i->first);
 
   for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
-    compressDownward(*i);   // java syntax
+    compressDownward(*i);  
 }
 
- /**
-  * Restore 2nd property at seedNode and guarantee that no new violations of P2 appeared.
-  */
+// Restores 2nd property at seedNode and guarantees that no new violations of P2 appear.
+// Same as compressUpward but slower, and therefore used less often
 void QDigest::compressDownward(long seedNode)
 {
   double threshold = std :: floor(size/compression_factor); 
-  // 2nd property check same as above but shorter and slower (and invoked rarely)
 	
   std::queue<long, std::list<long> > queue;
   queue.push(seedNode);
@@ -224,7 +207,8 @@ void QDigest::compressDownward(long seedNode)
       node2count[parent_] += 1;
     node2count.erase(node);
     node2count.erase(sibling(node));
-    // Now P2 could have vanished at the node's and sibling's subtrees since they decreased.
+
+    // Ensures that P2 holds for node and sibling subtrees
     if (!isLeaf(node))
     {
       queue.push(leftChild(node));
@@ -233,6 +217,7 @@ void QDigest::compressDownward(long seedNode)
   }
 }	
 
+// Creates and returns a sorted array of each node and its ranges
 std::vector<long*> QDigest::toAscRanges()
 {
   std::vector<long*> ranges;
@@ -248,6 +233,7 @@ std::vector<long*> QDigest::toAscRanges()
  return ranges;
 }
 
+// Deletes the dynamically allocated array of ranges
 void QDigest::delete_ranges(std::vector<long*> ranges)
 {
   for (int i = 0; i < ranges.size(); i++)
@@ -257,6 +243,7 @@ void QDigest::delete_ranges(std::vector<long*> ranges)
   }
 }
 
+// Returns a boolean based on the inputed a and b, used to sort the ranges
 bool QDigest::compare_ranges(long a[3], long b[3])
 {
   long rightA = a[1], rightB = b[1], sizeA = a[1] - a[0], sizeB = b[1] - b[0];
@@ -271,6 +258,7 @@ bool QDigest::compare_ranges(long a[3], long b[3])
   return 0;
 }
 
+// Copies all the properties from other to this
 void QDigest::copy(const QDigest& other)
 {
   node2count = other.node2count;
@@ -281,6 +269,7 @@ void QDigest::copy(const QDigest& other)
   max = other.max;
 }
 
+// Returns the left range of id, or the leftmost value id covers
 long QDigest::rangeLeft(long id)
 {
   while (!isLeaf(id))
@@ -288,6 +277,7 @@ long QDigest::rangeLeft(long id)
   return leaf2value(id);
 }
 
+// Returns the right range of id, or the rightmost value id covers
 long QDigest::rangeRight(long id)
 {
   while (!isLeaf(id))
@@ -295,6 +285,8 @@ long QDigest::rangeRight(long id)
   return leaf2value(id);
 }
 
+// If value is not in the range of values that were inserted, returns the
+// min/max to ensure that it returns a value in the range
 long QDigest::clamp(long value)
 {
   if (value < min)
@@ -304,13 +296,15 @@ long QDigest::clamp(long value)
   return value;
 }
 
-// Searchs the map and returns the key's value if found, 0 otherwise
+// Searchs the map and returns the key's value if found
 long QDigest::get(long node)
 {
   std::unordered_map<long, long>::const_iterator got = node2count.find(node); 
   return (got == node2count.end()) ? 0 : got->second;
 }
 
+// Returns a long value with at most a single one-bit, in the position
+// of the highest-order ("leftmost") one-bit in the specified int value.  
 int QDigest::highestOneBit(long value)
 {
   if (!value)
