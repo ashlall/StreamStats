@@ -13,6 +13,7 @@
 using namespace std;
 
 double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type, int num_buckets, double location, double scale);
+int get_DOF(char distribution_type);
 void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra);
 
 int main(int argc, char* argv[])
@@ -77,6 +78,7 @@ int main(int argc, char* argv[])
   ofstream data_file;
   char str[150];
   name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 0);
+  strcat(str, ".dat");
   data_file.open(str);
   data_file << "Distribution: " << distribution_type << ", location = " << location << ", scale = " << scale << endl;
   for (int i = 0; i < data_repeats; i++)
@@ -135,32 +137,38 @@ int main(int argc, char* argv[])
 
   // writes data into tab deliminated file
   name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 1);
+  strcat(str, ".dat");
+  int deg_freedom = num_buckets - get_DOF(distribution_type);
+  ChiSquareContinuous sketch(1,1);
   data_file.open(str);
-
-  // relative/percent error (|estimate - actual| / actual)
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << sizes[i] << "\t";
-    double rel_error = 0;
+    double error = 0;
     for (int j = 0; j < data_repeats; j++)
-      rel_error += abs(GK_values[j][i] - actual_values[j][i]) / actual_values[j][i];
-    data_file << rel_error / data_repeats;// << "\t";
+      error += abs(sketch.calculate_pvalue(GK_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+    data_file << error / data_repeats;
 
     if (all_quantiles)
     {
-      rel_error = 0;
+      error = 0;
       for (int j = 0; j < data_repeats; j++)
-        rel_error += abs(QD_values[j][i] - actual_values[j][i]) / actual_values[j][i];
-      data_file << "\t" << rel_error / data_repeats << "\t";
-      rel_error = 0;
+	error += abs(sketch.calculate_pvalue(QD_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+      data_file << "\t" << error / data_repeats << "\t";
+
+      error = 0;
       for (int j = 0; j < data_repeats; j++)
-        rel_error += abs(RS_values[j][i] - actual_values[j][i]) / actual_values[j][i];
-      data_file << rel_error / data_repeats;// << "\t";
+	error += abs(sketch.calculate_pvalue(RS_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+      data_file << error / data_repeats;
     }
     data_file << endl;
   }
+  data_file.close();
 
-  /*for (int i = 0; i < num_sizes; i++)
+  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 0);
+  strcat(str, "_extra.dat");
+  data_file.open(str);
+  for (int i = 0; i < num_sizes; i++)
   {
     for (int j = 0; j < data_repeats; j++)
 	    data_file << actual_values[j][i] << "\t";
@@ -186,7 +194,7 @@ int main(int argc, char* argv[])
 	     data_file << RS_values[j][i] << "\t";
     }
     data_file << endl;
-  }*/
+  }
   data_file.close();
   return 0;
 }
@@ -202,6 +210,14 @@ double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type
     return quantile_sketch->calculate_statistic_ifPareto(num_buckets, location, scale);
   else
     return quantile_sketch->calculate_statistic_ifExponential(num_buckets, location, scale);
+}
+
+int get_DOF(char distribution_type)
+{
+  if (distribution_type == 'E')
+    return 2;
+  else
+    return 3;
 }
 
 void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra)
@@ -236,5 +252,4 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
   strcat(str, buf);
   if (extra)
     strcat(str, "_table");
-  strcat(str, ".dat");
 }

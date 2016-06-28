@@ -186,11 +186,10 @@ void test_chi_square_1st() //One-sample test
 void test_chi_square_2nd() //Two-sample test
 {
  	int sketch_method = 1;
-  	cout << "Enter the number 1-4 to choose sketch method that you want to use: "<<endl;
+  	cout << "Enter the number 1-3 to choose sketch method that you want to use: "<<endl;
   	cout << "1. Greenwald sketch/default." <<endl;
   	cout << "2. Q-Digest sketch." <<endl;
   	cout << "3. Reservoir Sampling sketch." <<endl;
-  	cout << "4. Count-Min Sketch." <<endl;
   	cin >> sketch_method;
 
 	int stream_size1;
@@ -216,7 +215,7 @@ void test_chi_square_2nd() //Two-sample test
 	cout << "Enter the mean of the first normal distribution: "<<endl;
 	cin >> mean1;
 	cout << "Enter the mean of the second normal distribution: "<<endl;
-	cin >> mean1;
+	cin >> mean2;
  	cout << "Enter the standard deviation of the first normal distribution: "<<endl;
 	cin >> SD1;
  	cout << "Enter the standard deviation of the second normal distribution: "<<endl;
@@ -230,8 +229,7 @@ void test_chi_square_2nd() //Two-sample test
 	double data2;
 	default_random_engine generator(5);
 	normal_distribution<double> distribution(mean1,SD1);
-	normal_distribution<double> distribution2(mean2,SD2);
-    
+
 	for (int i=0; i<stream_size1; i++) 
   	{
    		data1 = distribution(generator);
@@ -239,12 +237,12 @@ void test_chi_square_2nd() //Two-sample test
   		c1.insert(data1);
  	}
 
-	//cout << "i: " << i << "  item1: " << item << "    " << "item2: " << item2 << endl; 
-	
+	default_random_engine generator2(5);
+	normal_distribution<double> distribution2(mean2,SD2);
  	for (int i = 0; i < stream_size2; i++)
   	{
-		data2 = distribution(generator);
-		items2[i] = items1[i];
+		data2 = distribution2(generator2);
+		items2[i] = data2;
 		c2.insert(data2);
  	}
 
@@ -275,10 +273,12 @@ void test_chi_square_2nd() //Two-sample test
     	    		if(( items2[j]<=Upper[i]) && (items2[j]>=Lower[i]))
 		        	O++;
     	    	}
+                //cout <<"actual S_i and R_i: " << E << " " << O<< endl;
 	
       	    	double lambda= E*constant_1 - O*constant_2;
 	 
 	    	//cout<<"i: "<< i << " Expected: "<<E << " "<<"actual:" << O <<endl;
+
     	   	chiActual=chiActual+((lambda*lambda)/(E+O)); 	    
     	}	
     /*gettimeofday(&timeAfter, NULL);
@@ -352,8 +352,8 @@ int main()
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
 
-	test_chi_square_1st();
-	//test_chi_square_2nd();
+  //test_chi_square_1st();
+	test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	return 0;
 }

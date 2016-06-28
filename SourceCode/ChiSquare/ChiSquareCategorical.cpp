@@ -61,7 +61,6 @@ double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& sec
 		 // Getting the frequencies if the i'th bin from the two streams.
 		 double frequency_1= count[i];
 		 double frequency_2= second_distribution.count[i];
-		 cout<<frequency_1<<" "<<frequency_2<<" "<<endl;
 		 
 		 //Calculating the Chi-Squared Statistic
 		 double value = frequency_1 * constant_1 - frequency_2 * constant_2;
