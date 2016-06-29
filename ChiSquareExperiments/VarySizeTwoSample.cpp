@@ -10,8 +10,6 @@
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.cpp"
 using namespace std;
 
-double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type, int num_buckets, double location, double scale);
-int get_DOF(char distribution_type);
 void name_file(char *str, char* argv[], int extra);
 
 int main(int argc, char* argv[])
@@ -70,7 +68,8 @@ int main(int argc, char* argv[])
     num_sizes++;
     size *= 10;
   }
-
+  cout << "num sizes " << num_sizes << endl;
+  cout << "data repeats " << data_repeats << endl;
   double actual_values[data_repeats][num_sizes];
   double GK_values[data_repeats][num_sizes];
   double QD_values[data_repeats][num_sizes];
@@ -81,7 +80,11 @@ int main(int argc, char* argv[])
   char str[150];
   name_file(str, argv, 0);
   data_file.open(str);
-  
+  data_file << "Distribution: " << distribution_type << endl;
+  data_file << "location_1 = " << location1 << " scale_1 = " << scale1 << endl;
+  data_file << "location_2 = " << location2 << " scale_2 = " << scale2 << endl;
+  data_file << "number of bins = " << num_buckets << endl;
+  data_file << "memory percent = " << memory_percent << endl;
   for (int i = 0; i < data_repeats; i++)
   {
     int j = 0;
@@ -93,7 +96,8 @@ int main(int argc, char* argv[])
       int sample2_size = memory_percent * stream2_size;
       if (!i)
 	sizes[j] = stream1_size;
-      data_file << "stream 1 size = " << stream1_size << endl;;
+      data_file << "stream 1 size = " << stream1_size << endl;
+      data_file << "stream 2 size = " << stream2_size << endl;
       DataGenerator data1(distribution_type, stream1_size, seed1, location1, scale1);
       double *stream1 = data1.get_stream();
 
@@ -150,7 +154,84 @@ int main(int argc, char* argv[])
     seed1++;
     seed2++;
   }
+  data_file.close();
 
+  ofstream data2_file;
+  char st[150];
+  name_file(st, argv, 3);
+  data2_file.open(st);
+  name_file(str, argv, 1);
+  int deg_freedom;
+  data_file.open(str);
+
+  for (int i = 0; i < num_sizes; i++)
+  {
+    data_file << sizes[i] << "\t";
+    if (sizes[i] == stream2_size)
+      deg_freedom = num_buckets - 1;
+    else
+      deg_freedom = num_buckets;
+    double error = 0;
+    for (int j = 0; j < data_repeats; j++)
+      error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+    data_file << error / data_repeats;
+
+    if (all_quantiles)
+      {
+	error = 0;
+	for (int j = 0; j < data_repeats; j++)
+	  error += abs(pochisq(QD_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+	data_file << "\t" << error / data_repeats << "\t";
+
+	error = 0;
+	for (int j = 0; j < data_repeats; j++)
+	  error += abs(pochisq(RS_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+	data_file << error / data_repeats;
+      }
+    data_file << endl;
+    data2_file << "stream1_size = " << sizes[i] << " stream2_size = " << stream2_size << endl;
+    for (int j = 0; j < data_repeats; j++)
+    {
+      data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
+      data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
+      data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+      data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+    }
+  }
+  data2_file.close();
+  data_file.close();
+
+  name_file(str, argv, 2);
+  data_file.open(str);
+  for (int i = 0; i < num_sizes; i++)
+  {
+    for (int j = 0; j < data_repeats; j++)
+      data_file << actual_values[j][i] << "\t";
+  }
+  data_file << endl;
+  for (int i = 0; i < num_sizes; i++)
+  {
+    for(int j = 0; j <data_repeats; j++)
+      data_file << GK_values[j][i] << "\t";
+  }
+  data_file << endl;
+  if (all_quantiles)
+  {
+    for (int i = 0; i < num_sizes; i++)
+    {
+      for(int j = 0; j <data_repeats; j++)
+        data_file << QD_values[j][i] << "\t";
+    }
+    data_file << endl;
+    for (int i = 0; i < num_sizes; i++)
+    {
+      for(int j = 0; j <data_repeats; j++)
+        data_file << RS_values[j][i] << "\t";
+    }
+    data_file << endl;
+  }
+
+  data_file << endl;
   data_file.close();
   return 0;
 }
@@ -197,6 +278,8 @@ void name_file(char *str, char* argv[], int extra)
     strcat(str, "_log.dat");
   else if (extra == 1)
     strcat(str, "_table.dat");
-  else
+  else if (extra == 2)
     strcat(str, "_extra.dat");
+  else
+    strcat(str, "_pvalues.dat");
 }
