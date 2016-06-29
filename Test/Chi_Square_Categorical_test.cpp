@@ -104,7 +104,7 @@ void categorical_test3()
 }
 void categorical_test4()
 {	
-	double num_bins=100;
+	double num_bins=1000;
 	double num_cat=100000;
 	
 	/* /////////////////////////// */
@@ -117,12 +117,12 @@ void categorical_test4()
 	int count_1[(int)num_cat];int count_2[(int)num_cat];
 	std::fill_n(count_1,num_cat,0);
 	std::fill_n(count_2,num_cat,0);
-	double stream_size1=0;
-	double stream_size2=0;
+	double stream_size1=0; 
+	double stream_size2=0; 
 	for(int i=0;i<num_cat;i++)
 	{
-		int v1= (int)(rand() % 10 +90 );
-		int v2= (int)(rand() % 10 +90 );
+		int v1= (int)(rand() % 39+200); // See between %35-40 with +100
+		int v2= (int)(rand() % 39+200);
 		count_1[i]=v1;
 		count_2[i]=v2;
 		for(int j=0;j<v1;j++)
@@ -148,8 +148,9 @@ void categorical_test4()
 	
 	double chi=c1.calculate_statistic(c2);
 	
-	//cout<<chi<<endl;
-	//cout<<actual_chi<<endl;
+	cout<<actual_chi<<endl;
+	cout<<chi<<endl;
+	
 	
 	int df1=num_cat-1;
 	int df2=num_bins-1;
