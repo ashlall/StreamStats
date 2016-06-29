@@ -22,7 +22,7 @@ ChiSquareContinuous::ChiSquareContinuous(double memory_,int num)
     quantile_sketch = new GK(memory);
     break;
   case 2:
-    quantile_sketch = new QDigestDouble(memory);
+    //quantile_sketch = new QDigestDouble(memory);
     break;
   case 3: 
     quantile_sketch = new ReservoirSampling((int)memory);
@@ -45,6 +45,12 @@ void ChiSquareContinuous::insert(double val)
 {
   quantile_sketch->insert(val);
 }
+
+
+/*
+Normal
+*/
+
 
 // Calculates the chi-squared statistic for a normal distribution.
 // Input: num_buckets is the number of buckets the data is divided into, mean 
@@ -99,17 +105,25 @@ double ChiSquareContinuous::calculate_pvalue_ifNormal(int num_buckets, double me
 
 //Compute whether the result is significant or not at estimated p < the given input pvalue
 //Input: Number of bins, the mean of the fixed known normal distribution, the standard deviation
-// of the fixed known normal distribution, the significant value we want to compare against
-//Output: True if the result is significant at p < pvalue. Reject null hypothesis. 
-//        False if the result is not significant at p < pvalue. Can't reject null hypothesis.
-bool ChiSquareContinuous::final_decision_ifNormal(int num_buckets, double mean, double SD, double pvalue)
+// of the fixed known normal distribution, the significant level we want to check
+//Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
+//        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
+bool ChiSquareContinuous::final_decision_ifNormal(int num_buckets, double mean, double SD, double sig_level)
 {
 	double p = calculate_pvalue_ifNormal(num_buckets, mean, SD);
-	if (p < pvalue)
+	if (p < sig_level)
 		return true;
 	else
 		return false;
 }
+
+
+
+
+/*
+calculate_statistic()
+*/
+
 
 // Calculates and returns the chi-squared statistic with the given distribution
 // Input: num_buckets is the number of bins the data is divided into, 
@@ -151,20 +165,152 @@ double ChiSquareContinuous::calculate_statistic(int num_buckets, double(ChiSquar
   return chi_squared;	
 }
 
-double ChiSquareContinuous::calculate_statistic_ifUniform(int num_buckets, double location, double scale)
+
+/*
+Uniform
+*/
+
+
+// Calculates the chi-squared statistic for a Uniform distribution.
+// Input: num_buckets is the number of buckets the data is divided into, a 
+// is the lower bound number of the fixed known uniform distribution, and b is the upper
+// bound number of the uniform distribution.
+// Output: Returns the chi-squared statistic for the observed quantile_sketch 
+// compared to the expected uniform distribution.
+double ChiSquareContinuous::calculate_statistic_ifUniform(int num_buckets, double a, double b)
 {
-  return calculate_statistic(num_buckets, &ChiSquareContinuous::uniform_cdf_inverse, location, scale);
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::uniform_cdf_inverse, a, b);
 }
 
+//Computes the p-value of chi-square test after comparing with a fixed known uniform distribution
+// Input: num_buckets is the number of buckets the data is divided into, a 
+// is the lower bound number of the fixed known uniform distribution, and b is the upper
+// bound number of the uniform distribution.
+//Output: Corresponding p-value;
+double ChiSquareContinuous::calculate_pvalue_ifUniform(int num_buckets, double a, double b)
+{
+	double pvalue, csq_statistics;
+	csq_statistics = calculate_statistic_ifUniform(num_buckets, a, b);
+	pvalue = pchisq(csq_statistics, num_buckets-1);
+	return pvalue;
+}
+
+//Compute whether the result is significant or not at estimated p < the given input pvalue
+//Input: Number of bins, the lower bound of the fixed known uniform distribution, the upper bound
+// of the fixed known uniform distribution, the significant level we want to check
+//Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
+//        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
+bool ChiSquareContinuous::final_decision_ifUniform(int num_buckets, double a, double b, double sig_level)
+{
+	double p = calculate_pvalue_ifUniform(num_buckets, a, b);
+	if (p < sig_level)
+		return true;
+	else
+		return false;
+}
+
+
+
+
+
+/*
+Pareto
+*/
+
+
+// Calculates the chi-squared statistic for a Pareto distribution.
+// Input: num_buckets is the number of buckets the data is divided into, location 
+// is the location for the Pareto distribution, and scale is the scale
+// for the Pareto distribution.
+// Output: Returns the chi-squared statistic for the observed quantile_sketch 
+// compared to the expected Pareto distribution.
 double ChiSquareContinuous::calculate_statistic_ifPareto(int num_buckets, double location, double scale)
 {
   return calculate_statistic(num_buckets, &ChiSquareContinuous::pareto_cdf_inverse, location, scale);
 }
 
-double ChiSquareContinuous::calculate_statistic_ifExponential(int num_buckets, double location, double scale)
+//Computes the p-value of chi-square test after comparing with a fixed known uniform distribution
+// Input: num_buckets is the number of buckets the data is divided into, location 
+// is the location for the Pareto distribution, and scale is the scale
+// for the Pareto distribution.
+//Output: Corresponding p-value;
+double ChiSquareContinuous::calculate_pvalue_ifPareto(int num_buckets, double location, double scale)
 {
-  return calculate_statistic(num_buckets, &ChiSquareContinuous::exponential_cdf_inverse, location, scale);
+	double pvalue, csq_statistics;
+	csq_statistics = calculate_statistic_ifPareto(num_buckets, location, scale);
+	pvalue = pchisq(csq_statistics, num_buckets-1);
+	return pvalue;
 }
+
+//Compute whether the result is significant or not at estimated p < the given input pvalue
+// Input: num_buckets is the number of buckets the data is divided into, location 
+// is the location for the Pareto distribution, scale is the scale
+// for the Pareto distribution, and the signifcance level we want to check
+//Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
+//        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
+bool ChiSquareContinuous::final_decision_ifPareto(int num_buckets, double location, double scale, double sig_level)
+{
+	double p = calculate_pvalue_ifPareto(num_buckets, location, scale);
+	if (p < sig_level)
+		return true;
+	else
+		return false;
+}
+
+
+
+
+
+/*
+Exponential
+
+
+// Calculates the chi-squared statistic for a Exponential distribution.
+// Input: num_buckets is the number of buckets the data is divided into, scale is the scale
+// for the Exponential distribution, and 
+// Output: Returns the chi-squared statistic for the observed quantile_sketch 
+// compared to the expected Exponential distribution.
+double ChiSquareContinuous::calculate_statistic_ifExponential(int num_buckets, double scale)
+{
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::exponential_cdf_inverse, scale);
+}
+
+//Computes the p-value of chi-square test after comparing with a fixed known uniform distribution
+// Input: num_buckets is the number of buckets the data is divided into, and scale is the scale
+// for the Exponential distribution.
+//Output: Corresponding p-value;
+double ChiSquareContinuous::calculate_pvalue_ifExponential(int num_buckets, double scale)
+{
+	double pvalue, csq_statistics;
+	csq_statistics = calculate_statistic_ifExponential(num_buckets, scale);
+	pvalue = pchisq(csq_statistics, num_buckets-1);
+	return pvalue;
+}
+
+//Compute whether the result is significant or not at estimated p < the given input pvalue
+// Input: num_buckets is the number of buckets the data is divided into, location 
+// is the location for the Exponential distribution, scale is the scale
+// for the Exponential distribution, and the signifcance level we want to check
+//Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
+//        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
+bool ChiSquareContinuous::final_decision_ifExponential(int num_buckets, double scale, double sig_level)
+{
+	double p = calculate_pvalue_ifExponential(num_buckets, scale);
+	if (p < sig_level)
+		return true;
+	else
+		return false;
+}
+
+*/
+
+
+
+
+/*
+Two-sample
+*/
+
 
 // Computes and returns the chi-squared statistic compared to another 
 // distribution, also known as the two-sample continuous test.
@@ -253,9 +399,9 @@ double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD)
   }
 }
 
-double ChiSquareContinuous::uniform_cdf_inverse(double percent, double location, double scale)
+double ChiSquareContinuous::uniform_cdf_inverse(double percent, double a, double b)
 {
-  return location + (scale - location) * percent;
+  return a + (b - a) * percent;
 }
 
 double ChiSquareContinuous::pareto_cdf_inverse(double percent, double location, double scale)
@@ -263,9 +409,10 @@ double ChiSquareContinuous::pareto_cdf_inverse(double percent, double location, 
   return location / pow(1 - percent, 1 / scale);
 }
 
-double ChiSquareContinuous::exponential_cdf_inverse(double percent, double location, double scale)
+double ChiSquareContinuous::exponential_cdf_inverse(double percent, double scale)
 {
-  return location - log(1 - percent) / scale;
+  //return location - log(1 - percent) / scale;
+    return - log(1 - percent) / scale; // from https://en.wikipedia.org/wiki/Exponential_distribution
 }
 
 double ChiSquareContinuous::rational_approximation(double t)

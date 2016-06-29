@@ -354,6 +354,7 @@ int main()
   test_chi_square_1st();
 	//test_chi_square_2nd();
 	//test_NormalCDFInverse();
+	//test_chi_square_1st_uniform();	
 	return 0;
 }
 
