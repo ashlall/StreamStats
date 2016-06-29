@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <fstream>
 #include <time.h>
-//#include <string.h>
 #include <cmath>
 #include "DataGenerator.cpp"
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.cpp"
@@ -33,7 +32,7 @@ int main(int argc, char* argv[])
   int all_quantiles = atoi (argv[7]);
   double memory_percent = atof (argv[8]);
   int num_buckets = atoi(argv[9]);
-  int seed = 1; 
+  int seed = 10; 
 
   if (data_repeats <= 0)
   {
@@ -105,19 +104,19 @@ int main(int argc, char* argv[])
       if (all_quantiles)
       {
       	// computes QDigest estimate
-	      ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
-	      for (int i = 0; i < stream_size; i++)
-	        sketch2.insert(stream[i]);
-	      double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
-	      QD_values[i][j] = QD_stat;
+	ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
+	for (int i = 0; i < stream_size; i++)
+          sketch2.insert(stream[i]);
+	double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
+	QD_values[i][j] = QD_stat;
         data_file << "QDigest = " << QD_stat << endl;
 
-	      // computes ReservoirSampling estimate
-	      ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
-	      for (int i = 0; i < stream_size; i++)
-	        sketch3.insert(stream[i]);
-	      double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
-	      RS_values[i][j] = RS_stat;
+	// computes ReservoirSampling estimate
+	ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
+	for (int i = 0; i < stream_size; i++)
+	  sketch3.insert(stream[i]);
+	double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
+	RS_values[i][j] = RS_stat;
         data_file << "Reservoir Sampling = " << RS_stat << endl;
       }
 
@@ -146,20 +145,27 @@ int main(int argc, char* argv[])
     data_file << sizes[i] << "\t";
     double error = 0;
     for (int j = 0; j < data_repeats; j++)
-      error += abs(sketch.calculate_pvalue(GK_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+      error += abs(pchisq(GK_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
     data_file << error / data_repeats;
 
     if (all_quantiles)
     {
       error = 0;
       for (int j = 0; j < data_repeats; j++)
-	error += abs(sketch.calculate_pvalue(QD_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+	error += abs(pchisq(QD_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
       data_file << "\t" << error / data_repeats << "\t";
 
       error = 0;
       for (int j = 0; j < data_repeats; j++)
-	error += abs(sketch.calculate_pvalue(RS_values[j][i], deg_freedom) - sketch.calculate_pvalue(actual_values[j][i], deg_freedom));
+	error += abs(pchisq(RS_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
       data_file << error / data_repeats;
+    }
+    for (int j = 0; j < data_repeats; j++)
+    {
+      cout << pchisq(actual_values[j][i], deg_freedom) << " actual" << endl;
+      cout << pchisq(GK_values[j][i], deg_freedom) << " GK" << endl;
+      cout << pchisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+      cout << pchisq(RS_values[j][i], deg_freedom) << " RS" << endl;
     }
     data_file << endl;
   }
@@ -228,7 +234,7 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
   tstruct = *localtime(&now);
   strftime(buf, sizeof(buf), "%m-%d-%Y.%X", &tstruct);
 
-  strcpy(str, "VaryS_");
+  strcpy(str, "VaryS1_");
   strcat(str, lower);
   strcat(str, "-");
   strcat(str, upper);
