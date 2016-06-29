@@ -172,6 +172,7 @@ void test_chi_square_1st() //One-sample test
    	cout << "chiActual: "<< chiActual << endl;
    	
   	cout << "chiEstimated: " << chiEstimated << endl;
+  	
 
   	cout << "Estimated p-value by calling calculate_pvalue_ifNormal(num_bins, mean, SD): " << b1.calculate_pvalue_ifNormal(k, mean, SD) <<endl;
 
