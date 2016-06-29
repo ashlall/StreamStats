@@ -121,8 +121,8 @@ void categorical_test4()
 	double stream_size2=0; 
 	for(int i=0;i<num_cat;i++)
 	{
-		int v1= (int)(rand() % 39+200); // See between %35-40 with +100
-		int v2= (int)(rand() % 39+200);
+		int v1= (int)(rand() % 10+100); // See between %35-40 with +100
+		int v2= (int)(rand() % 10+100);
 		count_1[i]=v1;
 		count_2[i]=v2;
 		for(int j=0;j<v1;j++)
