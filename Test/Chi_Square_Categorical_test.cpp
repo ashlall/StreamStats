@@ -98,23 +98,28 @@ void categorical_test3()
 		double value = frequency_1 * constant_1 - frequency_2 * constant_2;
 		actual_chi += (value * value) / (frequency_1 + frequency_2);
 	}
-	cout<<pchisq(actual_chi,100000-1)<<endl;
-	cout<<pchisq(c1.calculate_statistic(c2),1000-1)<<endl;
+	cout<<pochisq(actual_chi,100000-1)<<endl;
+	cout<<pochisq(c1.calculate_statistic(c2),1000-1)<<endl;
 	
 }
 void categorical_test4()
-{
-	ChiSquareCategorical c1(20);
-	ChiSquareCategorical c2(20);
+{	
+	double num_bins=100;
+	double num_cat=100000;
+	
+	/* /////////////////////////// */
+	
+	ChiSquareCategorical c1(num_bins);
+	ChiSquareCategorical c2(num_bins);
 	double actual_chi=0;
 	int N=0;
 	int M=0;
-	int count_1[200];int count_2[200];
-	std::fill_n(count_1,200,0);
-	std::fill_n(count_2,200,0);
+	int count_1[(int)num_cat];int count_2[(int)num_cat];
+	std::fill_n(count_1,num_cat,0);
+	std::fill_n(count_2,num_cat,0);
 	double stream_size1=0;
 	double stream_size2=0;
-	for(int i=0;i<200;i++)
+	for(int i=0;i<num_cat;i++)
 	{
 		int v1= (int)(rand() % 10 +90 );
 		int v2= (int)(rand() % 10 +90 );
@@ -133,19 +138,23 @@ void categorical_test4()
  	double constant_2 = sqrt((double)stream_size1/stream_size2);
  	
 	
-	for(int i=0;i<200;i++)
+	for(int i=0;i<num_cat;i++)
 	{
 		double frequency_1=count_1[i];
 		double frequency_2=count_2[i];
 		double value = frequency_1 * constant_1 - frequency_2 * constant_2;
 		actual_chi += (value * value) / (frequency_1 + frequency_2);
 	}
-	cout<<actual_chi<<endl;
-	double chi=c1.calculate_statistic(c2);
-	cout<<chi<<endl;
 	
-	//cout<<pchisq(actual_chi,200-1)<<endl;
-	cout<<1-pchisq(9900,10000)<<endl;
+	double chi=c1.calculate_statistic(c2);
+	
+	//cout<<chi<<endl;
+	//cout<<actual_chi<<endl;
+	
+	int df1=num_cat-1;
+	int df2=num_bins-1;
+	cout<<pochisq(actual_chi,df1)<<endl;
+	cout<<pochisq(chi,df2)<<endl;
 	
 }
 
