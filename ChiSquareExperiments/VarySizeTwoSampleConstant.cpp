@@ -1,5 +1,5 @@
-// VarySizeTwoSample.cpp
-// Experiments that vary in stream size
+// VarySizeTwoSampleConstant.cpp
+// Experiments that vary in stream size, changes one stream size and keeps the other stream constant
 
 #include <iostream>
 #include <stdlib.h>
@@ -194,8 +194,11 @@ int main(int argc, char* argv[])
     {
       data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
       data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
-      data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
-      data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      if (all_quantiles)
+      {
+	data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+	data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      }
     }
   }
   data2_file.close();
@@ -244,7 +247,7 @@ void name_file(char *str, char* argv[], int extra)
   tstruct = *localtime(&now);
   strftime(buf, sizeof(buf), "%m-%d-%Y.%X", &tstruct);
 
-  strcpy(str, "VaryS2_");
+  strcpy(str, "VaryS2C_");
   strcat(str, argv[1]);
   strcat(str, "-");
   strcat(str, argv[2]);
