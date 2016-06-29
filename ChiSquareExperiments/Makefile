@@ -2,7 +2,7 @@ CC = g++
 FLAGS = -std=c++11
 VPATH = ../SourceCode/ChiSquare:../SourceCode/Quantiles
 
-all: VarySizeOneSample MakePlot test
+all: VarySizeOneSample MakePlot
 
 VarySizeOneSample: VarySizeOneSample.cpp DataGenerator.o ChiSquareContinuous.o
 	$(CC) $(FLAGS) -o $@ $<
