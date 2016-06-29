@@ -26,15 +26,23 @@ public:
 	~ChiSquareContinuous();
   	
 	void insert(double val);
-	double calculate_pvalue(double chi_square_statistic, int DF);
 	
 	double calculate_statistic_ifNormal(int num_buckets, double mean, double SD);
 	double calculate_pvalue_ifNormal(int num_buckets, double mean, double SD);
 	bool   final_decision_ifNormal(int num_buckets, double mean, double SD, double pvalue);
 	
 	double calculate_statistic_ifUniform(int num_buckets, double location, double scale);
+	double calculate_pvalue_ifUniform(int num_buckets, double mean, double SD);
+	bool   final_decision_ifUniform(int num_buckets, double mean, double SD, double pvalue);
+
 	double calculate_statistic_ifPareto(int num_buckets, double location, double scale);
+	double calculate_pvalue_ifPareto(int num_buckets, double location, double scale);
+	bool   final_decision_ifPareto(int num_buckets, double mean, double SD, double pvalue);
+
 	double calculate_statistic_ifExponential(int num_buckets, double location, double scale);
+	double calculate_pvalue_ifExponential(int num_buckets, double location, double scale);
+	bool   final_decision_ifExponential(int num_buckets, double mean, double SD, double pvalue);
+
 	double calculate_statistic(int num_buckets, double (ChiSquareContinuous::*distribution)(double, double, double), double location, double scale);
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
 	double* get_upper();
