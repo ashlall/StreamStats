@@ -2,9 +2,12 @@ CC = g++
 FLAGS = -std=c++11
 VPATH = ../SourceCode/ChiSquare:../SourceCode/Quantiles
 
-all: VarySizeOneSample MakePlot VarySizeTwoSample
+all: VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth
 
-VarySizeTwoSample: VarySizeTwoSample.cpp DataGenerator.o ChiSquareContinuous.o
+VarySizeTwoSampleBoth: VarySizeTwoSampleBoth.cpp DataGenerator.o ChiSquareContinuous.o
+	$(CC) $(FLAGS) -o $@ $<
+
+VarySizeTwoSampleConstant: VarySizeTwoSampleConstant.cpp DataGenerator.o ChiSquareContinuous.o
 	$(CC) $(FLAGS) -o $@ $<
 
 VarySizeOneSample: VarySizeOneSample.cpp DataGenerator.o ChiSquareContinuous.o
@@ -20,4 +23,4 @@ clean:
 	rm *.o
 
 cleanest: clean
-	rm VarySizeOneSample MakePlot VarySizeTwoSample
+	rm VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth

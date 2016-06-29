@@ -13,7 +13,7 @@ using namespace std;
 
 double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type, int num_buckets, double location, double scale);
 int get_DOF(char distribution_type);
-void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra);
+void name_file(char *str, char *argv[], int extra);
 
 int main(int argc, char* argv[])
 {
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
   ofstream data_file;
   char str[150];
-  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 0);
+  name_file(str, argv, 0);
   strcat(str, ".dat");
   data_file.open(str);
   data_file << "Distribution: " << distribution_type << ", location = " << location << ", scale = " << scale << endl;
@@ -135,43 +135,53 @@ int main(int argc, char* argv[])
   data_file.close();
 
   // writes data into tab deliminated file
-  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 1);
+  name_file(str, argv, 1);
   strcat(str, ".dat");
   int deg_freedom = num_buckets - get_DOF(distribution_type);
-  ChiSquareContinuous sketch(1,1);
+
+  ofstream data2_file;
+  char st[150];
+  name_file(st, argv, 0);
+  strcat(st, "_pvalues.dat");
+  data2_file.open(st);
   data_file.open(str);
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << sizes[i] << "\t";
     double error = 0;
     for (int j = 0; j < data_repeats; j++)
-      error += abs(pchisq(GK_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
+      error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
     data_file << error / data_repeats;
 
     if (all_quantiles)
     {
       error = 0;
       for (int j = 0; j < data_repeats; j++)
-	error += abs(pchisq(QD_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
+	error += abs(pochisq(QD_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
       data_file << "\t" << error / data_repeats << "\t";
 
       error = 0;
       for (int j = 0; j < data_repeats; j++)
-	error += abs(pchisq(RS_values[j][i], deg_freedom) - pchisq(actual_values[j][i], deg_freedom));
+	error += abs(pochisq(RS_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
       data_file << error / data_repeats;
     }
+    data2_file << "streamsize = " << sizes[i] << endl;
     for (int j = 0; j < data_repeats; j++)
     {
-      cout << pchisq(actual_values[j][i], deg_freedom) << " actual" << endl;
-      cout << pchisq(GK_values[j][i], deg_freedom) << " GK" << endl;
-      cout << pchisq(QD_values[j][i], deg_freedom) << " QD" << endl;
-      cout << pchisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
+      data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
+      if (all_quantiles)
+      {
+	data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+	data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      }
     }
     data_file << endl;
   }
+  data2_file.close();
   data_file.close();
 
-  name_file(str, argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[8], argv[9], all_quantiles, 0);
+  name_file(str, argv, 0);
   strcat(str, "_extra.dat");
   data_file.open(str);
   for (int i = 0; i < num_sizes; i++)
@@ -226,7 +236,7 @@ int get_DOF(char distribution_type)
     return 3;
 }
 
-void name_file(char *str, char* lower, char* upper, char* repeats, char* distribution, char* location, char* scale, char* mem, char* num_buckets, int all, int extra)
+void name_file(char *str, char *argv[], int extra)
 {
   time_t now = time(0);
   struct tm tstruct;
@@ -235,23 +245,23 @@ void name_file(char *str, char* lower, char* upper, char* repeats, char* distrib
   strftime(buf, sizeof(buf), "%m-%d-%Y.%X", &tstruct);
 
   strcpy(str, "VaryS1_");
-  strcat(str, lower);
+  strcat(str, argv[1]);
   strcat(str, "-");
-  strcat(str, upper);
+  strcat(str, argv[2]);
   strcat(str, "_");
-  strcat(str, repeats);
+  strcat(str, argv[3]);
   strcat(str, "X_");
-  strcat(str, distribution);
+  strcat(str, argv[4]);
   strcat(str, "-");
-  strcat(str, location);
+  strcat(str, argv[5]);
   strcat(str, "-");
-  strcat(str, scale);
+  strcat(str, argv[6]);
   strcat(str, "_");
-  strcat(str, mem);
+  strcat(str, argv[8]);
   strcat(str, "_");
-  strcat(str, num_buckets);
+  strcat(str, argv[9]);
   strcat(str, "_");
-  if (all)
+  if (atoi(argv[7]))
     strcat(str, "all_");
   else
     strcat(str, "GK_");
