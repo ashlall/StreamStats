@@ -93,7 +93,7 @@ double ChiSquareContinuous::calculate_pvalue_ifNormal(int num_buckets, double me
 {
 	double pvalue, csq_statistics;
 	csq_statistics = calculate_statistic_ifNormal(num_buckets, mean, SD);
-	pvalue = pchisq(csq_statistics, num_buckets-2);
+	pvalue = pchisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
 
