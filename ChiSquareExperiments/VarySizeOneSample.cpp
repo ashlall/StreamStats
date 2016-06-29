@@ -170,8 +170,11 @@ int main(int argc, char* argv[])
     {
       data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
       data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
-      data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
-      data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      if (all_quantiles)
+      {
+	data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+	data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      }
     }
     data_file << endl;
   }
