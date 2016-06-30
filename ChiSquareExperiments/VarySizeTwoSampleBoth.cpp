@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
       stream_size = lower;
       data_file << "Pass " << i+1 << ":" << endl;
       while (stream_size <= upper)  // runs tests for every stream size
-	{ cout << "hereee" << endl;
+	{ 
 	  int sample_size = memory_percent * stream_size;
 	  if (!i)
 	    sizes[j] = stream_size;
