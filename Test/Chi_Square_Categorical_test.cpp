@@ -70,36 +70,42 @@ void categorical_test2()
 }
 
 void categorical_test3()
-{
-	ChiSquareCategorical c1(1000);
-	ChiSquareCategorical c2(1000);
-	double actual_chi=0;
-	int count_1[100000];int count_2[100000];
-	std::fill_n(count_1,100000,0);
-	std::fill_n(count_2,100000,0);
+{	
+	double num_bins=300;
+	double num_cat=10000;
 	
-	for(int i=0;i<=10000000;i++)
+	ChiSquareCategorical c1(num_bins);
+	ChiSquareCategorical c2(num_bins);
+	double actual_chi=0;
+	int count_1[(int)num_cat];int count_2[(int)num_cat];
+	std::fill_n(count_1,num_cat,0);
+	std::fill_n(count_2,num_cat,0);
+	
+	for(int i=0;i<=100000;i++)
 	{
-		int v1= (int)(rand() % 100001);
-		int v2=	(int)(rand() % 100001);
+		int v1= (int)(rand() % 10001);
+		int v2=	(int)(rand() % 10001);
 		count_1[v1]++;
 		count_2[v2]++;
 		c1.insert(v1);
 		c2.insert(v2);
 	}
-	double stream_size1=10000000;
-	double stream_size2=10000000;
+	double stream_size1=1000000;
+	double stream_size2=1000000;
 	double constant_1 = sqrt((double)stream_size2/stream_size1);
  	double constant_2 = sqrt((double)stream_size1/stream_size2);
- 	for(int i=0;i<100000;i++)
+ 	for(int i=0;i<num_cat;i++)
 	{
 		double frequency_1=count_1[i];
 		double frequency_2=count_2[i];
 		double value = frequency_1 * constant_1 - frequency_2 * constant_2;
 		actual_chi += (value * value) / (frequency_1 + frequency_2);
 	}
-	cout<<pochisq(actual_chi,100000-1)<<endl;
-	cout<<pochisq(c1.calculate_statistic(c2),1000-1)<<endl;
+	double chi= c1.calculate_statistic(c2);
+	cout<<actual_chi<<endl;
+	cout<<chi<<endl;
+	cout<<pochisq(actual_chi,num_cat-1)<<endl;
+	cout<<pochisq(chi,num_bins-1)<<endl;
 	
 }
 void categorical_test4()
@@ -121,8 +127,8 @@ void categorical_test4()
 	double stream_size2=0; 
 	for(int i=0;i<num_cat;i++)
 	{
-		int v1= (int)(rand() % 10+100); // See between %35-40 with +100
-		int v2= (int)(rand() % 10+100);
+		int v1= (int)(rand() % 39+50); // See between %35-40 with +100
+		int v2= (int)(rand() % 39+50);
 		count_1[i]=v1;
 		count_2[i]=v2;
 		for(int j=0;j<v1;j++)
@@ -156,7 +162,6 @@ void categorical_test4()
 	int df2=num_bins-1;
 	cout<<pochisq(actual_chi,df1)<<endl;
 	cout<<pochisq(chi,df2)<<endl;
-	
 }
 
 
@@ -164,8 +169,8 @@ int main()
 {	
 	//categorical_test1(); // When the streams are identical       
 	//categorical_test2(); // When the steams are identical       
-	//categorical_test3(); // When the two streams are different from one another.  
-	categorical_test4();
+	categorical_test3(); // When the two streams are different from one another.  
+	//categorical_test4();
 	 
 	return 0;		
 }
