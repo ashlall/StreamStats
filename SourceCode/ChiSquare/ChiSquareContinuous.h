@@ -38,14 +38,10 @@ public:
 	double calculate_statistic_ifPareto(int num_buckets, double location, double scale);
 	double calculate_pvalue_ifPareto(int num_buckets, double location, double scale);
 	bool   final_decision_ifPareto(int num_buckets, double location, double scale, double sig_level);
-	
-	/*
-	NOTE:the number of parameters in ifExponential is different from previous ones
-	*/
 
-	//double calculate_statistic_ifExponential(int num_buckets, double scale);
-	//double calculate_pvalue_ifExponential(int num_buckets, double scale);
-	//bool   final_decision_ifExponential(int num_buckets, double scale, double sig_level);
+	double calculate_statistic_ifExponential(int num_buckets, double location, double scale);
+	double calculate_pvalue_ifExponential(int num_buckets, double location, double scale);
+	bool   final_decision_ifExponential(int num_buckets, double location, double scale, double sig_level);
 
 	double calculate_statistic(int num_buckets, double (ChiSquareContinuous::*distribution)(double, double, double), double location, double scale);
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
@@ -64,7 +60,7 @@ private:
 	double normal_cdf_inverse(double p, double mean, double SD);	
 	double uniform_cdf_inverse(double percent, double a, double b);
 	double pareto_cdf_inverse(double percent, double location,double scale);
-	double exponential_cdf_inverse(double percent, double scale);
+	double exponential_cdf_inverse(double percent, double location, double scale);
 };
 
 class IndexError {};

@@ -263,26 +263,26 @@ bool ChiSquareContinuous::final_decision_ifPareto(int num_buckets, double locati
 
 /*
 Exponential
-
+*/
 
 // Calculates the chi-squared statistic for a Exponential distribution.
 // Input: num_buckets is the number of buckets the data is divided into, scale is the scale
 // for the Exponential distribution, and 
 // Output: Returns the chi-squared statistic for the observed quantile_sketch 
 // compared to the expected Exponential distribution.
-double ChiSquareContinuous::calculate_statistic_ifExponential(int num_buckets, double scale)
+double ChiSquareContinuous::calculate_statistic_ifExponential(int num_buckets, double location, double scale)
 {
-  return calculate_statistic(num_buckets, &ChiSquareContinuous::exponential_cdf_inverse, scale);
+  return calculate_statistic(num_buckets, &ChiSquareContinuous::exponential_cdf_inverse, location, scale);
 }
 
 //Computes the p-value of chi-square test after comparing with a fixed known uniform distribution
 // Input: num_buckets is the number of buckets the data is divided into, and scale is the scale
 // for the Exponential distribution.
 //Output: Corresponding p-value;
-double ChiSquareContinuous::calculate_pvalue_ifExponential(int num_buckets, double scale)
+double ChiSquareContinuous::calculate_pvalue_ifExponential(int num_buckets, double location, double scale)
 {
 	double pvalue, csq_statistics;
-	csq_statistics = calculate_statistic_ifExponential(num_buckets, scale);
+	csq_statistics = calculate_statistic_ifExponential(num_buckets, location, scale);
 	pvalue = pchisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
@@ -293,16 +293,16 @@ double ChiSquareContinuous::calculate_pvalue_ifExponential(int num_buckets, doub
 // for the Exponential distribution, and the signifcance level we want to check
 //Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
 //        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
-bool ChiSquareContinuous::final_decision_ifExponential(int num_buckets, double scale, double sig_level)
+bool ChiSquareContinuous::final_decision_ifExponential(int num_buckets, double location, double scale, double sig_level)
 {
-	double p = calculate_pvalue_ifExponential(num_buckets, scale);
+	double p = calculate_pvalue_ifExponential(num_buckets, location, scale);
 	if (p < sig_level)
 		return true;
 	else
 		return false;
 }
 
-*/
+
 
 
 
@@ -409,10 +409,9 @@ double ChiSquareContinuous::pareto_cdf_inverse(double percent, double location, 
   return location / pow(1 - percent, 1 / scale);
 }
 
-double ChiSquareContinuous::exponential_cdf_inverse(double percent, double scale)
+double ChiSquareContinuous::exponential_cdf_inverse(double percent, double location, double scale)
 {
-  //return location - log(1 - percent) / scale;
-    return - log(1 - percent) / scale; // from https://en.wikipedia.org/wiki/Exponential_distribution
+  return location - log(1 - percent) / scale;
 }
 
 double ChiSquareContinuous::rational_approximation(double t)
