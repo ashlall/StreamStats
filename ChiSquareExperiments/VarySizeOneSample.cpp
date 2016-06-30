@@ -17,7 +17,11 @@ void name_file(char *str, char *argv[], int extra);
 
 // Runs the experiments that vary the size of the stream
 // Input: takes 9 command line arguments
-// Output: creates 5 files, the log file holds all the data generated, the table file holds the pvalue errors deliminated by tabs, the extra file holds all the calculated statistics, the pvalue file holds all the pvalues calculated, and the actualerror file holds the actual and estimated statistics deliminated by tabs
+// Output: creates 5 files, the log file holds all the data generated, the 
+// table file holds the pvalue errors deliminated by tabs, the extra file 
+// holds all the calculated statistics, the pvalue file holds all the pvalues
+// calculated, and the actualerror file holds the actual and estimated 
+// statistics deliminated by tabs
 int main(int argc, char* argv[])
 {
   if (argc < 10)
@@ -94,16 +98,17 @@ int main(int argc, char* argv[])
     data_file << "Stream " << i+1 << ":" << endl;
     while (stream_size <= upper)  // runs tests for every stream size
     {
+      int sample_size = memory_percent * stream_size;
       if (i == 0)
         sizes[j] = stream_size;
       data_file << "stream_size = " << stream_size << endl;
-     
+      
       // generates the data based on inputed parameters
       DataGenerator data(distribution_type, stream_size, seed, location, scale);
       double *stream = data.get_stream();
 
       // computes GK estimate
-      ChiSquareContinuous sketch1(memory_percent * stream_size, 1); 
+      ChiSquareContinuous sketch1(sample_size, 1); 
       for (int i = 0; i < stream_size; i++)
 	      sketch1.insert(stream[i]);
       double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
@@ -113,7 +118,7 @@ int main(int argc, char* argv[])
       if (all_quantiles)
       {
       	// computes QDigest estimate
-	ChiSquareContinuous sketch2(memory_percent * stream_size, 2);
+	ChiSquareContinuous sketch2(sample_size, 2);
 	for (int i = 0; i < stream_size; i++)
           sketch2.insert(stream[i]);
 	double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
@@ -121,7 +126,7 @@ int main(int argc, char* argv[])
         data_file << "QDigest = " << QD_stat << endl;
 
 	// computes ReservoirSampling estimate
-	ChiSquareContinuous sketch3(memory_percent * stream_size, 3);
+	ChiSquareContinuous sketch3(sample_size, 3);
 	for (int i = 0; i < stream_size; i++)
 	  sketch3.insert(stream[i]);
 	double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
@@ -157,22 +162,23 @@ int main(int argc, char* argv[])
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << sizes[i] << "\t";
-    double error = 0;
+
     // adds pvalue error from the GK sketch to the table file
+    double error = 0;
     for (int j = 0; j < data_repeats; j++)
       error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
     data_file << error / data_repeats;
 
     if (all_quantiles)
     {
-      error = 0;
       // adds pvalue error from the QDigest sketch to the table file
+      error = 0;
       for (int j = 0; j < data_repeats; j++)
 	error += abs(pochisq(QD_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
       data_file << "\t" << error / data_repeats << "\t";
 
-      error = 0;
       // adds pvalue error from the Reservoir Sampling sketch to the table file
+      error = 0;
       for (int j = 0; j < data_repeats; j++)
 	error += abs(pochisq(RS_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
       data_file << error / data_repeats;
@@ -258,12 +264,12 @@ int get_DOF(char distribution_type)
     return 3;
 }
 
-// Creates a string that will be a name of one of the files using the command line
-// parameters and the current day and time
-// Input: argv has 10 parameters, extra is from 0 to 3
-// Output: when extra is 0 it creates the name for the log file, when 1 creates name
-// for table file, when 2 creates name for extra file, when 3 creates name for pvalues
-// file, when 4 creates name for actual_error file
+// Creates a string that will be the name of one of the files using the command
+// line arguments and the current day and time
+// Input: argv has 9 parameters, extra is from 0 to 4
+// Output: when extra is 0 i creates the name for the log file, when 1 creates
+// name for table file, when 2 creates name for extra file, when 3 creates name
+// for pvalues file, when 4 creates name for actual-error file 
 void name_file(char *str, char *argv[], int extra)
 {
   time_t now = time(0);
