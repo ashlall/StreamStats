@@ -18,11 +18,10 @@ ChiSquareContinuous::ChiSquareContinuous(double memory_,int num)
   {
   case 1: 
     memory = memory_/3;
-
     quantile_sketch = new GK(memory);
     break;
   case 2:
-    //quantile_sketch = new QDigestDouble(memory);
+    quantile_sketch = new QDigestDouble(memory);
     break;
   case 3: 
     quantile_sketch = new ReservoirSampling((int)memory);
@@ -99,7 +98,7 @@ double ChiSquareContinuous::calculate_pvalue_ifNormal(int num_buckets, double me
 {
 	double pvalue, csq_statistics;
 	csq_statistics = calculate_statistic_ifNormal(num_buckets, mean, SD);
-	pvalue = pchisq(csq_statistics, num_buckets-1);
+	pvalue = pochisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
 
@@ -191,7 +190,7 @@ double ChiSquareContinuous::calculate_pvalue_ifUniform(int num_buckets, double a
 {
 	double pvalue, csq_statistics;
 	csq_statistics = calculate_statistic_ifUniform(num_buckets, a, b);
-	pvalue = pchisq(csq_statistics, num_buckets-1);
+	pvalue = pochisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
 
@@ -238,7 +237,7 @@ double ChiSquareContinuous::calculate_pvalue_ifPareto(int num_buckets, double lo
 {
 	double pvalue, csq_statistics;
 	csq_statistics = calculate_statistic_ifPareto(num_buckets, location, scale);
-	pvalue = pchisq(csq_statistics, num_buckets-1);
+	pvalue = pochisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
 
@@ -283,7 +282,7 @@ double ChiSquareContinuous::calculate_pvalue_ifExponential(int num_buckets, doub
 {
 	double pvalue, csq_statistics;
 	csq_statistics = calculate_statistic_ifExponential(num_buckets, location, scale);
-	pvalue = pchisq(csq_statistics, num_buckets-1);
+	pvalue = pochisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
 
@@ -355,6 +354,36 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   }
   return chi_squared;
 }
+
+//Computes the p-value of chi-square test after comparing with another distribution.
+// Input: num_buckets is the number of buckets the data is divided into, and scale is the scale
+// for the Exponential distribution.
+//Output: Corresponding p-value;
+double ChiSquareContinuous::two_sample_pvalue(const ChiSquareContinuous& distribution_2, int num_buckets)
+{
+	double pvalue, csq_statistics;
+	csq_statistics = two_sample_statistic(distribution_2, num_buckets);
+	pvalue = pochisq(csq_statistics, num_buckets-1);
+	return pvalue;
+}
+
+//Compute whether the result is significant or not at estimated p < the given input pvalue
+// Input: num_buckets is the number of buckets the data is divided into, location 
+// is the location for the Exponential distribution, scale is the scale
+// for the Exponential distribution, and the signifcance level we want to check
+//Output: True(yes, reject the null) if p < pvalue. Our stream is unlikely to follow the fixed known distribution.
+//        False(no, can't reject the null) if p > pvalue. Our stream is likely to follow the fixed known distribution.
+bool ChiSquareContinuous::two_sample_final_decision(const ChiSquareContinuous& distribution_2, int num_buckets, double sig_level)
+{
+	double p = two_sample_pvalue(distribution_2, num_buckets);
+	if (p < sig_level)
+		return true;
+	else
+		return false;
+}
+
+
+
 
 // Returns the array lower_bins.
 double* ChiSquareContinuous::get_lower()

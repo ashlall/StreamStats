@@ -105,7 +105,7 @@ void test_chi_square_1st() //One-sample test
  	cout << "Enter the number of bins you want to use: " <<endl;
  	cin >> k;
 
-	int mean, SD;
+	double mean, SD;
 	cout << "Enter the mean of the normal distribution you want to compare against: "<<endl;
 	cin >> mean;
 	cout << "Enter the standard deviation of the normal distribution you want to compare against: "<<endl;
@@ -209,8 +209,8 @@ void test_chi_square_2nd() //Two-sample test
  	cout << "Enter the number of bins you want to use: " <<endl;
  	cin >> k;
 
-	int mean1, SD1;
-	int mean2, SD2;
+	double mean1, SD1;
+	double mean2, SD2;
 	cout << "Enter the mean of the first normal distribution: "<<endl;
 	cin >> mean1;
 	cout << "Enter the mean of the second normal distribution: "<<endl;
@@ -221,6 +221,8 @@ void test_chi_square_2nd() //Two-sample test
 	cin >> SD2;
 
 	ChiSquareContinuous c1(sample_size1, sketch_method), c2(sample_size2, sketch_method); 
+	ChiSquareContinuous c3(sample_size1, sketch_method), c4(sample_size2, sketch_method); 
+	ChiSquareContinuous c5(sample_size1, sketch_method), c6(sample_size2, sketch_method);
 
 	double *items1=new double[stream_size1]; //used for storing all the generated data for calculating the actual chi^2.
 	double *items2=new double[stream_size2];
@@ -234,6 +236,8 @@ void test_chi_square_2nd() //Two-sample test
    		data1 = distribution(generator);
 		items1[i] = data1;
   		c1.insert(data1);
+		c3.insert(data1);
+		c5.insert(data1);
  	}
 
 	default_random_engine generator2(5);
@@ -243,6 +247,8 @@ void test_chi_square_2nd() //Two-sample test
 		data2 = distribution2(generator2);
 		items2[i] = data2;
 		c2.insert(data2);
+		c4.insert(data2);
+		c6.insert(data2);
  	}
 
 	double chiEestimated;
@@ -297,6 +303,8 @@ void test_chi_square_2nd() //Two-sample test
     cout << "2nd way: "<< diffSeconds + diffUSeconds/1000000.0<<" seconds\n";*/
   	cout << "chiEestimated: " << chiEestimated << endl;
 	cout << "chiActual: " << chiActual << endl;
+	cout << "pvalue: "<<c3.two_sample_pvalue(c4,k) <<endl;
+	cout << "decision: "<<c5.two_sample_final_decision(c6,k,0.05) <<endl;
 }
 
 
@@ -351,8 +359,8 @@ int main()
   //test_chi_square_1st(1);
   //test_chi_square_1st(2);
 
-  test_chi_square_1st();
-	//test_chi_square_2nd();
+  //test_chi_square_1st();
+	test_chi_square_2nd();
 	//test_NormalCDFInverse();
 	//test_chi_square_1st_uniform();	
 	return 0;

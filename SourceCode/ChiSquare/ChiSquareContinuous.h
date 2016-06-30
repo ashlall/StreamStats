@@ -44,7 +44,12 @@ public:
 	bool   final_decision_ifExponential(int num_buckets, double location, double scale, double sig_level);
 
 	double calculate_statistic(int num_buckets, double (ChiSquareContinuous::*distribution)(double, double, double), double location, double scale);
+
 	double two_sample_statistic(const ChiSquareContinuous& second_distribution, int num_buckets);
+	double two_sample_pvalue( const ChiSquareContinuous& second_distribution, int num_buckets);
+	bool   two_sample_final_decision(const ChiSquareContinuous& second_distribution, int num_buckets, double sig_level);
+
+	
 	double* get_upper();
 	double* get_lower();
 	
