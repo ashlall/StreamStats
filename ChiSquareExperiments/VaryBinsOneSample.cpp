@@ -93,59 +93,59 @@ int main(int argc, char* argv[])
   data_file << "stream_size = " << stream_size << endl;
 
   for (int i = 0; i < data_repeats; i++) // runs all tests data_repeats times
+  {
+    num_buckets = lower;
+    int j = 0;
+    data_file << "Pass " << i+1 << ":" << endl;
+    while (num_buckets <= upper)  // runs tests for every number of buckets
     {
-      num_buckets = lower;
-      int j = 0;
-      data_file << "Pass " << i+1 << ":" << endl;
-      while (num_buckets <= upper)  // runs tests for every number of buckets
-	{
-	  if (i == 0)
-	    bins[j] = num_buckets;
-	  data_file << "num_buckets = " << num_buckets << endl;
+      if (i == 0)
+        bins[j] = num_buckets;
+      data_file << "num_buckets = " << num_buckets << endl;
       
-	  // generates the data based on inputed parameters
-	  DataGenerator data(distribution_type, stream_size, seed, location, scale);
-	  double *stream = data.get_stream();
+      // generates the data based on inputed parameters
+      DataGenerator data(distribution_type, stream_size, seed, location, scale);
+      double *stream = data.get_stream();
 
-	  // computes GK estimate
-	  ChiSquareContinuous sketch1(sample_size, 1); 
-	  for (int i = 0; i < stream_size; i++)
-	    sketch1.insert(stream[i]);
-	  double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
-	  GK_values[i][j] = GK_stat;
-	  data_file << "GK = " << GK_stat << endl;
+      // computes GK estimate
+      ChiSquareContinuous sketch1(sample_size, 1); 
+      for (int i = 0; i < stream_size; i++)
+        sketch1.insert(stream[i]);
+      double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
+      GK_values[i][j] = GK_stat;
+      data_file << "GK = " << GK_stat << endl;
 
-	  if (all_quantiles)
-	    {
-	      // computes QDigest estimate
-	      ChiSquareContinuous sketch2(sample_size, 2);
-	      for (int i = 0; i < stream_size; i++)
-		sketch2.insert(stream[i]);
-	      double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
-	      QD_values[i][j] = QD_stat;
-	      data_file << "QDigest = " << QD_stat << endl;
+      if (all_quantiles)
+      {
+        // computes QDigest estimate
+        ChiSquareContinuous sketch2(sample_size, 2);
+        for (int i = 0; i < stream_size; i++)
+          sketch2.insert(stream[i]);
+        double QD_stat = get_estimate(&sketch2, distribution_type, num_buckets, location, scale);
+        QD_values[i][j] = QD_stat;
+        data_file << "QDigest = " << QD_stat << endl;
 
-	      // computes ReservoirSampling estimate
-	      ChiSquareContinuous sketch3(sample_size, 3);
-	      for (int i = 0; i < stream_size; i++)
-		sketch3.insert(stream[i]);
-	      double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
-	      RS_values[i][j] = RS_stat;
-	      data_file << "Reservoir Sampling = " << RS_stat << endl;
-	    }
+        // computes ReservoirSampling estimate
+        ChiSquareContinuous sketch3(sample_size, 3);
+        for (int i = 0; i < stream_size; i++)
+          sketch3.insert(stream[i]);
+        double RS_stat = get_estimate(&sketch3, distribution_type, num_buckets, location, scale);
+        RS_values[i][j] = RS_stat;
+        data_file << "Reservoir Sampling = " << RS_stat << endl;
+      }
 
-	  // computes actual statistic
-	  double *upper_interval = sketch1.get_upper();
-	  double *lower_interval = sketch1.get_lower();
-	  double actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
-	  actual_values[i][j] = actual;
-	  data_file << "Real = " << actual << endl;
+      // computes actual statistic
+      double *upper_interval = sketch1.get_upper();
+      double *lower_interval = sketch1.get_lower();
+      double actual = data.get_stat_one_sample(num_buckets, upper_interval, lower_interval);
+      actual_values[i][j] = actual;
+      data_file << "Real = " << actual << endl;
 
-	  num_buckets += 10;
-	  j++;
-	}
-      seed++; // changes seed for next repeat
+      num_buckets += 10;
+      j++;
     }
+    seed++; // changes seed for next repeat
+  }
   data_file.close();
 
   // creates table file
@@ -160,45 +160,45 @@ int main(int argc, char* argv[])
 
   int deg_freedom;
   for (int i = 0; i < num_sizes; i++)
+  {
+    data_file << bins[i] << "\t";
+    deg_freedom = num_buckets - get_DOF(distribution_type);
+
+    // adds pvalue error from the GK sketch to the table file
+    double error = 0;
+    for (int j = 0; j < data_repeats; j++)
+      error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+    data_file << error / data_repeats;
+
+    if (all_quantiles)
     {
-      data_file << bins[i] << "\t";
-      deg_freedom = num_buckets - get_DOF(distribution_type);
-
-      // adds pvalue error from the GK sketch to the table file
-      double error = 0;
+      // adds pvalue error from the QDigest sketch to the table file
+      error = 0;
       for (int j = 0; j < data_repeats; j++)
-	error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+        error += abs(pochisq(QD_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
+      data_file << "\t" << error / data_repeats << "\t";
+
+      // adds pvalue error from the Reservoir Sampling sketch to the table file
+      error = 0;
+      for (int j = 0; j < data_repeats; j++)
+        error += abs(pochisq(RS_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
       data_file << error / data_repeats;
-
-      if (all_quantiles)
-	{
-	  // adds pvalue error from the QDigest sketch to the table file
-	  error = 0;
-	  for (int j = 0; j < data_repeats; j++)
-	    error += abs(pochisq(QD_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
-	  data_file << "\t" << error / data_repeats << "\t";
-
-	  // adds pvalue error from the Reservoir Sampling sketch to the table file
-	  error = 0;
-	  for (int j = 0; j < data_repeats; j++)
-	    error += abs(pochisq(RS_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
-	  data_file << error / data_repeats;
-	}
-      data_file << endl;
-
-      // adds all pvalues to the pvalue file
-      data2_file << "num_buckets = " << bins[i] << endl;
-      for (int j = 0; j < data_repeats; j++)
-	{
-	  data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
-	  data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
-	  if (all_quantiles)
-	    {
-	      data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
-	      data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
-	    }
-	}
     }
+    data_file << endl;
+
+    // adds all pvalues to the pvalue file
+    data2_file << "num_buckets = " << bins[i] << endl;
+    for (int j = 0; j < data_repeats; j++)
+    {
+      data2_file << pochisq(actual_values[j][i], deg_freedom) << " actual" << endl;
+      data2_file << pochisq(GK_values[j][i], deg_freedom) << " GK" << endl;
+      if (all_quantiles)
+      {
+        data2_file << pochisq(QD_values[j][i], deg_freedom) << " QD" << endl;
+        data2_file << pochisq(RS_values[j][i], deg_freedom) << " RS" << endl;
+      }
+    }
+  }
   data2_file.close();
   data_file.close();
 
@@ -208,37 +208,37 @@ int main(int argc, char* argv[])
 
   // adds actual statistics to the extra file
   for (int i = 0; i < num_sizes; i++)
-    {
-      for (int j = 0; j < data_repeats; j++)
-	data_file << actual_values[j][i] << "\t";
-    }
+  {
+    for (int j = 0; j < data_repeats; j++)
+      data_file << actual_values[j][i] << "\t";
+  }
   data_file << endl;
 
   // adds GK statistics to the extra file
   for (int i = 0; i < num_sizes; i++)
-    {
-      for(int j = 0; j <data_repeats; j++)
-	data_file << GK_values[j][i] << "\t";
-    }
+  {
+    for(int j = 0; j <data_repeats; j++)
+      data_file << GK_values[j][i] << "\t";
+  }
   data_file << endl;
   if (all_quantiles)
+  {
+    // adds QDigest statistics to the extra file
+    for (int i = 0; i < num_sizes; i++)
     {
-      // adds QDigest statistics to the extra file
-      for (int i = 0; i < num_sizes; i++)
-	{
-	  for(int j = 0; j <data_repeats; j++)
-	    data_file << QD_values[j][i] << "\t";
-	}
-      data_file << endl;
-
-      // adds Reservoir Sampling statistcs to the extra file
-      for (int i = 0; i < num_sizes; i++)
-	{
-	  for(int j = 0; j <data_repeats; j++)
-	    data_file << RS_values[j][i] << "\t";
-	}
-      data_file << endl;
+      for(int j = 0; j <data_repeats; j++)
+        data_file << QD_values[j][i] << "\t";
     }
+    data_file << endl;
+
+    // adds Reservoir Sampling statistcs to the extra file
+    for (int i = 0; i < num_sizes; i++)
+    {
+      for(int j = 0; j <data_repeats; j++)
+        data_file << RS_values[j][i] << "\t";
+    }
+    data_file << endl;
+  }
   data_file.close();
   return 0;
 }
