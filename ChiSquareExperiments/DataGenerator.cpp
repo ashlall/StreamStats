@@ -3,6 +3,8 @@
 #include "DataGenerator.h"
 #include <random>
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 // Constructor, based on the parameters creates and holds a stream of data in stream
 // Input: distribution_type is either N,U,P, or E, size is a positive integer
@@ -54,7 +56,7 @@ double DataGenerator::get_stat_one_sample(int num_buckets, double *upper_interva
   double expected = stream_size / num_buckets;
   double chi_squared = 0;
   for (int i = 1; i <= num_buckets; i++)
-  {
+  { 
     double observed = 0;
     for (int j = 0; j < stream_size; j++)
     {
