@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
   double mem = lower;
   while (mem <= (upper + 0.0000001))
   {
-    cout << mem << endl;
+    //cout << mem << endl;
     num_mems++;
     mem *= sqrt(10);
-    cout << mem << " " << upper << endl;
+    //cout << mem << " " << upper << endl;
   }
-  cout << "here " << num_mems <<endl;
+
   // creates the arrays that will hold the calculated statistics
   double actual_values[data_repeats][num_mems];
   double GK_values[data_repeats][num_mems];
