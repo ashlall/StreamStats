@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
       throw ParameterError();
     }
 
-  // finds te number of different sizes the experiment will run on
+  // finds the number of different sizes the experiment will run on
   int stream1_size;
   int num_sizes = 0, size = lower;
   while (size <= upper)
