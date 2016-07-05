@@ -14,7 +14,7 @@ double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type
 int get_DOF(char distribution_type);
 void name_file(char *str, char *argv[], int extra);
 
-// Runs the experiments that vary the size of the stream
+// Runs the experiments that vary the percent of memory
 // Input: takes 9 command line arguments
 // Output: creates 5 files, the log file holds all the data generated, the 
 // table file holds the pvalue errors deliminated by tabs, the extra file 
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 {
   if (argc < 10)
   {
-    cout << "usage: VarySize lower-memory upper-memory num-streams(>0) [N|U|P|E] location scale [0|1] memory_percent num-buckets" << endl;
+    cout << "usage: VaryMemory lower-memory upper-memory num-streams(>0) [N|U|P|E] location scale [0|1] stream-size num-buckets" << endl;
     throw ParameterError();
   }
   
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
       memory_percent *= sqrt(10);
       j++;
     }
-    seed++; // changes seed for next repeat?
+    seed++; // changes seed for next repeat
   }
   data_file.close();
 
