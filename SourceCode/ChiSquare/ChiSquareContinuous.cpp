@@ -411,7 +411,7 @@ double ChiSquareContinuous::normal_cdf_inverse(double p, double mean, double SD)
   }
 
   if(p==0)
-    return 0;
+    return -99999999;
     
   if(p==1)
     return 99999999;
