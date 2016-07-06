@@ -178,7 +178,10 @@ void QDigest::compressFully()
     keys.push_back(i->first);
 
   for (std::vector<long>::const_iterator i = keys.begin(); i != keys.end(); i++)
-    compressDownward(*i);  
+  {
+    if (!isRoot(*i))
+      compressDownward(*i);  
+  }
 }
 
 // Restores 2nd property at seedNode and guarantees that no new violations of P2 appear.
