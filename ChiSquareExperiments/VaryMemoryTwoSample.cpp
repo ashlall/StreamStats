@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   double GK_values[data_repeats][num_mems];
   double QD_values[data_repeats][num_mems];
   double RS_values[data_repeats][num_mems];
-  int percents[num_mems];
+  double percents[num_mems];
 
   // creates and intializes the log file
   ofstream data_file;
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
       actual_values[i][j] = actual;
       data_file << "Real = " << actual << endl;
 
-      num_buckets += 10;
+      memory_percent *= sqrt(10);
       j++;
     }     
     seed1++;
