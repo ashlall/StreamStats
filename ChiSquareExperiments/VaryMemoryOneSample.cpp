@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   double GK_values[data_repeats][num_mems];
   double QD_values[data_repeats][num_mems];
   double RS_values[data_repeats][num_mems];
-  int percents[num_mems];
+  double percents[num_mems];
 
   // creates and initializes the log file
   ofstream data_file;
