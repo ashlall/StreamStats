@@ -60,7 +60,7 @@ Normal
 double ChiSquareContinuous::calculate_statistic_ifNormal(int num_buckets, double mean, double SD)
 {	
   int stream_size = quantile_sketch->get_stream_size();
-  double expected_frequency = stream_size/num_buckets;
+  double expected_frequency = (double)stream_size/num_buckets;
   
   // Reallocates the memory for upper_bins and lower_bins.
   delete upper_bins;
@@ -134,7 +134,7 @@ calculate_statistic()
 double ChiSquareContinuous::calculate_statistic(int num_buckets, double(ChiSquareContinuous::*distribution)(double, double, double), double location, double scale)
 {		
   int stream_size = quantile_sketch->get_stream_size();
-  double expected_frequency = stream_size/num_buckets;
+  double expected_frequency = (double)stream_size/num_buckets;
 
   // Reallocates the memory for upper_bins and lower_bins
   delete upper_bins;
@@ -321,7 +321,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   QuantileSketch *quantile_sketch_2 = distribution_2.quantile_sketch;
   int stream_size_1 = quantile_sketch->get_stream_size();
   int stream_size_2 = quantile_sketch_2->get_stream_size();
-  double frequency_1 = stream_size_1 / num_buckets;
+  double frequency_1 = (double)stream_size_1 / num_buckets;
 
   // Reallocates the memory for upper_bins and lower_bins
   delete upper_bins;
