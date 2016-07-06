@@ -10,10 +10,17 @@ class QDigestDouble : public QDigest
  public:
  QDigestDouble(double compression) : QDigest(compression) { 
     precision = 1000000000.0; 
-    range = 1000000000.0; };
+    range = 10000.0; };
   QDigestDouble(const QDigestDouble& q) : QDigest(q) {};
   
-  void insert(double x) { QDigest::insert(doubleToLong(x)); };
+  void insert(double x)
+  { 
+    if (x < -range)
+      x = 0;
+    if (x > range)
+      x = precision;
+    QDigest::insert(doubleToLong(x)); 
+  };
   double getQuantile(double f) { return longToDouble(QDigest::getQuantile(f)); };
 
  private:
