@@ -207,16 +207,9 @@ bool ChiSquareContinuous::final_decision_ifUniform(int num_buckets, double a, do
 	else
 		return false;
 }
-
-
-
-
-
 /*
 Pareto
 */
-
-
 // Calculates the chi-squared statistic for a Pareto distribution.
 // Input: num_buckets is the number of buckets the data is divided into, location 
 // is the location for the Pareto distribution, and scale is the scale
@@ -240,7 +233,6 @@ double ChiSquareContinuous::calculate_pvalue_ifPareto(int num_buckets, double lo
 	pvalue = pochisq(csq_statistics, num_buckets-1);
 	return pvalue;
 }
-
 //Compute whether the result is significant or not at estimated p < the given input pvalue
 // Input: num_buckets is the number of buckets the data is divided into, location 
 // is the location for the Pareto distribution, scale is the scale
@@ -255,11 +247,6 @@ bool ChiSquareContinuous::final_decision_ifPareto(int num_buckets, double locati
 	else
 		return false;
 }
-
-
-
-
-
 /*
 Exponential
 */
@@ -300,11 +287,6 @@ bool ChiSquareContinuous::final_decision_ifExponential(int num_buckets, double l
 	else
 		return false;
 }
-
-
-
-
-
 
 /*
 Two-sample
@@ -381,9 +363,6 @@ bool ChiSquareContinuous::two_sample_final_decision(const ChiSquareContinuous& d
 	else
 		return false;
 }
-
-
-
 
 // Returns the array lower_bins.
 double* ChiSquareContinuous::get_lower()
