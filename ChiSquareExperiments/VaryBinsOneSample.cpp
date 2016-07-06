@@ -14,7 +14,7 @@ double get_estimate(ChiSquareContinuous *quantile_sketch, char distribution_type
 int get_DOF(char distribution_type);
 void name_file(char *str, char *argv[], int extra);
 
-// Runs the experiments that vary the size of the stream
+// Runs the experiments that vary in number of bins
 // Input: takes 9 command line arguments
 // Output: creates 5 files, the log file holds all the data generated, the 
 // table file holds the pvalue errors deliminated by tabs, the extra file 
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 {
   if (argc < 10)
   {
-    cout << "usage: VarySize lower-bins upper-bins num-streams(>0) [N|U|P|E] location scale [0|1] memory-percent stream-size" << endl;
+    cout << "usage: VaryBinsOneSample lower-bins upper-bins num-streams(>0) [N|U|P|E] location scale [0|1] memory-percent stream-size" << endl;
     throw ParameterError();
   }
   
