@@ -10,7 +10,7 @@ ChiSquareCategorical::ChiSquareCategorical(int buckets)
 	num_buckets=buckets;
 	stream_size=0;
 	count= new int[num_buckets];
-	std::fill_n(count,num_buckets,0); // run a for loop if this doesnt work
+	std::fill_n(count,num_buckets,0); // run a for loop if this doesnt work 
 	
 	
 }
