@@ -34,10 +34,11 @@ void ChiSquareCategorical::insert(double c)
 	
 	// Passing c into the hash function and increases the count of
 	// whichever bucket it falls into. 
-	HashTable HashA(71);;
-	int bucket= (HashA.hash(c))%num_buckets;
+	HashTable HashA(71);
+	int bucket= int((HashA.hash(c))%num_buckets);	
 	//int bucket= int(hash_table[c]) % num_buckets;
 	count[bucket]++;
+	
 	
 }
 /*
@@ -45,7 +46,7 @@ Pre-Condition: distribution_2 the second stream of data which has used the
 same number of buckets and hash function.
 Post-Condition: Returns the Chi-Squared statistic for the categorical data.
 */
-double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution)
+double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution,int &df)
 {	
 	//Getting the size of both streams
 	int stream_size_1=stream_size;
@@ -62,9 +63,14 @@ double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& sec
 		 double frequency_1= count[i];
 		 double frequency_2= second_distribution.count[i];
 		 
+		 if((frequency_1==0) && (frequency_2==0))
+		 df--;
+	 	else
+	 	{
 		 //Calculating the Chi-Squared Statistic
 		 double value = frequency_1 * constant_1 - frequency_2 * constant_2;
-		 chi_squared += (value * value) / (frequency_1 + frequency_2);	
+		 chi_squared += (value * value) / (frequency_1 + frequency_2);
+		}
 	}
 	
 	return chi_squared;
