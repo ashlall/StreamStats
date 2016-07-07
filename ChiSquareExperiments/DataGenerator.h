@@ -7,7 +7,7 @@
 class DataGenerator
 {
  public:
-  DataGenerator(char distribution, int size, int seed, double location, double scale = 0);
+  DataGenerator(char distribution, int size, int seed, double location, double scale);
   ~DataGenerator() { delete [] stream; };
 
   double* get_stream() { return stream; };
