@@ -8,6 +8,9 @@
 #include <string>
 #include <unordered_map>
 #include <stdlib.h> 
+#include <unordered_set>
+#include <cstddef>
+#include <functional>
 #include<stdio.h>
 #include<math.h>
 using namespace std;
@@ -21,12 +24,14 @@ public:
 	{
 		rand_num=n;
 	}
-	int hash(int x)
-	{
+	std::size_t hash(int x)
+	{	
+		 std::size_t h1 = std::hash<int>()(x);
+		 std::size_t h2 = std::hash<int>()(x);
+		 return h1 ^ (h2 << 1); // or use boost::hash_combine
+		/*x = ((x >> 16) ^ x) * 0x45d9f3b;
 		x = ((x >> 16) ^ x) * 0x45d9f3b;
-		x = ((x >> 16) ^ x) * 0x45d9f3b;
-		x = ((x >> 16) ^ x);
-    return x;
+		x = ((x >> 16) ^ x);*/
 	}
 };
 
@@ -39,7 +44,7 @@ public:
 	~ChiSquareCategorical();
   	
 	void insert(double val);
-	double calculate_statistic(const ChiSquareCategorical& second_distribution);
+	double calculate_statistic(const ChiSquareCategorical& second_distribution,int &df);
 	int get_stream_size(){ return stream_size;};
 private:
 	double chi_squared;
