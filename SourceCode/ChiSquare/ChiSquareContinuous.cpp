@@ -304,6 +304,7 @@ double ChiSquareContinuous::two_sample_statistic(const ChiSquareContinuous& dist
   int stream_size_1 = quantile_sketch->get_stream_size();
   int stream_size_2 = quantile_sketch_2->get_stream_size();
   double frequency_1 = (double)stream_size_1 / num_buckets;
+  chi_squared = 0;
 
   // Reallocates the memory for upper_bins and lower_bins
   delete upper_bins;
