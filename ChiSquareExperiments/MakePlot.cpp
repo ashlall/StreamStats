@@ -31,15 +31,14 @@ int main(int argc, char* argv[])
     fprintf(file, "set xlabel 'Percent Memory'\n");
   else if (argv[1][0] == 'B')
     fprintf(file, "set xlabel 'Number of Bins'\n");
-  fprintf(file, "set ylabel 'Relative Error'\n");
+  fprintf(file, "set ylabel 'P-value Error'\n");
 
   fprintf(file, "set key box\n");
   fprintf(file, "set size .5,.5\n");
  
   if (argv[1][0] == 'S')
     fprintf(file, "set logscale x\n");
-  //fprintf(file, "set yrange [1:*]\n");
-  fprintf(file, "set logscale y\n");
+  fprintf(file, "set yrange [0:1]\n");
 
   if (argc <= 4)
     fprintf(file, "plot \"%s\" u 1:2 t 'GK' w linespoints lw 2\n", argv[2]);
@@ -52,6 +51,6 @@ int main(int argc, char* argv[])
   sprintf(command, "convert %s.eps %s.pdf", argv[3], argv[3]);
   system(command);
 
-  //system("rm plot.p");
+  system("rm plot.p");
   return 0;
 }
