@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 
   // finds the number of different bins the experiment will run on
   double memory_percent;
-  int num_mems;
+  int num_mems = 0;
   double mem = lower;
   while (mem <= (upper + 0.0000001))
   {
