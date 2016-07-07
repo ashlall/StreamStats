@@ -62,7 +62,7 @@ double DataGenerator::get_stat_one_sample(int num_buckets, double *upper_interva
     double observed = 0;
     for (int j = 0; j < stream_size; j++)
     {
-      if (stream[j] <= upper_intervals[i] && stream[j] >= lower_intervals[i])
+      if (stream[j] <= upper_intervals[i] && stream[j] > lower_intervals[i])
 	observed++;
     }
     chi_squared += (observed - expected) * (observed - expected) / expected;
@@ -89,12 +89,12 @@ double DataGenerator::get_stat_two_sample(const DataGenerator& other, int num_bu
     double frequency1 = 0, frequency2 = 0;
     for (int j = 0; j < stream_size; j++)
     {
-      if (stream[j] <= upper_intervals[i+1] && stream[j] >= lower_intervals[i+1])
+      if (stream[j] <= upper_intervals[i+1] && stream[j] > lower_intervals[i+1])
 	frequency1++;
     }
     for (int j = 0; j < stream2_size; j++)
     {
-      if (stream2[j] <= upper_intervals[i+1] && stream2[j] >= lower_intervals[i+1])
+      if (stream2[j] <= upper_intervals[i+1] && stream2[j] > lower_intervals[i+1])
 	frequency2++;
     }
     double lambda = frequency1 * constant_1 - frequency2 * constant_2;
