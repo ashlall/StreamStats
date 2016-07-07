@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   double memory_percent = atof (argv[11]);
   int num_buckets = atoi (argv[12]);
   int seed1 = 1;
-  int seed2 = 0;
+  int seed2 = 2;
 
   // ensures that the parameters will not create error
   if (data_repeats <= 0)
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 	ChiSquareContinuous QD_sketch1(sample1_size, 2);
 	for (int k = 0; k < stream1_size; k++)
 	  QD_sketch1.insert(stream1[k]);
-	double QD_stat = QD_sketch1.two_sample_statistic(QD_sketch2, num_buckets);
+	double QD_stat = QD_sketch2.two_sample_statistic(QD_sketch1, num_buckets);
 	QD_values[i][j] = QD_stat;
 	data_file << "QD = " << QD_stat << endl;
 
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	ChiSquareContinuous RS_sketch1(sample1_size, 3);
         for (int k = 0; k < stream1_size; k++)
           RS_sketch1.insert(stream1[k]);
-        double RS_stat = RS_sketch1.two_sample_statistic(RS_sketch2, num_buckets);
+        double RS_stat = RS_sketch2.two_sample_statistic(RS_sketch1, num_buckets);
 	RS_values[i][j]= RS_stat;
 	data_file << "RS = " << RS_stat<< endl;
       }
