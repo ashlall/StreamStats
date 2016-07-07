@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
   int all_quantiles = atoi (argv[9]);
   int stream_size = atoi (argv[10]);
   int num_buckets = atoi (argv[11]);
-  int seed1 = 1;
-  int seed2 = 20;
+  int seed1 = 0;
+  int seed2 = 1;
 
   // ensures that the parameters will not create error
   if (data_repeats <= 0)
