@@ -62,10 +62,9 @@ class ChiSquareCategorical
 public:
 	ChiSquareCategorical();
 	ChiSquareCategorical(double p);
-	~ChiSquareCategorical();
   	
 	void insert(double val);
-	double calculate_statistic(const ChiSquareCategorical& second_distribution);
+	double calculate_statistic(const ChiSquareCategorical& second_distribution,int &df);
 	int get_stream_size(){ return stream_size;};
 private:
 	double chi_squared;
