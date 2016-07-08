@@ -115,7 +115,7 @@ void categorical_test3()
 	cout<<pochisq(actual_chi,num_cat-1)<<endl;
 	cout<<pochisq(chi,num_bins-1)<<endl;
 	
-}*/
+}
 void categorical_test4()
 {	int seed=0;
 	for(int h=0;h<10;h++)
@@ -128,7 +128,7 @@ void categorical_test4()
 		double actual_chi;
 		ChiSquareCategorical c1(num_bins);
 		ChiSquareCategorical c2(num_bins);
-		/* /////////////////////////// */
+
 		double p_value=0;
 		int max_dif;
 		int count_1[(int)num_cat];int count_2[(int)num_cat];
@@ -154,11 +154,11 @@ void categorical_test4()
 				
 				count_1[i]=v1;
 				count_2[i]=v2;
-				/*for(int j=0;j<v1;j++)
-				c1.insert(i);
+				//for(int j=0;j<v1;j++)
+				//c1.insert(i);
 				
-				for(int k=0;k<v2;k++)
-				c2.insert(i);*/
+				//for(int k=0;k<v2;k++)
+				//c2.insert(i);
 				
 				stream_size1=stream_size1+v1;
 				stream_size2=stream_size2+v2;
@@ -193,6 +193,33 @@ void categorical_test4()
 		cout<<"Actual: "<<p_value<<endl;
 		cout<<"Calculated: "<<1-pochisq(chi,df2)<<endl;
 	}
+}*/
+
+void categorical_test5()
+{
+		
+	ChiSquareCategorical c1(10);
+	ChiSquareCategorical c2(10);
+	int num_cat=10000;
+	int df=0;
+	for(int i=0;i<num_cat;i++)
+	{
+		int v1= (int)(rand() % 250+50);
+		int max_dif= 28;
+		int v2= v1-max_dif+rand()%(2*max_dif+1);
+	
+		for(int j=0;j<v1;j++)
+			c1.insert(i);
+				
+		for(int k=0;k<v2;k++)
+			c2.insert(i);
+	}
+	
+	
+	double chi=c1.calculate_statistic(c2,df);
+	cout<<chi<<endl;
+	cout<<1-pochisq(chi,df--);
+	
 }
 
 
@@ -201,7 +228,9 @@ int main()
 	//categorical_test1(); // When the streams are identical       
 	//categorical_test2(); // When the steams are identical       
 	//categorical_test3(); // When the two streams are different from one another.  
-	categorical_test4();
+	//categorical_test4();
+	categorical_test5();
+	
 	 
 	return 0;		
 }
