@@ -22,7 +22,7 @@ void ChiSquareCategorical::insert(double c)
 	HashTable HashA(71);
 	
 	long hash_value= HashA.hash(c);
-	if(hash_value<(percent*range))
+	if(hash_value<((percent/100)*range))
 	{	
 		if(map.count(hash_value)<1)
 		{	
@@ -35,9 +35,6 @@ void ChiSquareCategorical::insert(double c)
 			map.at(hash_value)=cat_count;
 		}
 	}
-		
-	
-	
 	
 }
 /*
@@ -48,8 +45,6 @@ Post-Condition: Returns the Chi-Squared statistic for the categorical data.
 double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution,int &df)
 {	
 	//Getting the size of both streams
-	
-	
 	int stream_size_1=stream_size;
 	int stream_size_2=second_distribution.stream_size;
 	
