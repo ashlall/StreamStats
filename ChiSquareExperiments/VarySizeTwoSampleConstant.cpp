@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   double memory_percent = atof (argv[11]);
   int num_buckets = atoi (argv[12]);
   int seed1 = 1;
-  int seed2 = 20;
+  int seed2 = 2;
 
   // ensures that the parameters will not create error
   if (data_repeats <= 0)
@@ -99,12 +99,29 @@ int main(int argc, char* argv[])
   for (int i = 0; i < data_repeats; i++)  // runs all test data_repeats times
   {
     int j = 0;
+    int sample2_size = memory_percent * stream2_size;
+
+    // generates the data and the sketches of the stream held at a constant
+    // size just once for each stream size of the first stream
+    DataGenerator data2(distribution_type, stream2_size, seed2, location2, scale2);
+    double *stream2 = data2.get_stream();
+    ChiSquareContinuous GK_sketch2(sample2_size, 1);
+    for (int k = 0; k < stream2_size; k++)
+      GK_sketch2.insert(stream2[k]);
+    
+    
+      ChiSquareContinuous QD_sketch2(sample2_size, 2);
+      for (int k = 0; k < stream2_size; k++)
+	QD_sketch2.insert(stream2[k]);
+      ChiSquareContinuous RS_sketch2(sample2_size, 3);
+      for (int k = 0; k < stream2_size; k++)
+	RS_sketch2.insert(stream2[k]);
+    
     stream1_size = lower;
     data_file << "Pass " << i+1 << ":" << endl;
     while (stream1_size <= upper)  // runs tests for every stream size
     {
       int sample1_size = memory_percent * stream1_size;
-      int sample2_size = memory_percent * stream2_size;
       if (!i)
 	sizes[j] = stream1_size;
       data_file << "stream 1 size = " << stream1_size << endl;
@@ -113,18 +130,13 @@ int main(int argc, char* argv[])
       // generates the data based on inputed parameters
       DataGenerator data1(distribution_type, stream1_size, seed1, location1, scale1);
       double *stream1 = data1.get_stream();
-      DataGenerator data2(distribution_type, stream2_size, seed2, location2, scale2);
-      double *stream2 = data2.get_stream();
 
       // computes GK estimate
       ChiSquareContinuous GK_sketch1(sample1_size, 1);
       for (int k = 0; k < stream1_size; k++)
 	GK_sketch1.insert(stream1[k]);
-      ChiSquareContinuous GK_sketch2(sample2_size, 1);
-      for (int k = 0; k < stream2_size; k++)
-	GK_sketch2.insert(stream2[k]);
-      double GK_stat = GK_sketch1.two_sample_statistic(GK_sketch2, num_buckets);
-      //double GK_stat = GK_sketch2.two_sample_statistic(GK_sketch1, num_buckets);
+      //double GK_stat = GK_sketch1.two_sample_statistic(GK_sketch2, num_buckets);
+      double GK_stat = GK_sketch2.two_sample_statistic(GK_sketch1, num_buckets);
       GK_values[i][j] = GK_stat;
       data_file << "GK = " << GK_stat << endl;
 
@@ -134,10 +146,7 @@ int main(int argc, char* argv[])
 	ChiSquareContinuous QD_sketch1(sample1_size, 2);
 	for (int k = 0; k < stream1_size; k++)
 	  QD_sketch1.insert(stream1[k]);
-	ChiSquareContinuous QD_sketch2(sample2_size, 2);
-	for (int k = 0; k < stream2_size; k++)
-	  QD_sketch2.insert(stream2[k]);
-	double QD_stat = QD_sketch1.two_sample_statistic(QD_sketch2, num_buckets);
+	double QD_stat = QD_sketch2.two_sample_statistic(QD_sketch1, num_buckets);
 	QD_values[i][j] = QD_stat;
 	data_file << "QD = " << QD_stat << endl;
 
@@ -145,25 +154,22 @@ int main(int argc, char* argv[])
 	ChiSquareContinuous RS_sketch1(sample1_size, 3);
         for (int k = 0; k < stream1_size; k++)
           RS_sketch1.insert(stream1[k]);
-        ChiSquareContinuous RS_sketch2(sample2_size, 3);
-        for (int k = 0; k < stream2_size; k++)
-          RS_sketch2.insert(stream2[k]);
-        double RS_stat = RS_sketch1.two_sample_statistic(RS_sketch2, num_buckets);
+        double RS_stat = RS_sketch2.two_sample_statistic(RS_sketch1, num_buckets);
 	RS_values[i][j]= RS_stat;
 	data_file << "RS = " << RS_stat<< endl;
       }
        
       // computes actual statistic
-      double *upper_interval = GK_sketch1.get_upper();
-      double *lower_interval = GK_sketch1.get_lower();
+      double *upper_interval = GK_sketch2.get_upper();
+      double *lower_interval = GK_sketch2.get_lower();
       double actual = data2.get_stat_two_sample(data1, num_buckets, upper_interval, lower_interval);
       actual_values[i][j] = actual;
       data_file << "Real = " << actual << endl;
 
       stream1_size *= 10;
       j++;
+      seed1++;
     }     
-    seed1++;
     seed2++;
   }
   data_file.close();

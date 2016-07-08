@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   double memory_percent = atof (argv[10]);
   int num_buckets = atoi (argv[11]);
   int seed1 = 1;
-  int seed2 = 20;
+  int seed2 = 2;
 
   // ensures that the parameters will not create error
   if (data_repeats <= 0)

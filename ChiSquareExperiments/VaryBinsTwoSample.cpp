@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   double memory_percent = atof (argv[10]);
   int stream_size = atoi (argv[11]);
   int seed1 = 1;
-  int seed2 = 20;
+  int seed2 = 2;
 
   // ensures that the parameters will not create error
   if (data_repeats <= 0)
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   while (size <= upper)
   {
     num_sizes++;
-    size += 10;
+    size += 20;
   }
 
   // creates the arrays that will hold the calculated statistics 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
       actual_values[i][j] = actual;
       data_file << "Real = " << actual << endl;
 
-      num_buckets += 10;
+      num_buckets += 20;
       j++;
     }     
     seed1++;
