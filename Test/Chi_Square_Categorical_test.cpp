@@ -117,60 +117,58 @@ void categorical_test3()
 	
 }*/
 void categorical_test4()
-{	int seed=0;	
-	for(int i=0;i<10;i++)
+{	int seed=0;
+	double memory_percent=20;	
+	for(int i=0;i<5;i++)
 	{
-		
 		double num_cat=100000;
 		int df1=num_cat;
 		int df2=0;
 		int N,M;
 		double actual_chi;
-		ChiSquareCategorical c1(10);
-		ChiSquareCategorical c2(10);
-
+		ChiSquareCategorical c1(memory_percent);
+		ChiSquareCategorical c2(memory_percent);
+		
 		double p_value=0;
 		int max_dif;
 		int count_1[(int)num_cat];int count_2[(int)num_cat];
 			
-			actual_chi=0;
-			N=0;
-			M=0;
-			std::fill_n(count_1,num_cat,0);
-			std::fill_n(count_2,num_cat,0);
-			double stream_size1=0; 
-			double stream_size2=0; 
-			srand(seed);
+		actual_chi=0;
+		N=0;
+		M=0;
+		std::fill_n(count_1,num_cat,0);
+		std::fill_n(count_2,num_cat,0);
+		double stream_size1=0; 
+		double stream_size2=0; 
+		srand(seed);
 			
-			for(int i=0;i<num_cat;i++)
-			{
-				int v1= (int)(rand() % 250+50); // See between %35-40 with +100
-				max_dif= 28;
-				int v2= v1-max_dif+rand()%(2*max_dif+1);
+		for(int i=0;i<num_cat;i++)
+		{
+			int v1= (int)(rand() % 250+50); // See between %35-40 with +100
+			max_dif= 28;
+			int v2= v1-max_dif+rand()%(2*max_dif+1);
 				
-				count_1[i]=v1;
-				count_2[i]=v2;
+			count_1[i]=v1;
+			count_2[i]=v2;
 				
-				stream_size1=stream_size1+v1;
-				stream_size2=stream_size2+v2;
-			}
-			double constant_1 = sqrt((double)stream_size2/stream_size1);
-			double constant_2 = sqrt((double)stream_size1/stream_size2);
+			stream_size1=stream_size1+v1;
+			stream_size2=stream_size2+v2;
+		}
+		double constant_1 = sqrt((double)stream_size2/stream_size1);
+		double constant_2 = sqrt((double)stream_size1/stream_size2);
 			
 			
-			for(int i=0;i<num_cat;i++)
-			{
-				double frequency_1=count_1[i];
-				double frequency_2=count_2[i];
-				double value = frequency_1 * constant_1 - frequency_2 * constant_2;
-				actual_chi += (value * value) / (frequency_1 + frequency_2);
-			}
+		for(int i=0;i<num_cat;i++)
+		{
+			double frequency_1=count_1[i];
+			double frequency_2=count_2[i];
+			double value = frequency_1 * constant_1 - frequency_2 * constant_2;
+			actual_chi += (value * value) / (frequency_1 + frequency_2);
+		}
 			
-			p_value=1-pochisq(actual_chi,df1);
-			seed=seed+1;
+		p_value=1-pochisq(actual_chi,df1);
+		seed=seed+1;
 			
-		
-		
 		for(int i=0;i<num_cat;i++)
 		{
 			for(int j=0;j<count_1[i];j++)
