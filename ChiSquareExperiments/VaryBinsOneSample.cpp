@@ -97,16 +97,16 @@ int main(int argc, char* argv[])
     num_buckets = lower;
     int j = 0;
     data_file << "Pass " << i+1 << ":" << endl;
+
+    // generates the data based on inputed parameters                         
+    DataGenerator data(distribution_type, stream_size, seed, location, scale);
+    double *stream = data.get_stream();
     while (num_buckets <= upper)  // runs tests for every number of buckets
     {
       if (i == 0)
         bins[j] = num_buckets;
       data_file << "num_buckets = " << num_buckets << endl;
       
-      // generates the data based on inputed parameters
-      DataGenerator data(distribution_type, stream_size, seed, location, scale);
-      double *stream = data.get_stream();
-
       // computes GK estimate
       ChiSquareContinuous sketch1(sample_size, 1); 
       for (int i = 0; i < stream_size; i++)

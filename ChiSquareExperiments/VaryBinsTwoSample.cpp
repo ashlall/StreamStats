@@ -101,17 +101,18 @@ int main(int argc, char* argv[])
     int j = 0;
     num_buckets = lower;
     data_file << "Pass " << i+1 << ":" << endl;
+
+    // generates the data based on parameters                                               
+    DataGenerator data1(distribution_type, stream_size, seed1, location1, scale1);
+    double *stream1 = data1.get_stream();
+    DataGenerator data2(distribution_type, stream_size, seed2, location2, scale2);
+    double *stream2 = data2.get_stream();
+
     while (num_buckets <= upper)  // runs tests for every number of bins
     { 
       if (!i)
 	bins[j] = num_buckets;
       data_file << "num_buckets = " << num_buckets << endl;
-
-      // generates the data based on parameters
-      DataGenerator data1(distribution_type, stream_size, seed1, location1, scale1);
-      double *stream1 = data1.get_stream();
-      DataGenerator data2(distribution_type, stream_size, seed2, location2, scale2);
-      double *stream2 = data2.get_stream();
 
       // computes GK estimate
       ChiSquareContinuous GK_sketch1(sample_size, 1);

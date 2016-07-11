@@ -98,6 +98,11 @@ int main(int argc, char* argv[])
     memory_percent = lower;
     int j = 0;
     data_file << "Stream " << i+1 << ":" << endl;
+
+    // generates the data based on inputed parameters                                       
+    DataGenerator data(distribution_type, stream_size, seed, location, scale);
+    double *stream = data.get_stream();
+
     while (memory_percent <= (upper+0.0000001))  // runs tests for every memory percent
     {
       int sample_size = memory_percent * stream_size;
@@ -105,10 +110,6 @@ int main(int argc, char* argv[])
         percents[j] = memory_percent;
       data_file << "memory_percent = " << memory_percent << endl;
       
-      // generates the data based on inputed parameters
-      DataGenerator data(distribution_type, stream_size, seed, location, scale);
-      double *stream = data.get_stream();
-
       // computes GK estimate
       ChiSquareContinuous sketch1(sample_size, 1); 
       for (int i = 0; i < stream_size; i++)

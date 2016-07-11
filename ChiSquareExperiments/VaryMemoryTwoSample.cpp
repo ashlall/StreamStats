@@ -101,6 +101,14 @@ int main(int argc, char* argv[])
     memory_percent = lower;
     int j = 0;
     data_file << "Pass " << i+1 << ":" << endl;
+
+    // generates the data based on parameters                                                
+    DataGenerator data1(distribution_type, stream_size, seed1, location1, scale1);
+    double *stream1 = data1.get_stream();
+    DataGenerator data2(distribution_type, stream_size, seed2, location2, scale2);
+    double *stream2 = data2.get_stream();
+    cout << "Data" << endl;
+
     while (memory_percent <= (upper + 0.00000001))  // runs tests for every memory percent
     { 
       int sample_size = memory_percent * stream_size;
@@ -108,24 +116,18 @@ int main(int argc, char* argv[])
 	percents[j] = memory_percent;
       data_file << "memory_percent = " << memory_percent << endl;
 
-      // generates the data based on parameters
-      DataGenerator data1(distribution_type, stream_size, seed1, location1, scale1);
-      double *stream1 = data1.get_stream();
-      DataGenerator data2(distribution_type, stream_size, seed2, location2, scale2);
-      double *stream2 = data2.get_stream();
-
       // computes GK estimate
-      ChiSquareContinuous GK_sketch1(sample_size, 1);
+      ChiSquareContinuous *GK_sketch1 = new ChiSquareContinuous(sample_size, 1);
       for (int k = 0; k < stream_size; k++)
-        GK_sketch1.insert(stream1[k]);
-      ChiSquareContinuous GK_sketch2(sample_size, 1);
+        GK_sketch1->insert(stream1[k]);
+      ChiSquareContinuous *GK_sketch2 = new ChiSquareContinuous(sample_size, 1);
       for (int k = 0; k < stream_size; k++)
-        GK_sketch2.insert(stream2[k]);
-      double GK_stat = GK_sketch1.two_sample_statistic(GK_sketch2, num_buckets);
+        GK_sketch2->insert(stream2[k]);
+      double GK_stat = GK_sketch1->two_sample_statistic(*GK_sketch2, num_buckets);
       //double GK_stat = GK_sketch2.two_sample_statistic(GK_sketch1, num_buckets);
       GK_values[i][j] = GK_stat;
       data_file << "GK = " << GK_stat << endl;
-
+      cout << "GK" << endl;
       if (all_quantiles)
       {
         // computes QDigest estimate
@@ -138,7 +140,7 @@ int main(int argc, char* argv[])
         double QD_stat = QD_sketch1.two_sample_statistic(QD_sketch2, num_buckets);
         QD_values[i][j] = QD_stat;
         data_file << "QD = " << QD_stat << endl;
-
+	cout << "QD" << endl;
         // computes Reservoir Sampling estimate
         ChiSquareContinuous RS_sketch1(sample_size, 3);
         for (int k = 0; k < stream_size; k++)
@@ -149,11 +151,12 @@ int main(int argc, char* argv[])
         double RS_stat = RS_sketch1.two_sample_statistic(RS_sketch2, num_buckets);
         RS_values[i][j]= RS_stat;
         data_file << "RS = " << RS_stat<< endl;
+	cout << "RS" << endl;
       }
        
       // computes actual statistic
-      double *upper_interval = GK_sketch1.get_upper();
-      double *lower_interval = GK_sketch1.get_lower();
+      double *upper_interval = GK_sketch1->get_upper();
+      double *lower_interval = GK_sketch1->get_lower();
       double actual = data2.get_stat_two_sample(data1, num_buckets, upper_interval, lower_interval);
       actual_values[i][j] = actual;
       data_file << "Real = " << actual << endl;
