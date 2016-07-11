@@ -121,10 +121,12 @@ Post-Condition: the tuple at the index is deleted.
 */
 void GK::delete_tuple(int index)
 {	
+        Tuple *hold  = summary[index];
 	summary[index] = new Tuple(summary[index + 1]->v,
                 summary[index]->g + summary[index + 1]->g,
                 summary[index + 1]->delta);
-        
+        delete hold;
+	delete summary[index+1];
         int size_of_pointer= sizeof(summary[0]);
         int total_size=size_of_pointer * (num_tuples-index-2);
         memmove(&(summary[index+1]),&(summary[index+2]),total_size);
