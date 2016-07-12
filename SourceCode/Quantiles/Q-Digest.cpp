@@ -1,6 +1,6 @@
 // Q-Digest.cpp, implemented with a hash table
 // Adapted from https://raw.github.com/clearspring/stream-lib/master/src/main/java/com/clearspring/analytics/stream/quantile/QDigest.java
-// TODO: add exception in getQuantile
+// TODO: there is a memory leak in the toAscRanges() function with ranges
 
 #include "Q-Digest.h"
 #include <math.h>
