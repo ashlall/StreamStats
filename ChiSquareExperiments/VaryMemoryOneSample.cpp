@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
   int deg_freedom = num_buckets - get_DOF(distribution_type);
   for (int i = 0; i < num_mems; i++)
   {
-    data_file << percents[i] << "\t";
+    data_file << percents[i] * 100 << "\t";
 
     // adds pvalue error from the GK sketch to the table file
     double error = 0;

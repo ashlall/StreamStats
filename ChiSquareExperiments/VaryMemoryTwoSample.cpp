@@ -107,14 +107,12 @@ int main(int argc, char* argv[])
     double *stream1 = data1.get_stream();
     DataGenerator data2(distribution_type, stream_size, seed2, location2, scale2);
     double *stream2 = data2.get_stream();
-    cout << "Data" << endl;
 
     while (memory_percent <= (upper + 0.00000001))  // runs tests for every memory percent
     { 
       int sample_size = memory_percent * stream_size;
       if (!i)
 	percents[j] = memory_percent;
-      data_file << "memory_percent = " << memory_percent << endl;
 
       // computes GK estimate
       ChiSquareContinuous *GK_sketch1 = new ChiSquareContinuous(sample_size, 1);
@@ -124,10 +122,9 @@ int main(int argc, char* argv[])
       for (int k = 0; k < stream_size; k++)
         GK_sketch2->insert(stream2[k]);
       double GK_stat = GK_sketch1->two_sample_statistic(*GK_sketch2, num_buckets);
-      //double GK_stat = GK_sketch2.two_sample_statistic(GK_sketch1, num_buckets);
       GK_values[i][j] = GK_stat;
       data_file << "GK = " << GK_stat << endl;
-      cout << "GK" << endl;
+
       if (all_quantiles)
       {
         // computes QDigest estimate
@@ -140,7 +137,7 @@ int main(int argc, char* argv[])
         double QD_stat = QD_sketch1.two_sample_statistic(QD_sketch2, num_buckets);
         QD_values[i][j] = QD_stat;
         data_file << "QD = " << QD_stat << endl;
-	cout << "QD" << endl;
+
         // computes Reservoir Sampling estimate
         ChiSquareContinuous RS_sketch1(sample_size, 3);
         for (int k = 0; k < stream_size; k++)
@@ -151,7 +148,6 @@ int main(int argc, char* argv[])
         double RS_stat = RS_sketch1.two_sample_statistic(RS_sketch2, num_buckets);
         RS_values[i][j]= RS_stat;
         data_file << "RS = " << RS_stat<< endl;
-	cout << "RS" << endl;
       }
        
       // computes actual statistic
@@ -182,7 +178,7 @@ int main(int argc, char* argv[])
   int deg_freedom = num_buckets;
   for (int i = 0; i < num_mems; i++)
   {
-    data_file << percents[i] << "\t";
+    data_file << percents[i] * 100 << "\t";
     double error = 0;
 
     // adds pvalue error from the GK sketch to the table file
