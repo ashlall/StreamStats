@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
  
   if (argv[1][0] == 'S')
     fprintf(file, "set logscale x\n");
-  fprintf(file, "set yrange [0:1]\n");
+  fprintf(file, "set yrange [0:*]\n");
 
   if (argc <= 4)
     fprintf(file, "plot \"%s\" u 1:2 t 'GK' w linespoints lw 2\n", argv[2]);
