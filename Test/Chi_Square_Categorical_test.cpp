@@ -119,9 +119,9 @@ void categorical_test3()
 void categorical_test4()
 {	int seed=0;
 	double memory_percent=20;	
-	for(int i=0;i<5;i++)
+	for(int js=0;js<20;js++)
 	{
-		double num_cat=100000;
+		double num_cat=1000000;
 		int df1=num_cat;
 		int df2=0;
 		int N,M;
@@ -145,7 +145,7 @@ void categorical_test4()
 		for(int i=0;i<num_cat;i++)
 		{
 			int v1= (int)(rand() % 250+50); // See between %35-40 with +100
-			max_dif= 28;
+			max_dif= 28;// see with 28
 			int v2= v1-max_dif+rand()%(2*max_dif+1);
 				
 			count_1[i]=v1;
@@ -166,7 +166,7 @@ void categorical_test4()
 			actual_chi += (value * value) / (frequency_1 + frequency_2);
 		}
 			
-		p_value=1-pochisq(actual_chi,df1);
+		p_value=1-pochisq(actual_chi,df1--);
 		seed=seed+1;
 			
 		for(int i=0;i<num_cat;i++)
@@ -179,7 +179,7 @@ void categorical_test4()
 		}
 		double chi=c1.calculate_statistic(c2,df2);
 		cout<<"Actual: "<<p_value<<endl;
-		cout<<"Calculated: "<<1-pochisq(chi,df2)<<endl;
+		cout<<"Calculated: "<<1-pochisq(chi,df2--)<<endl;
 	}
 }
 
