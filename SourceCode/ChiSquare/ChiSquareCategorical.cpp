@@ -20,7 +20,6 @@ void ChiSquareCategorical::insert(double c)
 {
 	stream_size++;
 	HashTable HashA(71);
-	
 	long hash_value= HashA.hash(c);
 	if(hash_value<((percent/100)*range))
 	{	
@@ -35,7 +34,6 @@ void ChiSquareCategorical::insert(double c)
 			map.at(hash_value)=cat_count;
 		}
 	}
-	
 }
 /*
 Pre-Condition: distribution_2 the second stream of data which has used the 
