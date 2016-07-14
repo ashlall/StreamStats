@@ -64,7 +64,7 @@ public:
 	ChiSquareCategorical(double p);
   	
 	void insert(double val);
-	double calculate_statistic(const ChiSquareCategorical& second_distribution,int &df);
+	double calculate_statistic(const ChiSquareCategorical& second_distribution, int seed = 0);
 	int get_stream_size(){ return stream_size;};
 private:
 	double chi_squared;

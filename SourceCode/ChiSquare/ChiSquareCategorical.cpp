@@ -1,5 +1,7 @@
 //ChiSquareCategorical.cpp
 #include"ChiSquareCategorical.h"
+#include <random>
+
 /*
 Pre-Condition: None.
 Post-Condition:Initializes the variables used in the ChiSquareCategorical class.
@@ -40,16 +42,15 @@ Pre-Condition: distribution_2 the second stream of data which has used the
 same number of buckets and hash function.
 Post-Condition: Returns the Chi-Squared statistic for the categorical data.
 */
-double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution,int &df)
-{	
-	//Getting the size of both streams
+double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& second_distribution, int seed)
+{      	//Getting the size of both streams
 	int stream_size_1=stream_size;
 	int stream_size_2=second_distribution.stream_size;
-	
+	srand(seed);
 	
 	double constant_1 = sqrt((double)stream_size_2/stream_size_1);
 	double constant_2 = sqrt((double)stream_size_1/stream_size_2);
-	df=map.size();
+	double estimateSum = 0.0;
 	for ( auto it = map.begin(); it != map.end(); ++it )
 	{
 		 // Getting the frequencies if the i'th bin from the two streams.
@@ -57,8 +58,30 @@ double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& sec
 		 double frequency_2= second_distribution.map.at(it->first);
 	 	
 		 //Calculating the Chi-Squared Statistic
+		
+		 // Naive sampling:
 		 double value = frequency_1 * constant_1 - frequency_2 * constant_2;
-		 chi_squared += (value * value) / (frequency_1 + frequency_2);
+		 chi_squared += (100.0/percent) * (value * value) / (frequency_1 + frequency_2);
+
+		 /*
+		 // AMS-sampling from https://people.cs.umass.edu/~mcgregor/papers/07-unsketchables.pdf
+		 int r, s;
+		 if (rand() % 2 == 0) // randomly pick between stream 1 and stream 2
+		 {
+		     r = (1 + rand() % stream_size_2) + (rand() % frequency_1) * stream_size_2;
+		     s = frequency_2 * stream_size_1;
+		 }
+		 else
+		 {
+		     r = 0;
+		     s = (1 + rand() % stream_size_1) + (rand() % frequency_2) * stream_size_1; 
+		 }
+		 */
+		 
+
+		 
+
+
 	}
 	
 	return chi_squared;
