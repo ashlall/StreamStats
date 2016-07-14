@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << bins[i] << "\t";
-    deg_freedom = num_buckets - get_DOF(distribution_type);
+    deg_freedom = bins[i] - get_DOF(distribution_type);
 
     // adds pvalue error from the GK sketch to the table file
     double error = 0;
