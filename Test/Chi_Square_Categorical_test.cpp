@@ -134,18 +134,21 @@ void categorical_test4()
 	double memory_percent=10;
 	int stream_size1 = 1000000;
 	int stream_size2 = stream_size1;
-	int num_cat = 10000;
+	int num_cat = 10000, df = num_cat - 1;
 	int cumulative_freq1[num_cat];
 	int cumulative_freq2[num_cat];
+	int count_1[num_cat], count_2[num_cat];
 
 	// generate a Zipfian distribution with num_cat categories
+	// and parameters alpha1 and alpha2
 	int sum1 = 0, sum2 = 0;
+	double alpha1 = 1.1, alpha2 = 1.105;
 	for(int i = 0; i < num_cat; ++i)
 	{
-	    sum1 += max((int)(num_cat/pow(i+1, 1.1)), 1); 
+	    sum1 += max((int)(num_cat/pow(i+1, alpha1)), 1); 
 	    cumulative_freq1[i] = sum1;
 
-	    sum2 += max((int)(num_cat/pow(i+1, 1.105)), 1);
+	    sum2 += max((int)(num_cat/pow(i+1, alpha2)), 1);
             cumulative_freq2[i] = sum2; 
 
 	}
@@ -157,7 +160,6 @@ void categorical_test4()
 	    ChiSquareCategorical c2(memory_percent);
 	    
 	    double p_value = 0;
-	    int count_1[num_cat], count_2[num_cat];
 	    
 	    while (p_value < 0.02 || p_value > .1)
 	    {			
@@ -187,7 +189,7 @@ void categorical_test4()
 		    actual_chi += (value * value) / (frequency_1 + frequency_2);
 		}
 		
-		p_value=pochisq(actual_chi,df1);
+		p_value=pochisq(actual_chi, df);
 		//cout << actual_chi << " " << p_value << endl;
 		seed=seed+1;  
 	    }
@@ -207,7 +209,7 @@ void categorical_test4()
 	    cout << "Calculated :" << chi << endl;
 	    
 	    cout<<"Actual   p: "<<p_value<<endl;
-	    cout<<"Calculated: "<<pochisq(chi,df1) <<endl << endl;
+	    cout<<"Calculated: "<<pochisq(chi,df) <<endl << endl;
 	}
 }
 
