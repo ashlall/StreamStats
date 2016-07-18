@@ -11,7 +11,8 @@ ChiSquareCategorical::ChiSquareCategorical(double p)
 	chi_squared=0;
 	stream_size=0;
 	percent =p;
-	range=pow(2,32);	
+	range=pow(2,32);
+	num_cat=0;	
 }
 /*
 Pre-Condition: Data from category c, where c lies betweeen categories 0 throuh C.
@@ -28,6 +29,7 @@ void ChiSquareCategorical::insert(double c)
 		if(map.count(hash_value)<1)
 		{	
 			map.emplace(hash_value,1);
+			num_cat++;
 		}
 		else
 		{
