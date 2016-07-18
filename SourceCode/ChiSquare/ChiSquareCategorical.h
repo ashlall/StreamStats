@@ -66,12 +66,14 @@ public:
 	void insert(double val);
 	double calculate_statistic(const ChiSquareCategorical& second_distribution, int seed = 0);
 	int get_stream_size(){ return stream_size;};
+	int get_num_categories(){return (num_cat*(100.0/percent));};
 private:
 	double chi_squared;
 	int num_buckets;
 	double percent;
 	int *count;
 	int stream_size;
+	int num_cat;
 	long range=0;
 	unordered_map<long,int> map;
 };
