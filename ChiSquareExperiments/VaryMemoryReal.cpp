@@ -111,36 +111,32 @@ int main(int argc, char* argv[])
     double GK_stat = GK_sketch1.two_sample_statistic(GK_sketch2, num_buckets);
     GK_values[i] = GK_stat;
     data_file << "GK = " << GK_stat << endl;
-    cout << 1 << endl;
+
     // calculates real statistic
     double *upper_intervals = GK_sketch1.get_upper();
     double *lower_intervals = GK_sketch1.get_lower();
     double constant_1 = sqrt((double)stream_size2/stream_size1);
     double constant_2 = sqrt((double)stream_size1/stream_size2);
     double chi_squared = 0;
-    cout << 2 << endl;
+
     for (int i = 0; i < num_buckets; i++)
     {
-      cout << 3 << endl;
       double frequency1 = 0, frequency2 = 0;
-      cout << 4 << endl;
-      cout << lower_intervals[i+1] << " " << upper_intervals[i+1] << " " << i << endl;
       for (std::vector<double>::iterator j = data1.begin(); j!=data1.end();j++)
 	{
         if (*j <= upper_intervals[i+1] && *j > lower_intervals[i+1])
           frequency1++;
       }
-      cout << 5 << endl;
       for (std::vector<double>::iterator j = data2.begin(); j!=data2.end();j++)
       {
         if (*j <= upper_intervals[i+1] && *j > lower_intervals[i+1])
 	  frequency2++;
       }
-      cout << 6 << endl;
+
       double lambda = frequency1 * constant_1 - frequency2 * constant_2;
       chi_squared += (lambda * lambda) / (frequency1 + frequency2);
     }
-    cout << 7 << endl;
+
     actual_values[i] = chi_squared;
     data_file << "actual = " << chi_squared << endl;
 
