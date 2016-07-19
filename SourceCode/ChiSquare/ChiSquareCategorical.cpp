@@ -58,13 +58,28 @@ double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& sec
 	{
 		 // Getting the frequencies if the i'th bin from the two streams.
 		 int frequency_1= it->second;
-		 int frequency_2= second_distribution.map.at(it->first);
+		 int frequency_2 = 0;
+		 if (second_distribution.map.find(it->first) != second_distribution.map.end())
+		   frequency_2= second_distribution.map.at(it->first);
 	 	
 		 //Calculating the Chi-Squared Statistic
 		
 		 // Naive sampling:
 		 double value = frequency_1 * constant_1 - frequency_2 * constant_2;
 		 chi_squared += (100.0/percent) * (value * value) / (frequency_1 + frequency_2);
+	}
+
+	// loop through second stream to find bins where 1st stream is 0
+	for (auto i = second_distribution.map.begin(); i != second_distribution.map.end(); ++i)
+        {
+	  if (map.find(i->first) == map.end())
+	  {
+	    int frequency_1 = 0;
+	    int frequency_2 = i->second;
+	    double value = frequency_1 * constant_1 - frequency_2 * constant_2;
+	    chi_squared += (100.0/percent) * (value * value) / (frequency_1 + frequency_2);
+	  }
+	}
 		 
 		 
 		 /*
@@ -87,7 +102,7 @@ double ChiSquareCategorical::calculate_statistic(const ChiSquareCategorical& sec
 		 estimateSum += X;
 		 count++;
 		 */
-	}
+	
 	
 	return chi_squared;
 	//return (stream_size_1 + stream_size_2 - 4 * stream_size_1 * estimateSum / count);
