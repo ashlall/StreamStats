@@ -12,9 +12,9 @@ int main(int argc, char* argv[])
     cout << "usage: MakePlot [S|M|B] input-file output-file [0|1]\n";
     return 0;
   }
-  if (argv[1][0] != 'S' && argv[1][0] != 'M' && argv[1][0] != 'B')
+  if (argv[1][0] != 'S' && argv[1][0] != 'M' && argv[1][0] != 'B' && argv[1][0] != 'R')
   {
-    cout << "Must be S, M, or B\n";
+    cout << "Must be S, M, R, or B\n";
     return 0;
   }
   FILE* file;
@@ -31,16 +31,24 @@ int main(int argc, char* argv[])
     fprintf(file, "set xlabel 'Percent Memory'\n");
   else if (argv[1][0] == 'B')
     fprintf(file, "set xlabel 'Number of Bins'\n");
-  fprintf(file, "set ylabel 'P-value Error'\n");
+  else
+	fprintf(file, "set xlabel 'Percent Memory'\n");
+  
+  if (argv[1][0] == 'R')
+	fprintf(file, "set ylabel 'Relative Error'\n");
+  else
+    fprintf(file, "set ylabel 'P-value Error'\n");
 
   fprintf(file, "set key box\n");
   fprintf(file, "set size .5,.5\n");
- 
+
   if (argv[1][0] == 'S')
     fprintf(file, "set logscale x\n");
   fprintf(file, "set yrange [0:*]\n");
 
-  if (argc <= 4)
+  if (argv[1][0] == 'R')
+	fprintf(file, "plot \"%s\" u 1:2 t 'estimated' w linespoints lw 2\n", argv[2]);
+  else if (argc <= 4)
     fprintf(file, "plot \"%s\" u 1:2 t 'GK' w linespoints lw 2\n", argv[2]);
   else
     fprintf(file, "plot \"%s\" u 1:2 t 'GK' w linespoints lw 2, \"%s\" u 1:3 t 'Q-Digest' w linespoints lw 2, \"%s\" u 1:4 t 'Reservoir-Sampling' w linespoints lw 2\n", argv[2], argv[2], argv[2]);
