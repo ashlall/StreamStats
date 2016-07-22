@@ -41,4 +41,4 @@ clean:
 	rm *.o
 
 cleanest: clean
-	rm VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth VaryBinsOneSample VaryBinsTwoSample VaryMemoryOneSample VaryMemoryTwoSample
+	rm VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth VaryBinsOneSample VaryBinsTwoSample VaryMemoryOneSample VaryMemoryTwoSample VaryMemoryReal VaryMemoryCategorical
