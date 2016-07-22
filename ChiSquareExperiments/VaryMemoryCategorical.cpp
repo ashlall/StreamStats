@@ -50,14 +50,11 @@ int main(int argc, char* argv[])
   char output[100];
   int stream_size1 = 0, stream_size2 = 0;
 
-  //std::default_random_engine generator(1);
-  //std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
   input_file.open(filename1);
   while (!input_file.eof())
     {
       input_file >> output;
-      data1.push_back(atof(output));// + (distribution(generator) * 0.000000001));
+      data1.push_back(atof(output));
       stream_size1++;
       if (stream1.find(atof(output)) == stream1.end())
 	stream1.insert(std::make_pair(atof(output),1));
@@ -70,7 +67,7 @@ int main(int argc, char* argv[])
   while (!input_file.eof())
     {
       input_file >> output;
-      data2.push_back(atof(output));// + (distribution(generator) * 0.000000001));
+      data2.push_back(atof(output));
       stream_size2++;
       if (stream2.find(atof(output)) == stream2.end())
 	stream2.insert(std::make_pair(atof(output),1));
@@ -85,6 +82,7 @@ int main(int argc, char* argv[])
   data_file << "number of categories: " << stream1.size() << endl;
   memory_percent = lower;
   int i = 0, num_categories;
+
   while (memory_percent <= (upper + 0.00000001)) //accounts for rounding
   {
     data_file << "memory percent: " << memory_percent << endl;
@@ -104,20 +102,28 @@ int main(int argc, char* argv[])
     data_file << "estimate = " << estimated_stat << endl;
 
     // calculates actual statistic
-    double constant1 = stream_size2 / stream_size1;
-    double constant2 = stream_size1 / stream_size2;
+    double constant1 = sqrt(double(stream_size2) / double(stream_size1));
+    double constant2 = sqrt(double(stream_size1) / double(stream_size2));
     double actual_stat = 0;
 
-    num_categories = 0;
     for (std::unordered_map<double,int>::const_iterator j = stream1.begin(); j!= stream1.end(); j++)
     {
-      //cout << j->first << " " << j->second << endl;
       double frequency1 = j->second;
-      //if (frequency1 >= 5 && stream2.find(j->first) != stream2.end() && stream2[j->first] >= 5)
+      double frequency2 = 0;
+      num_categories++;
       if (stream2.find(j->first) != stream2.end())
+	frequency2 = stream2[j->first];
+      double value = frequency1 * constant1 - frequency2 * constant2;
+      actual_stat += (value * value) / (frequency1 + frequency2);
+    }
+    // have to loop through other stream to find when first one is 0
+    for (std::unordered_map<double,int>::const_iterator j = stream2.begin(); j!= stream2.end(); j++)
+    {
+      if (stream1.find(j->first) == stream1.end())
       {
 	num_categories++;
-        double frequency2 = stream2[j->first];
+	int frequency1 = 0;
+	int frequency2 = j->second;
 	double value = frequency1 * constant1 - frequency2 * constant2;
 	actual_stat += (value * value) / (frequency1 + frequency2);
       }
