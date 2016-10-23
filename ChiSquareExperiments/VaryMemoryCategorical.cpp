@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <time.h>
+#include <sys/time.h>
 #include <cmath>
 #include "../SourceCode/ChiSquare/ChiSquareCategorical.cpp"
 #include "../SourceCode/ChiSquare/Chi_Square_Distribution.cpp"
@@ -34,10 +35,12 @@ int main(int argc, char* argv[])
   while (mem <= (upper + 0.00000001))
   {
     repeats++;
-    mem *= sqrt(10);
+    mem += 10;
   }
 
   double actual_values[repeats], estimated_values[repeats], percents[repeats];
+  long times[repeats];
+  long times2[repeats];
   std::vector<double> data1, data2;
   std::unordered_map<double,int> stream1, stream2;
 
@@ -83,6 +86,7 @@ int main(int argc, char* argv[])
   memory_percent = lower;
   int i = 0, num_categories;
 
+
   while (memory_percent <= (upper + 0.00000001)) //accounts for rounding
   {
     data_file << "memory percent: " << memory_percent << endl;
@@ -90,11 +94,23 @@ int main(int argc, char* argv[])
 
     // calculates the estimated statistic
     ChiSquareCategorical sketch1(memory_percent);
+    ChiSquareCategorical sketch2(memory_percent);
+
+	timeval timeBefore, timeAfter; // initializes variables
+  	long diffSeconds, diffUSeconds;
+ 	gettimeofday(&timeBefore, NULL); 
+
     for (std::vector<double>::iterator j = data1.begin(); j != data1.end();j++)
       sketch1.insert(*j);
-    ChiSquareCategorical sketch2(memory_percent);
     for (std::vector<double>::iterator j = data2.begin(); j != data2.end();j++)
       sketch2.insert(*j);
+
+	gettimeofday(&timeAfter, NULL); // get time for insertion
+  	diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
+  	diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
+
+	times[i] = diffSeconds;
+	times2[i] = diffUSeconds;
 
     double estimated_stat = sketch1.calculate_statistic(sketch2, 0);
 
@@ -131,7 +147,7 @@ int main(int argc, char* argv[])
     actual_values[i] = actual_stat;
     data_file << "actual = " << actual_stat << endl;
     i++;
-    memory_percent *= sqrt(10);
+    memory_percent += 10;
   }
   data_file.close();
 
@@ -143,6 +159,12 @@ int main(int argc, char* argv[])
   ofstream data2_file;
   name_file(str, argv, 1);
   data2_file.open(str);
+
+  // creates time table file
+  ofstream time_file;
+  char str2[150];
+  name_file(str2, argv, 5);
+  time_file.open(str2);
 
   // creates extra file
   ofstream data3_file;
@@ -157,6 +179,11 @@ int main(int argc, char* argv[])
       double error = abs(pochisq(estimated_values[i], deg_freedom) - pochisq(actual_values[i], deg_freedom));
       data2_file << error << endl;
 
+	  // adds values to the time table
+	  time_file << percents[i] << "\t";
+      long double avg_time = times[i] + times2[i]/1000000.0;
+      time_file << avg_time << endl;
+	  
       // adds values to pvalue file
       data_file << pochisq(actual_values[i], deg_freedom) << " actual" << endl;
       data_file << pochisq(estimated_values[i], deg_freedom) << " estimated" << endl;
@@ -168,7 +195,7 @@ int main(int argc, char* argv[])
     }
   data3_file.close();
   data2_file.close();
-  data_file.close();
+  data_file.close(); 
   return 0;
 }
 
@@ -195,6 +222,10 @@ void name_file(char *str, char* argv[], int extra)
     strcat(str, "_table.dat");
   else if (extra == 2)
     strcat(str, "_extra.dat");
-  else
+  else if (extra == 3)
     strcat(str, "_pvalues.dat");
+  else if (extra == 4)
+    strcat(str, "_actual-values.dat");
+  else 
+	strcat(str, "_times.dat");
 }

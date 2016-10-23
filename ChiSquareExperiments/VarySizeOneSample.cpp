@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <time.h>
+#include <sys/time.h>
 #include <cmath>
 #include "DataGenerator.cpp"
 #include "../SourceCode/ChiSquare/ChiSquareContinuous.cpp"
@@ -83,6 +84,8 @@ int main(int argc, char* argv[])
   double QD_values[data_repeats][num_sizes];
   double RS_values[data_repeats][num_sizes];
   int sizes[num_sizes];
+  long times[data_repeats][num_sizes];
+  long times2[data_repeats][num_sizes];
 
   // creates and initializes the log file
   ofstream data_file;
@@ -109,8 +112,22 @@ int main(int argc, char* argv[])
 
       // computes GK estimate
       ChiSquareContinuous sketch1(sample_size, 1); 
+
+	  timeval timeBefore, timeAfter; // initializes variables
+  	  long diffSeconds, diffUSeconds;
+ 	  gettimeofday(&timeBefore, NULL); 
+
       for (int i = 0; i < stream_size; i++)
 	      sketch1.insert(stream[i]);
+
+	  gettimeofday(&timeAfter, NULL); // get time for insertion
+  	  diffSeconds = timeAfter.tv_sec - timeBefore.tv_sec;
+  	  diffUSeconds = timeAfter.tv_usec - timeBefore.tv_usec;
+
+	  times[i][j] = diffSeconds;
+	  times2[i][j] = diffUSeconds;
+
+
       double GK_stat = get_estimate(&sketch1, distribution_type, num_buckets, location, scale);
       GK_values[i][j] = GK_stat;
       data_file << "GK = " << GK_stat << endl;
@@ -152,6 +169,12 @@ int main(int argc, char* argv[])
   name_file(str, argv, 1);
   data_file.open(str);
 
+  // creates time table file
+  ofstream time_file;
+  char str2[150];
+  name_file(str2, argv, 5);
+  time_file.open(str2);
+
   // creates pvalues file
   ofstream data2_file;
   char st[150];
@@ -162,12 +185,19 @@ int main(int argc, char* argv[])
   for (int i = 0; i < num_sizes; i++)
   {
     data_file << sizes[i] << "\t";
+	time_file << sizes[i] << "\t";
 
     // adds pvalue error from the GK sketch to the table file
     double error = 0;
     for (int j = 0; j < data_repeats; j++)
       error += abs(pochisq(GK_values[j][i], deg_freedom) - pochisq(actual_values[j][i], deg_freedom));
     data_file << error / data_repeats;
+
+	// adds times to the time table
+	long double avg_time = 0.0;
+	for (int j = 0; j < data_repeats; j++)
+		avg_time += times[j][i] + times2[j][i]/1000000.0;// diffSeconds + diffUSeconds/1000000.0
+	time_file << avg_time / data_repeats << endl;
 
     if (all_quantiles)
     {
@@ -200,6 +230,7 @@ int main(int argc, char* argv[])
   }
   data2_file.close();
   data_file.close();
+  time_file.close();
 
   // Creates extra file
   name_file(str, argv, 2);
@@ -308,6 +339,8 @@ void name_file(char *str, char *argv[], int extra)
     strcat(str, "_extra.dat");
   else if (extra == 3)
     strcat(str, "_pvalues.dat");
-  else
+  else if (extra == 4)
     strcat(str, "_actual-values.dat");
+  else 
+	strcat(str, "_times.dat");
 }

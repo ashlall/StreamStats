@@ -2,7 +2,7 @@ CC = g++
 FLAGS = -std=c++11
 VPATH = ../SourceCode/ChiSquare:../SourceCode/Quantiles
 
-all: VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth VaryBinsOneSample VaryBinsTwoSample VaryMemoryOneSample VaryMemoryTwoSample VaryMemoryReal.cpp VaryMemoryCategorical.cpp
+all: VarySizeOneSample MakePlot VarySizeTwoSampleConstant VarySizeTwoSampleBoth VaryBinsOneSample VaryBinsTwoSample VaryMemoryOneSample VaryMemoryTwoSample VaryMemoryReal VaryMemoryCategorical
 
 VaryMemoryCategorical: VaryMemoryCategorical.cpp ChiSquareContinuous.o Chi_Square_Distribution.cpp
 	$(CC) $(FLAGS) -o $@ $<
